@@ -99,10 +99,14 @@ void WavetableSynthesisTestAudioProcessor::prepareToPlay (double sampleRate, int
     auto* oscillator = new WavetableOscillator(wtFileBuffer);
 
     // setting the frequency and sample rate in this class instance
-    oscillator->setFrequency(440.0f, (float)sampleRate);
+    oscillator->setFrequency(110.0f, (float)sampleRate);
 
     // adding to the WavetableOscillator array in private variables
     wtOscillators.add(oscillator);
+
+    
+
+    DBG(BinaryData::ESW_Analog__JP800_Saw_wav[0]);
 }
 
 void WavetableSynthesisTestAudioProcessor::releaseResources()
@@ -173,11 +177,20 @@ void WavetableSynthesisTestAudioProcessor::createWavetable()
     // allows the program to use basic audio file formats (.wav)
     wtFormatManager.registerBasicFormats();
 
-    // specifying path of wavetable to load, using the JP800 saw file in the wavetables folder
-    juce::File wavetableFilePath("C:\JUCE\projects\AudioProgrammingProject\WavetableSynthesisTest\Source\Wavetables\ESW Analog - JP800 Saw.wav");
+    // loading binary data
+    const void* data = BinaryData::ESW_Analog__Moog_Square_01__wav;
+
+    // loading size of binary data
+    size_t sizeBytes = BinaryData::ESW_Analog__Moog_Square_01__wavSize;
+    
+    // creating instance of juce class for reading and writing .wav files
+    juce::WavAudioFormat wavFormat;
+
+    // creating juce class for accessing block of data as a stream and handing it the source data and size
+    auto* inputStream = new juce::MemoryInputStream(data, sizeBytes, false);
 
     // creating an audio format reader from the path
-    std::unique_ptr<juce::AudioFormatReader> wtReader(wtFormatManager.createReaderFor(wavetableFilePath));
+    std::unique_ptr<juce::AudioFormatReader> wtReader(wavFormat.createReaderFor(inputStream, false));
 
     // if statement used in juce tutorial, only used when a dialogue box is opened and user clicks cancel? maybe uneccesary?
     if (wtReader.get() != nullptr)

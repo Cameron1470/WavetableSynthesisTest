@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "WavetableOscillator.h"
+#include <BinaryData.h>
 
 //==============================================================================
 /**

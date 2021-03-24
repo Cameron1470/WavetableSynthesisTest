@@ -20,12 +20,12 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     
     addAndMakeVisible(wavetableChooserDropDown);
 
-    wavetableChooserDropDown.addItem("Moog Square", 1);
-    wavetableChooserDropDown.addItem("Moog Triangle", 2);
-    wavetableChooserDropDown.addItem("Prophet Triangle", 3);
-    wavetableChooserDropDown.addItem("JP800 Saw", 4);
-    wavetableChooserDropDown.addItem("Juno 60 Square", 5);
-    
+    for (int i = 0; i < BinaryData::namedResourceListSize; i++)
+    {
+        wavetableChooserDropDown.addItem(BinaryData::originalFilenames[i], i + 1);
+    }
+
+
     //wavetableChooserDropDown.onChange = [this] { change Audio file function }
 
     wavetableChooserDropDown.setSelectedId(1);
