@@ -23,7 +23,15 @@ WavetableSynthesisTestAudioProcessor::WavetableSynthesisTestAudioProcessor()
 #endif
 {
     // before processing starts, the wavetable is created through the function (defined under process block)
-    createWavetable();
+    //createWavetable();
+
+    // add wavetable synth voices to the synthesiser class
+    for (int i = 0; i < voiceCount; i++)
+    {
+        synth.addVoice(new WavetableSynthVoice());
+    }
+
+    synth.addSound(new WavetableSynthSound());
 }
 
 WavetableSynthesisTestAudioProcessor::~WavetableSynthesisTestAudioProcessor()
@@ -95,18 +103,7 @@ void WavetableSynthesisTestAudioProcessor::changeProgramName (int index, const j
 //==============================================================================
 void WavetableSynthesisTestAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // creating a new WavetableOscillator class from the the AudioSampleBuffer
-    auto* oscillator = new WavetableOscillator(wtFileBuffer);
-
-    // setting the frequency and sample rate in this class instance
-    oscillator->setFrequency(110.0f, (float)sampleRate);
-
-    // adding to the WavetableOscillator array in private variables
-    wtOscillators.add(oscillator);
-
-    
-
-    DBG(BinaryData::ESW_Analog__JP800_Saw_wav[0]);
+    synth.setCurrentPlaybackSampleRate(sampleRate);
 }
 
 void WavetableSynthesisTestAudioProcessor::releaseResources()
@@ -144,63 +141,13 @@ bool WavetableSynthesisTestAudioProcessor::isBusesLayoutSupported (const BusesLa
 void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
-    auto totalNumInputChannels  = getTotalNumInputChannels();
-    auto totalNumOutputChannels = getTotalNumOutputChannels();
+    //auto totalNumInputChannels  = getTotalNumInputChannels();
+    //auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear (i, 0, buffer.getNumSamples());
+    //for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+    //    buffer.clear (i, 0, buffer.getNumSamples());
 
-    //create channel pointers
-    float* leftChannel = buffer.getWritePointer(0);
-    float* rightChannel = buffer.getWritePointer(1);
-
-    for (int i = 0; i < buffer.getNumSamples(); i++)
-    {
-        // creating a float taken from index 0 of the wtOscillators array
-        auto* oscillator = wtOscillators.getUnchecked(0);
-        
-        // creating a sample float, using getNextSample function of the WavetableOscillator class 
-        auto sample = oscillator->getNextSample() * gain;
-
-        // assigning to channels
-        leftChannel[i] = sample;
-        rightChannel[i] = sample;
-    }
-
-}
-
-void WavetableSynthesisTestAudioProcessor::createWavetable()
-{
-    // got most of this from here: https://docs.juce.com/master/tutorial_looping_audio_sample_buffer_advanced.html
-    // seems quite advanced and I don't really understand some of whats going on here
-    
-    // allows the program to use basic audio file formats (.wav)
-    wtFormatManager.registerBasicFormats();
-
-    // loading binary data
-    const void* data = BinaryData::ESW_Analog__Moog_Square_01__wav;
-
-    // loading size of binary data
-    size_t sizeBytes = BinaryData::ESW_Analog__Moog_Square_01__wavSize;
-    
-    // creating instance of juce class for reading and writing .wav files
-    juce::WavAudioFormat wavFormat;
-
-    // creating juce class for accessing block of data as a stream and handing it the source data and size
-    auto* inputStream = new juce::MemoryInputStream(data, sizeBytes, false);
-
-    // creating an audio format reader from the path
-    std::unique_ptr<juce::AudioFormatReader> wtReader(wavFormat.createReaderFor(inputStream, false));
-
-    // if statement used in juce tutorial, only used when a dialogue box is opened and user clicks cancel? maybe uneccesary?
-    if (wtReader.get() != nullptr)
-    {
-        //setting size of private variable
-        wtFileBuffer.setSize((int)wtReader->numChannels, (int)wtReader->lengthInSamples);
-
-        //using the reader to populate AudioSampleBuffer class with the wavetable
-        wtReader->read(&wtFileBuffer, 0, (int)wtReader->lengthInSamples, 0, true, true);
-    }
+    synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
 
 }
 

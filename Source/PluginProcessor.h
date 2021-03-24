@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 #include "WavetableOscillator.h"
 #include <BinaryData.h>
+#include "WavetableSynthesiser.h"
 
 //==============================================================================
 /**
@@ -55,18 +56,12 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    //==============================================================================
-    void createWavetable();
 
 private:
-    // for keeping list of avaible audio formats
-    juce::AudioFormatManager wtFormatManager;
 
-    // a multi channel buffer containing floating point audio samples - the wavetable itself!
-    juce::AudioBuffer<float> wtFileBuffer;
+    juce::Synthesiser synth;
 
-    // an array of WavetableOscillators (not sure about the owned array type, from a juce tutorial)
-    juce::OwnedArray<WavetableOscillator> wtOscillators;
+    int voiceCount = 6;
 
     // gain used in process block
     float gain = 0.25f;
