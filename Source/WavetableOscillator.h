@@ -13,13 +13,15 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "LagrangeTable.h"
 
 class WavetableOscillator
 {
 public:
     WavetableOscillator(const juce::AudioSampleBuffer& wavetableToUse)
         : wavetable(wavetableToUse),
-        tableSize(wavetable.getNumSamples())
+        tableSize(wavetable.getNumSamples()),
+        lagrangeTab(4, 100)
     {
         jassert(wavetable.getNumChannels() == 1);
     }
@@ -60,8 +62,12 @@ public:
         return currentSample;
     }
 
+    
+
 private:
     const juce::AudioSampleBuffer& wavetable;
     const int tableSize;
     float currentIndex = 0.0f, tableDelta = 0.0f;
+
+    LagrangeTable lagrangeTab;
 };

@@ -14,6 +14,7 @@
       <FILE id="FtJKPk" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
       <FILE id="JSZL54" name="WavetableOscillator.h" compile="0" resource="0"
             file="Source/WavetableOscillator.h"/>
+      <FILE id="lOXIC7" name="LagrangeTable.h" compile="0" resource="0" file="Source/LagrangeTable.h"/>
       <GROUP id="{8A6A8882-3CC1-3075-5501-40BE323A0076}" name="Wavetables">
         <FILE id="iT4kTS" name="ESW Analog - JP800 Saw.wav" compile="0" resource="1"
               file="Source/Wavetables/ESW Analog - JP800 Saw.wav"/>
@@ -48,6 +49,7 @@
         <MODULEPATH id="juce_graphics" path="../../../modules"/>
         <MODULEPATH id="juce_gui_basics" path="../../../modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../../modules"/>
+        <MODULEPATH id="juce_dsp" path="../../../modules"/>
       </MODULEPATHS>
     </VS2019>
   </EXPORTFORMATS>
@@ -61,6 +63,7 @@
     <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
