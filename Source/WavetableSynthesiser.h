@@ -47,6 +47,16 @@ public:
         // before processing starts, the wavetable is created through the function (defined under process block)
         createWavetable();
 
+        env.setSampleRate(getSampleRate());
+
+        juce::ADSR::Parameters envParams;
+        envParams.attack = 0.5f;
+        envParams.decay = 0.25f;
+        envParams.sustain = 0.5f;
+        envParams.release = 1.0f;
+
+        env.setParameters(envParams);
+
     }
     //--------------------------------------------------------------------------
     /**
@@ -60,8 +70,11 @@ public:
     void startNote (int midiNoteNumber, float velocity, juce::SynthesiserSound*, int /*currentPitchWheelPosition*/) override
     {
         playing = true;
+        ending = false;
+
         float freq = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
         
+        wtOscillators.clear();
 
         // creating a new WavetableOscillator class from the the AudioSampleBuffer
         auto* oscillator = new WavetableOscillator(wtFileBuffer);
@@ -71,6 +84,10 @@ public:
 
         // adding to the WavetableOscillator array in private variables
         wtOscillators.add(oscillator);
+
+        env.reset();
+
+        env.noteOn();
 
         
     }
@@ -84,10 +101,9 @@ public:
      */
     void stopNote(float /*velocity*/, bool allowTailOff) override
     {
-        clearCurrentNote();
-        playing = false;
-
-        wtOscillators.clear();
+        env.noteOff();
+        ending = true;
+        
     }
     
     //--------------------------------------------------------------------------
@@ -107,17 +123,30 @@ public:
             // iterate through the necessary number of samples (from startSample up to startSample + numSamples)
             for (int sampleIndex = startSample;   sampleIndex < (startSample+numSamples);   sampleIndex++)
             {
+                float envVal = env.getNextSample();
+                
                 // creating a float taken from index 0 of the wtOscillators array
                 auto* oscillator = wtOscillators.getUnchecked(0);
 
                 // creating a sample float, using getNextSample function of the WavetableOscillator class 
-                auto currentSample = oscillator->getNextSample() * gain;
+                auto currentSample = oscillator->getNextSample() * gain * envVal;
                 
                 // for each channel, write the currentSample float to the output
                 for (int chan = 0; chan<outputBuffer.getNumChannels(); chan++)
                 {
                     // The output sample is scaled by 0.2 so that it is not too loud by default
                     outputBuffer.addSample (chan, sampleIndex, currentSample * 0.2);
+                }
+
+                if (ending)
+                {
+                    if (envVal < 0.0001f)
+                    {
+                        clearCurrentNote();
+                        playing = false;
+
+                        
+                    }
                 }
             }
         }
@@ -180,6 +209,8 @@ private:
     /// Should the voice be playing?
     bool playing = false;
 
+    bool ending = false;
+
     // for keeping list of avaible audio formats
     juce::AudioFormatManager wtFormatManager;
 
@@ -188,6 +219,9 @@ private:
 
     // an array of WavetableOscillators (not sure about the owned array type, from a juce tutorial)
     juce::OwnedArray<WavetableOscillator> wtOscillators;
+
+    // the ADSR envelope
+    juce::ADSR env;
 
     // gain used in process block
     float gain = 0.2f;
