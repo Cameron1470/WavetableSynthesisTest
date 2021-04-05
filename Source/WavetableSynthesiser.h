@@ -50,10 +50,10 @@ public:
         env.setSampleRate(getSampleRate());
 
         juce::ADSR::Parameters envParams;
-        envParams.attack = 0.5f;
+        envParams.attack = 0.1f;
         envParams.decay = 0.25f;
-        envParams.sustain = 0.5f;
-        envParams.release = 1.0f;
+        envParams.sustain = 0.7f;
+        envParams.release = 0.25f;
 
         env.setParameters(envParams);
 
