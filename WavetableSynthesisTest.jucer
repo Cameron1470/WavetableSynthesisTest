@@ -19,6 +19,8 @@
             file="Source/LagrangeTable.cpp"/>
       <FILE id="LnHdsY" name="WavetableSynthesiser.h" compile="0" resource="0"
             file="Source/WavetableSynthesiser.h"/>
+      <FILE id="JBILG8" name="LagrangeTable.txt" compile="0" resource="1"
+            file="Source/LagrangeTable.txt"/>
       <GROUP id="{8A6A8882-3CC1-3075-5501-40BE323A0076}" name="Wavetables">
         <FILE id="iT4kTS" name="ESW Analog - JP800 Saw.wav" compile="0" resource="1"
               file="Source/Wavetables/ESW Analog - JP800 Saw.wav"/>

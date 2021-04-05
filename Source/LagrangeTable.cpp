@@ -31,13 +31,13 @@ void LagrangeTable::setLagrangeTable()
     float* aq = new float[Q];                       // create array for alpha_q values of Q length
     for (int i = 0; i < Q; i++)
     {
-        aq[i] = (-Q / 2 + i) / Q;                   // fill array with alpha_q values between -1/2 and 1/2
+        aq[i] = (-Q / 2.0f + i) / Q;                   // fill array with alpha_q values between -1/2 and 1/2
     }
 
     float* al = new float[lagrangeOrder];           // create pointer to array of lagrangeOrder length
     for (int i = 0; i < lagrangeOrder; i++)
     {
-        al[i] = (1 - lagrangeOrder + 2 * i) / 2;    // fill array with alpha values for interpolation order
+        al[i] = (1.0f - lagrangeOrder + 2.0f * i) / 2.0f;    // fill array with alpha values for interpolation order
     }
 
     // looping over the polynomials
