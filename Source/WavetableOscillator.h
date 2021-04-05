@@ -13,15 +13,13 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "LagrangeTable.h"
 
 class WavetableOscillator
 {
 public:
     WavetableOscillator(const juce::AudioSampleBuffer& wavetableToUse)
         : wavetable(wavetableToUse),
-        tableSize(wavetable.getNumSamples()),
-        lagrangeTab(4, 100)
+        tableSize(wavetable.getNumSamples())
     {
         jassert(wavetable.getNumChannels() == 1);
     }
@@ -37,22 +35,7 @@ public:
         // get number of samples in the wavetable
         auto tableSize = (unsigned int)wavetable.getNumSamples();
 
-        // create a temporary variable of the current index
-        auto index0 = (unsigned int)currentIndex;             
-        
-        // now finding the next index -- if this matches the table size it will wrap back to 0
-        auto index1 = (index0 + 1) % tableSize;
-
-        // fractional different between rounded index0 and actual current index
-        auto frac = currentIndex - (float)index0; 
-
-        // create read pointer and read the values at the two index points
-        auto* table = wavetable.getReadPointer(0);        
-        auto value0 = table[index0];
-        auto value1 = table[index1];
-
-        // linearly interpolate
-        auto currentSample = value0 + frac * (value1 - value0);
+        auto currentSample = getSplineOut(currentIndex);
 
         // if current index + delta is larger than table size. subtract table size
         if ((currentIndex += tableDelta) > (float)tableSize) 
@@ -62,12 +45,23 @@ public:
         return currentSample;
     }
 
-    
+    float getSplineOut(float currentIndex)
+    {
+        const int n0 = floor(currentIndex);
+        const int n1 = (n0 + 1) % tableSize;
+        const int n2 = (n0 + 2) % tableSize;
+        const float alpha = currentIndex - n0;
+
+        auto* table = wavetable.getReadPointer(0);
+        const float a = table[n1];
+        const float c = ((3.0f * (table[n2] - table[n1])) - (3.0f * (table[n1] - table[n0]))) * 0.25f;
+        const float b = (table[n2] - table[n1]) - (2.0f * c * 0.33333f);
+        const float d = (-c) * 0.33333f;
+        return a + (b * alpha) + (c * alpha * alpha) + (d * alpha * alpha * alpha);
+    }
 
 private:
     const juce::AudioSampleBuffer& wavetable;
     const int tableSize;
     float currentIndex = 0.0f, tableDelta = 0.0f;
-
-    LagrangeTable lagrangeTab;
 };
