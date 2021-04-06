@@ -60,6 +60,11 @@ public:
         return a + (b * alpha) + (c * alpha * alpha) + (d * alpha * alpha * alpha);
     }
 
+    float getTableDelta()
+    {
+        return tableDelta;
+    }
+
 private:
     const juce::AudioSampleBuffer& wavetable;
     const int tableSize;
