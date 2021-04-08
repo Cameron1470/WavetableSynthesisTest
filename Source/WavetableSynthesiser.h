@@ -95,6 +95,7 @@ public:
     {
         return dynamic_cast<WavetableSynthSound*> (sound) != nullptr;
     }
+
     //--------------------------------------------------------------------------
     /**
      Create wavetable from binary data and storing as a juce audio buffer "named wtFileBuffer"
@@ -105,7 +106,17 @@ public:
      */
     void setWavetableOne(const void* inputData, size_t inputSize);
 
+    //--------------------------------------------------------------------------
+    /**
+     Create wavetable from binary data and storing as a juce audio buffer "named wtFileBuffer"
 
+    Subsequently calls the antialiasing function below to deal with the artifacting issues
+    @param the binary data wavetable file name (ie. BinaryData::FileName__wav)
+    @param the binary data wavetable file size (ie. BinaryData::FileName__wavSize
+     */
+    void setWavetableTwo(const void* inputData, size_t inputSize);
+
+    void setWavescanVal(float _wavescanBal);
 
 private:
     //--------------------------------------------------------------------------
@@ -116,10 +127,16 @@ private:
     bool ending = false;
 
     /// For keeping list of avaible audio formats
-    juce::AudioFormatManager wtFormatManager;
+    juce::AudioFormatManager wtFormatManager1;
 
     /// A multi channel buffer containing floating point audio samples - the raw wavetable itself!
-    juce::AudioBuffer<float> wtFileBuffer;
+    juce::AudioBuffer<float> wtFileBuffer1;
+
+    /// For keeping list of avaible audio formats
+    juce::AudioFormatManager wtFormatManager2;
+
+    /// A multi channel buffer containing floating point audio samples - the raw wavetable itself!
+    juce::AudioBuffer<float> wtFileBuffer2;
 
     /// Creating a structure for storing the antialiased wavetables
     struct wavescannerSlot1 {
@@ -142,15 +159,11 @@ private:
 
     const void** data = new const void* [wavescanningSlots];
     size_t* dataSize = new size_t[wavescanningSlots];
-    
-
-
-    
-    
-
+   
 
     /// an array of WavetableOscillators
-    juce::OwnedArray<WavetableOscillator> wtOscillators;
+    juce::OwnedArray<WavetableOscillator> wtOscillator1;
+    juce::OwnedArray<WavetableOscillator> wtOscillator2;
 
     /// the ADSR envelope
     juce::ADSR env;
@@ -158,9 +171,6 @@ private:
     /// gain used in process block
     float gain = 0.2f;
 
-    
-
-    //const void* wavetableOneData = BinaryData::ESW_Analog__Moog_Square_01__wav;
-    //size_t wavetableOneSize = BinaryData::ESW_Analog__Moog_Square_01__wavSize;
+    float wavescanBal = 0.0f;
     
 };

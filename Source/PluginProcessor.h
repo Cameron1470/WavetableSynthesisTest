@@ -57,6 +57,8 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 
+    
+
 private:
 
     juce::Synthesiser synth;
@@ -65,6 +67,14 @@ private:
 
     // gain used in process block
     float gain = 0.25f;
+
+    
+
+    juce::AudioProcessorValueTreeState parameters;
+
+    std::atomic<float>* waveScanParameter;
+
+    
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WavetableSynthesisTestAudioProcessor)
