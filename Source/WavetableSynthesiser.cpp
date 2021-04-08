@@ -139,10 +139,60 @@ void WavetableSynthVoice::createWavetable()
 
 void WavetableSynthVoice::antialising(juce::AudioBuffer<float> _wtFileBuffer)
 {
+    // store variable of the sample rate
+    double sampleRate = getSampleRate();
+
+    // set cutoff frequency, single value for now. will make an array
+    double cutoff[numWavetableSlots] = { 16000.0, 16000.0, 16000.0, 16000.0, 10000.0, 1000.0, 50.0, 10.0, 5.0, 1.0 };
+
+    // find the range of values for the unfiltered buffer
+    juce::Range<float> preRange = _wtFileBuffer.findMinMax(0, 0, _wtFileBuffer.getNumSamples());
+
+    // absolute max value before filtering
+    float preMaxVal = abs(std::max(preRange.getStart(), preRange.getEnd()));
+
     // from the original buffer creating ten wavetable across the midi note range with varying levels of filtering
     for (int wtNumber = 0; wtNumber < numWavetableSlots; wtNumber++)
     {
+        // initialize filter with coefficients
+        mWavetables[wtNumber].wtFilter.setCoefficients(juce::IIRCoefficients::makeLowPass(sampleRate, cutoff[wtNumber], 1.0));
+
+        // reset filter
+        mWavetables[wtNumber].wtFilter.reset();
+
+        // store the wavetable length
+        mWavetables[wtNumber].wavetableLength = _wtFileBuffer.getNumSamples();
+
+        // copy the wt buffer into the structure
         mWavetables[wtNumber].wavetableAntialiased = _wtFileBuffer;
+
+        // process wavetables with the filter
+        for (int channel = 0; channel < _wtFileBuffer.getNumChannels(); channel++)
+        {
+            mWavetables[wtNumber].wtFilter.processSamples(mWavetables[wtNumber].wavetableAntialiased.getWritePointer(channel), mWavetables[wtNumber].wavetableLength);
+            
+
+            // find the range of values for the filtered buffer
+            juce::Range<float> postRange = mWavetables[wtNumber].wavetableAntialiased.findMinMax(0, 0, _wtFileBuffer.getNumSamples());
+
+            //find the absolute max value after filtering
+            float postMaxVal = abs(std::max(postRange.getStart(), postRange.getEnd()));
+
+            // create pointer
+            float* channelSamp = mWavetables[wtNumber].wavetableAntialiased.getWritePointer(channel);
+
+            //normalizing volume across wavetable
+            for (int sample = 0; sample < mWavetables[wtNumber].wavetableLength; sample++)
+            {
+                channelSamp[sample] *= preMaxVal / postMaxVal;
+            }
+        
+        }
+        
+       
+        
+
     }
+
 
 }

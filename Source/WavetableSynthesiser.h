@@ -107,7 +107,8 @@ public:
     /**
      Takes the juce audio buffer created in the above function and subdivides it into ten seperate wavetables
 
-     These seperate wavetable will beused for different ranges with varying levels of bandlimiting
+     These seperate wavetables will be used for different ranges with varying levels of bandlimiting
+     TODO: figure out how best to go about bandlimiting 
 
     @param the juce::audiobuffer wavetable to be processed and antialaised
      */
@@ -131,7 +132,8 @@ private:
     /// Creating a structure for storing the antialiased wavetables
     struct wavetablesAntialiased {
         int wavetableLength;
-        juce::AudioBuffer<float> wavetableAntialiased;
+        juce::AudioBuffer<float> wavetableAntialiased; 
+        juce::IIRFilter wtFilter;   // filter for reducing aliasing of wavetables
     };
     
     static constexpr int numWavetableSlots = 10;
@@ -146,6 +148,8 @@ private:
 
     /// gain used in process block
     float gain = 0.2f;
+
+    
 
     
 };
