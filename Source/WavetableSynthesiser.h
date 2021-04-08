@@ -100,19 +100,11 @@ public:
      Create wavetable from binary data and storing as a juce audio buffer "named wtFileBuffer"
 
     Subsequently calls the antialiasing function below to deal with the artifacting issues
+    @param the binary data wavetable file name (ie. BinaryData::FileName__wav)
+    @param the binary data wavetable file size (ie. BinaryData::FileName__wavSize
      */
-    void createWavetable();
-    
-    //--------------------------------------------------------------------------
-    /**
-     Takes the juce audio buffer created in the above function and subdivides it into ten seperate wavetables
+    void setWavetableOne(const void* inputData, size_t inputSize);
 
-     These seperate wavetables will be used for different ranges with varying levels of bandlimiting
-     TODO: figure out how best to go about bandlimiting 
-
-    @param the juce::audiobuffer wavetable to be processed and antialaised
-     */
-    void antialising(juce::AudioBuffer<float> _wtFileBuffer);
 
 
 private:
@@ -130,14 +122,31 @@ private:
     juce::AudioBuffer<float> wtFileBuffer;
 
     /// Creating a structure for storing the antialiased wavetables
-    struct wavetablesAntialiased {
-        int wavetableLength;
-        juce::AudioBuffer<float> wavetableAntialiased; 
-        juce::IIRFilter wtFilter;   // filter for reducing aliasing of wavetables
+    struct wavescannerSlot1 {
+        int wavetableLength1;
+        juce::AudioBuffer<float> wavetableAntialiased1; 
+        juce::IIRFilter wtFilter1;   // filter for reducing aliasing of wavetables
     };
+    struct wavescannerSlot2 {
+        int wavetableLength2;
+        juce::AudioBuffer<float> wavetableAntialiased2;
+        juce::IIRFilter wtFilter2;   // filter for reducing aliasing of wavetables
+    };
+    static constexpr int numWavetableOctaves = 10;
     
-    static constexpr int numWavetableSlots = 10;
-    wavetablesAntialiased mWavetables[numWavetableSlots];
+    wavescannerSlot1 mWavescanOne[numWavetableOctaves];
+    wavescannerSlot2 mWavescanTwo[numWavetableOctaves];
+    
+    // number of wavescanning slots
+    int wavescanningSlots = 2;
+
+    const void** data = new const void* [wavescanningSlots];
+    size_t* dataSize = new size_t[wavescanningSlots];
+    
+
+
+    
+    
 
 
     /// an array of WavetableOscillators
@@ -151,5 +160,7 @@ private:
 
     
 
+    //const void* wavetableOneData = BinaryData::ESW_Analog__Moog_Square_01__wav;
+    //size_t wavetableOneSize = BinaryData::ESW_Analog__Moog_Square_01__wavSize;
     
 };

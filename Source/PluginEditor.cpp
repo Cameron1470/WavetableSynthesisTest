@@ -13,8 +13,7 @@
 WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessorEditor (WavetableSynthesisTestAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
-    // Ignore this for now, just experimenting with some GUI stuff, isn't connected to anything
-    
+   
     addAndMakeVisible(dropDownLabel);
     dropDownLabel.setFont(textFont);
     

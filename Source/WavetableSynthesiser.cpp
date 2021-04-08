@@ -12,9 +12,18 @@
 #include <JuceHeader.h>
 
 WavetableSynthVoice::WavetableSynthVoice()
-{
-    // before processing starts, the wavetable is created through the function (defined under process block)
-    createWavetable();
+{    
+    // setting initial wavetable for wavescanning slot 1
+    data[0] = BinaryData::ESW_Analog__Moog_Square_01__wav;
+    dataSize[0] = BinaryData::ESW_Analog__Moog_Square_01__wavSize;
+
+    // setting initial wavetable for wavescanning slot 2
+    data[1] = BinaryData::ESW_Analog__Moog_Triangle_wav;
+    dataSize[1] = BinaryData::ESW_Analog__Moog_Triangle_wavSize;
+
+    // before processing starts, the wavetables are created through the function (defined under process block)
+    setWavetableOne(data[0], dataSize[0]);
+
 
     env.setSampleRate(getSampleRate());
 
@@ -47,7 +56,7 @@ void WavetableSynthVoice::startNote(int midiNoteNumber, float velocity, juce::Sy
     wtOscillators.clear();
 
     // creating a new WavetableOscillator class from the the AudioSampleBuffer
-    auto* oscillator = new WavetableOscillator(mWavetables[currentWavetable].wavetableAntialiased);
+    auto* oscillator = new WavetableOscillator(mWavescanOne[currentWavetable].wavetableAntialiased1);
 
     // setting the frequency and sample rate in this class instance
     oscillator->setFrequency(freq, getSampleRate());
@@ -102,7 +111,7 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
     }
 }
 
-void WavetableSynthVoice::createWavetable()
+void WavetableSynthVoice::setWavetableOne(const void* inputData, size_t inputSize)
 {
     // got most of this from here: https://docs.juce.com/master/tutorial_looping_audio_sample_buffer_advanced.html
 
@@ -110,10 +119,10 @@ void WavetableSynthVoice::createWavetable()
     wtFormatManager.registerBasicFormats();
 
     // loading binary data
-    const void* data = BinaryData::ESW_Analog__Moog_Square_01__wav;
+    const void* data = inputData;
 
     // loading size of binary data
-    size_t sizeBytes = BinaryData::ESW_Analog__Moog_Square_01__wavSize;
+    size_t sizeBytes = inputSize;
 
     // creating instance of juce class for reading and writing .wav files
     juce::WavAudioFormat wavFormat;
@@ -134,65 +143,56 @@ void WavetableSynthVoice::createWavetable()
         wtReader->read(&wtFileBuffer, 0, (int)wtReader->lengthInSamples, 0, true, true);
     }
 
-    antialising(wtFileBuffer);
-}
-
-void WavetableSynthVoice::antialising(juce::AudioBuffer<float> _wtFileBuffer)
-{
     // store variable of the sample rate
     double sampleRate = getSampleRate();
 
     // set cutoff frequency, single value for now. will make an array
-    double cutoff[numWavetableSlots] = { 16000.0, 16000.0, 16000.0, 16000.0, 10000.0, 1000.0, 50.0, 10.0, 5.0, 1.0 };
+    double cutoff[numWavetableOctaves] = { 16000.0, 16000.0, 16000.0, 16000.0, 10000.0, 1000.0, 50.0, 10.0, 8.0, 8.0 };
 
     // find the range of values for the unfiltered buffer
-    juce::Range<float> preRange = _wtFileBuffer.findMinMax(0, 0, _wtFileBuffer.getNumSamples());
+    juce::Range<float> preRange = wtFileBuffer.findMinMax(0, 0, wtFileBuffer.getNumSamples());
 
     // absolute max value before filtering
     float preMaxVal = abs(std::max(preRange.getStart(), preRange.getEnd()));
 
     // from the original buffer creating ten wavetable across the midi note range with varying levels of filtering
-    for (int wtNumber = 0; wtNumber < numWavetableSlots; wtNumber++)
+    for (int wtNumber = 0; wtNumber < numWavetableOctaves; wtNumber++)
     {
         // initialize filter with coefficients
-        mWavetables[wtNumber].wtFilter.setCoefficients(juce::IIRCoefficients::makeLowPass(sampleRate, cutoff[wtNumber], 1.0));
+        mWavescanOne[wtNumber].wtFilter1.setCoefficients(juce::IIRCoefficients::makeLowPass(sampleRate, cutoff[wtNumber], 1.0));
 
         // reset filter
-        mWavetables[wtNumber].wtFilter.reset();
+        mWavescanOne[wtNumber].wtFilter1.reset();
 
         // store the wavetable length
-        mWavetables[wtNumber].wavetableLength = _wtFileBuffer.getNumSamples();
+        mWavescanOne[wtNumber].wavetableLength1 = wtFileBuffer.getNumSamples();
 
         // copy the wt buffer into the structure
-        mWavetables[wtNumber].wavetableAntialiased = _wtFileBuffer;
+        mWavescanOne[wtNumber].wavetableAntialiased1 = wtFileBuffer;
 
         // process wavetables with the filter
-        for (int channel = 0; channel < _wtFileBuffer.getNumChannels(); channel++)
+        for (int channel = 0; channel < wtFileBuffer.getNumChannels(); channel++)
         {
-            mWavetables[wtNumber].wtFilter.processSamples(mWavetables[wtNumber].wavetableAntialiased.getWritePointer(channel), mWavetables[wtNumber].wavetableLength);
-            
+            mWavescanOne[wtNumber].wtFilter1.processSamples(mWavescanOne[wtNumber].wavetableAntialiased1.getWritePointer(channel), mWavescanOne[wtNumber].wavetableLength1);
+
 
             // find the range of values for the filtered buffer
-            juce::Range<float> postRange = mWavetables[wtNumber].wavetableAntialiased.findMinMax(0, 0, _wtFileBuffer.getNumSamples());
+            juce::Range<float> postRange = mWavescanOne[wtNumber].wavetableAntialiased1.findMinMax(0, 0, wtFileBuffer.getNumSamples());
 
             //find the absolute max value after filtering
             float postMaxVal = abs(std::max(postRange.getStart(), postRange.getEnd()));
 
             // create pointer
-            float* channelSamp = mWavetables[wtNumber].wavetableAntialiased.getWritePointer(channel);
+            float* channelSamp = mWavescanOne[wtNumber].wavetableAntialiased1.getWritePointer(channel);
 
             //normalizing volume across wavetable
-            for (int sample = 0; sample < mWavetables[wtNumber].wavetableLength; sample++)
+            for (int sample = 0; sample < mWavescanOne[wtNumber].wavetableLength1; sample++)
             {
                 channelSamp[sample] *= preMaxVal / postMaxVal;
             }
-        
+
         }
-        
-       
-        
+
 
     }
-
-
 }
