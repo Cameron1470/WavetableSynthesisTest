@@ -13,6 +13,7 @@
 #include <JuceHeader.h>
 #include "WavetableOscillator.h"
 #include <BinaryData.h>
+#include "WavescanningSlot.h"
 
 
 // ===========================
@@ -96,25 +97,6 @@ public:
         return dynamic_cast<WavetableSynthSound*> (sound) != nullptr;
     }
 
-    //--------------------------------------------------------------------------
-    /**
-     Create wavetable from binary data and storing as a juce audio buffer "named wtFileBuffer"
-
-    Subsequently calls the antialiasing function below to deal with the artifacting issues
-    @param the binary data wavetable file name (ie. BinaryData::FileName__wav)
-    @param the binary data wavetable file size (ie. BinaryData::FileName__wavSize
-     */
-    void setWavetableOne(const void* inputData, size_t inputSize);
-
-    //--------------------------------------------------------------------------
-    /**
-     Create wavetable from binary data and storing as a juce audio buffer "named wtFileBuffer"
-
-    Subsequently calls the antialiasing function below to deal with the artifacting issues
-    @param the binary data wavetable file name (ie. BinaryData::FileName__wav)
-    @param the binary data wavetable file size (ie. BinaryData::FileName__wavSize
-     */
-    void setWavetableTwo(const void* inputData, size_t inputSize);
 
     void setWavescanVal(float _wavescanBal);
 
@@ -125,45 +107,20 @@ private:
 
     /// Is the voice in the process of ending?
     bool ending = false;
-
-    /// For keeping list of avaible audio formats
-    juce::AudioFormatManager wtFormatManager1;
-
-    /// A multi channel buffer containing floating point audio samples - the raw wavetable itself!
-    juce::AudioBuffer<float> wtFileBuffer1;
-
-    /// For keeping list of avaible audio formats
-    juce::AudioFormatManager wtFormatManager2;
-
-    /// A multi channel buffer containing floating point audio samples - the raw wavetable itself!
-    juce::AudioBuffer<float> wtFileBuffer2;
-
-    /// Creating a structure for storing the antialiased wavetables
-    struct wavescannerSlot1 {
-        int wavetableLength1;
-        juce::AudioBuffer<float> wavetableAntialiased1; 
-        juce::IIRFilter wtFilter1;   // filter for reducing aliasing of wavetables
-    };
-    struct wavescannerSlot2 {
-        int wavetableLength2;
-        juce::AudioBuffer<float> wavetableAntialiased2;
-        juce::IIRFilter wtFilter2;   // filter for reducing aliasing of wavetables
-    };
-    static constexpr int numWavetableOctaves = 10;
-    
-    wavescannerSlot1 mWavescanOne[numWavetableOctaves];
-    wavescannerSlot2 mWavescanTwo[numWavetableOctaves];
     
     // number of wavescanning slots
     int wavescanningSlots = 2;
 
-    const void** data = new const void* [wavescanningSlots];
-    size_t* dataSize = new size_t[wavescanningSlots];
-   
+    //const void** data = new const void* [wavescanningSlots];
+    //size_t* dataSize = new size_t[wavescanningSlots];
+    
+
+    WavescanningSlot slotOne;
+    WavescanningSlot slotTwo;
 
     /// an array of WavetableOscillators
-    juce::OwnedArray<WavetableOscillator> wtOscillator1;
-    juce::OwnedArray<WavetableOscillator> wtOscillator2;
+    juce::OwnedArray<WavetableOscillator> wtOscillatorOne;
+    juce::OwnedArray<WavetableOscillator> wtOscillatorTwo;
 
     /// the ADSR envelope
     juce::ADSR env;

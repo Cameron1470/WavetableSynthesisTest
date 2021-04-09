@@ -12,12 +12,16 @@
       <FILE id="osrCnI" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="FtJKPk" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
-      <FILE id="JSZL54" name="WavetableOscillator.h" compile="0" resource="0"
-            file="Source/WavetableOscillator.h"/>
       <FILE id="Ct88ix" name="WavetableSynthesiser.cpp" compile="1" resource="0"
             file="Source/WavetableSynthesiser.cpp"/>
       <FILE id="LnHdsY" name="WavetableSynthesiser.h" compile="0" resource="0"
             file="Source/WavetableSynthesiser.h"/>
+      <FILE id="IwWK00" name="WavescanningSlot.cpp" compile="1" resource="0"
+            file="Source/WavescanningSlot.cpp"/>
+      <FILE id="EcqNh2" name="WavescanningSlot.h" compile="0" resource="0"
+            file="Source/WavescanningSlot.h"/>
+      <FILE id="JSZL54" name="WavetableOscillator.h" compile="0" resource="0"
+            file="Source/WavetableOscillator.h"/>
       <GROUP id="{8A6A8882-3CC1-3075-5501-40BE323A0076}" name="Wavetables">
         <FILE id="iT4kTS" name="ESW Analog - JP800 Saw.wav" compile="0" resource="1"
               file="Source/Wavetables/ESW Analog - JP800 Saw.wav"/>
