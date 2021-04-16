@@ -51,13 +51,16 @@ private:
         juce::AudioBuffer<float> antialiasedWavetable;
         juce::IIRFilter wtFilter;   // filter for reducing aliasing of wavetables
     };
-
     static constexpr int numWavetableOctaves = 10;
-
     wavetableOctaves mWavescanner[numWavetableOctaves];
 
+    /// Storing the name of the wavetable data in BinaryData
     const void* data;
+
+    /// Storing the name of the wavetable data size in BinaryData
     size_t dataSize;
+
+    /// Storing sample rate
     double SR;
 
 };

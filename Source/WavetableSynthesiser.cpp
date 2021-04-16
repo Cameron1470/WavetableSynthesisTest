@@ -2,8 +2,9 @@
   ==============================================================================
 
     WavetableSynthesiser.cpp
-    Created: 6 Apr 2021 1:49:34pm
-    Author:  csmit
+
+    Created: 6th April 2021
+    Author:  Cameron Smith
 
   ==============================================================================
 */
@@ -15,18 +16,15 @@ WavetableSynthVoice::WavetableSynthVoice() :
     slotOne(BinaryData::ESW_Analog__Moog_Square_01__wav, BinaryData::ESW_Analog__Moog_Square_01__wavSize, getSampleRate()),
     slotTwo(BinaryData::ESW_Analog__Moog_Triangle_wav, BinaryData::ESW_Analog__Moog_Triangle_wavSize, getSampleRate())
 {
-    // before processing starts, the wavetables are set
-    //slotOne.setWavetable();
-    //slotTwo.setWavetable();
-
+    // set sample rate of ADSR envelope
     env.setSampleRate(getSampleRate());
 
+    // setting parameters of ADSR envelope
     juce::ADSR::Parameters envParams;
     envParams.attack = 0.1f;
     envParams.decay = 0.25f;
     envParams.sustain = 0.7f;
     envParams.release = 0.25f;
-
     env.setParameters(envParams);
 
 }
@@ -36,6 +34,7 @@ void WavetableSynthVoice::startNote(int midiNoteNumber, float velocity, juce::Sy
     playing = true;
     ending = false;
 
+    // store frequency in Hz from the midi note number
     float freq = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
 
     // variable for selecting the current wavetable dependent on required frequency
@@ -47,6 +46,7 @@ void WavetableSynthVoice::startNote(int midiNoteNumber, float velocity, juce::Sy
         currentWavetable++;
     }
 
+    // clear what the wavetables stored in the OwnedArray's
     wtOscillatorOne.clear();
     wtOscillatorTwo.clear();
 
@@ -58,12 +58,12 @@ void WavetableSynthVoice::startNote(int midiNoteNumber, float velocity, juce::Sy
     oscillatorSlotOne->setFrequency(freq, getSampleRate());
     oscillatorSlotTwo->setFrequency(freq, getSampleRate());
 
-    // adding to the WavetableOscillator array in private variables
+    // adding to the wavetable OwnedArrays in private variables
     wtOscillatorOne.add(oscillatorSlotOne);
     wtOscillatorTwo.add(oscillatorSlotTwo);
 
+    // reset and start envelope
     env.reset();
-
     env.noteOn();
 }
 
@@ -97,6 +97,7 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
                 outputBuffer.addSample(chan, sampleIndex, currentSample * 0.1);
             }
 
+            // clear current note if ending and env val is very small
             if (ending)
             {
                 if (envVal < 0.0001f)

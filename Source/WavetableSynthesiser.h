@@ -2,7 +2,8 @@
   ==============================================================================
 
     WavetableSynthesiser.h
-    Created: 7 Mar 2020 4:27:57pm
+
+    Created: 17th March 2021
     Author:  Cameron Smith
 
   ==============================================================================
@@ -86,6 +87,7 @@ public:
     //--------------------------------------------------------------------------
     void controllerMoved(int, int) override {}
     //--------------------------------------------------------------------------
+
     /**
      Can this voice play a sound. I wouldn't worry about this for the time being
 
@@ -97,7 +99,11 @@ public:
         return dynamic_cast<WavetableSynthSound*> (sound) != nullptr;
     }
 
+    /**
+     Modify the mix between the wavetables
 
+     @param wavescan balance value
+     */
     void setWavescanVal(float _wavescanBal);
 
 private:
@@ -114,7 +120,7 @@ private:
     //const void** data = new const void* [wavescanningSlots];
     //size_t* dataSize = new size_t[wavescanningSlots];
     
-
+    // instance of the WavescanningSlot class
     WavescanningSlot slotOne;
     WavescanningSlot slotTwo;
 
@@ -128,6 +134,7 @@ private:
     /// gain used in process block
     float gain = 0.2f;
 
+    /// value for mixing between the wavetables
     float wavescanBal = 0.0f;
     
 };
