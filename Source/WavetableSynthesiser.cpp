@@ -14,7 +14,10 @@
 
 WavetableSynthVoice::WavetableSynthVoice() :
     slotOne(BinaryData::ESW_Analog__Moog_Square_01__wav, BinaryData::ESW_Analog__Moog_Square_01__wavSize, getSampleRate()),
-    slotTwo(BinaryData::ESW_Analog__Moog_Triangle_wav, BinaryData::ESW_Analog__Moog_Triangle_wavSize, getSampleRate())
+    slotTwo(BinaryData::ESW_Analog__Moog_Triangle_wav, BinaryData::ESW_Analog__Moog_Triangle_wavSize, getSampleRate()),
+    slotThree(BinaryData::ESW_Analog__JP800_Saw_wav, BinaryData::ESW_Analog__JP800_Saw_wavSize, getSampleRate()),
+    slotFour(BinaryData::ESW_Analog__Juno_60_Square_wav, BinaryData::ESW_Analog__Juno_60_Square_wavSize, getSampleRate()),
+    slotFive(BinaryData::ESW_Analog__Prophet_Triangle_wav, BinaryData::ESW_Analog__Prophet_Triangle_wavSize, getSampleRate())
 {
     // set sample rate of ADSR envelope
     env.setSampleRate(getSampleRate());
@@ -49,18 +52,31 @@ void WavetableSynthVoice::startNote(int midiNoteNumber, float velocity, juce::Sy
     // clear what the wavetables stored in the OwnedArray's
     wtOscillatorOne.clear();
     wtOscillatorTwo.clear();
+    wtOscillatorThree.clear();
+    wtOscillatorFour.clear();
+    wtOscillatorFive.clear();
 
     // creating a new WavetableOscillator class from the the AudioSampleBuffer
     auto* oscillatorSlotOne = new WavetableOscillator(slotOne.getAntialiasedWavetable(currentWavetable));
     auto* oscillatorSlotTwo = new WavetableOscillator(slotTwo.getAntialiasedWavetable(currentWavetable));
+    auto* oscillatorSlotThree = new WavetableOscillator(slotThree.getAntialiasedWavetable(currentWavetable));
+    auto* oscillatorSlotFour = new WavetableOscillator(slotFour.getAntialiasedWavetable(currentWavetable));
+    auto* oscillatorSlotFive = new WavetableOscillator(slotFive.getAntialiasedWavetable(currentWavetable));
+
 
     // setting the frequency and sample rate in this class instance
     oscillatorSlotOne->setFrequency(freq, getSampleRate());
     oscillatorSlotTwo->setFrequency(freq, getSampleRate());
+    oscillatorSlotThree->setFrequency(freq, getSampleRate());
+    oscillatorSlotFour->setFrequency(freq, getSampleRate());
+    oscillatorSlotFive->setFrequency(freq, getSampleRate());
 
     // adding to the wavetable OwnedArrays in private variables
     wtOscillatorOne.add(oscillatorSlotOne);
     wtOscillatorTwo.add(oscillatorSlotTwo);
+    wtOscillatorThree.add(oscillatorSlotThree);
+    wtOscillatorFour.add(oscillatorSlotFour);
+    wtOscillatorFive.add(oscillatorSlotFive);
 
     // reset and start envelope
     env.reset();
@@ -85,10 +101,41 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
             // creating a float taken from index 0 of the wtOscillators array
             auto* oscillatorSlotOne = wtOscillatorOne.getUnchecked(0);
             auto* oscillatorSlotTwo = wtOscillatorTwo.getUnchecked(0);
+            auto* oscillatorSlotThree = wtOscillatorThree.getUnchecked(0);
+            auto* oscillatorSlotFour = wtOscillatorFour.getUnchecked(0);
+            auto* oscillatorSlotFive = wtOscillatorFive.getUnchecked(0);
 
             // creating a sample float, using getNextSample function of the WavetableOscillator class 
-            auto currentSample = ((oscillatorSlotOne->getNextSample() * (1 - wavescanBal)) + (oscillatorSlotTwo->getNextSample() * wavescanBal)) * gain * envVal;
+            //auto currentSample = ((oscillatorSlotOne->getNextSample() * (1 - wavescanBal)) + (oscillatorSlotTwo->getNextSample() * wavescanBal)) * gain * envVal;
             
+            auto slotOneSample = oscillatorSlotOne->getNextSample();
+            auto slotTwoSample = oscillatorSlotTwo->getNextSample();
+            auto slotThreeSample = oscillatorSlotThree->getNextSample();
+            auto slotFourSample = oscillatorSlotFour->getNextSample();
+            auto slotFiveSample = oscillatorSlotFive->getNextSample();
+
+
+            if (wavescanBal <= 1.0)
+            {
+                currentSample = ((slotOneSample * (1 - wavescanBal)) + (slotTwoSample * wavescanBal)) * gain * envVal;
+            }
+            else if (wavescanBal <= 2.0)
+            {
+                float normalizedWavescanVal = wavescanBal - 1.0f;
+                currentSample = ((slotTwoSample * (1 - normalizedWavescanVal)) + (slotThreeSample * normalizedWavescanVal)) * gain * envVal;
+            }
+            else if (wavescanBal <= 3.0)
+            {
+                float normalizedWavescanVal = wavescanBal - 2.0f;
+                currentSample = ((slotThreeSample * (1 - normalizedWavescanVal)) + (slotFourSample * normalizedWavescanVal)) * gain * envVal;
+            }
+            else if (wavescanBal <= 4.0)
+            {
+                float normalizedWavescanVal = wavescanBal - 3.0f;
+                currentSample = ((slotFourSample * (1 - normalizedWavescanVal)) + (slotFiveSample * normalizedWavescanVal)) * gain * envVal;
+            }
+
+
 
             // for each channel, write the currentSample float to the output
             for (int chan = 0; chan < outputBuffer.getNumChannels(); chan++)

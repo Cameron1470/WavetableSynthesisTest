@@ -115,7 +115,7 @@ private:
     bool ending = false;
     
     // number of wavescanning slots
-    int wavescanningSlots = 2;
+    int wavescanningSlots = 5;
 
     //const void** data = new const void* [wavescanningSlots];
     //size_t* dataSize = new size_t[wavescanningSlots];
@@ -123,10 +123,16 @@ private:
     // instance of the WavescanningSlot class
     WavescanningSlot slotOne;
     WavescanningSlot slotTwo;
+    WavescanningSlot slotThree;
+    WavescanningSlot slotFour;
+    WavescanningSlot slotFive;
 
     /// an array of WavetableOscillators
     juce::OwnedArray<WavetableOscillator> wtOscillatorOne;
     juce::OwnedArray<WavetableOscillator> wtOscillatorTwo;
+    juce::OwnedArray<WavetableOscillator> wtOscillatorThree;
+    juce::OwnedArray<WavetableOscillator> wtOscillatorFour;
+    juce::OwnedArray<WavetableOscillator> wtOscillatorFive;
 
     /// the ADSR envelope
     juce::ADSR env;
@@ -136,5 +142,7 @@ private:
 
     /// value for mixing between the wavetables
     float wavescanBal = 0.0f;
+    
+    float currentSample;
     
 };

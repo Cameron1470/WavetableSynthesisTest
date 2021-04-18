@@ -22,7 +22,7 @@ WavetableSynthesisTestAudioProcessor::WavetableSynthesisTestAudioProcessor()
                        ),
 #endif
     parameters(*this, nullptr, "ParameterTree", {
-        std::make_unique<juce::AudioParameterFloat>("wave_scan", "Wave Scan", 0.0f, 1.0f, 0.0f)
+        std::make_unique<juce::AudioParameterFloat>("wave_scan", "Wave Scan", 0.0f, 4.0f, 0.0f)
     })
 
 {
@@ -164,7 +164,7 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
 //==============================================================================
 bool WavetableSynthesisTestAudioProcessor::hasEditor() const
 {
-    return true; // (change this to false if you choose to not supply an editor)
+    return false; // (change this to false if you choose to not supply an editor)
 }
 
 juce::AudioProcessorEditor* WavetableSynthesisTestAudioProcessor::createEditor()
