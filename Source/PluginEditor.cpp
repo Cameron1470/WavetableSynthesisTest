@@ -62,6 +62,9 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     addAndMakeVisible(wavescanningSlider);
     wavescanningSlider.setRange(0, 4);
     wavescanningSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
+    wavescanningSlider.addListener(this);
+
+    wavescanTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "wavescan", wavescanningSlider);
 
     
     setSize (620, 400);
@@ -140,4 +143,12 @@ void WavetableSynthesisTestAudioProcessorEditor::resized()
     releaseSlider.setBounds(76, 234, 21, 130);
 
 
+}
+
+void WavetableSynthesisTestAudioProcessorEditor::sliderValueChanged(juce::Slider* slider)
+{
+    if (slider == &wavescanningSlider)
+    {
+        audioProcessor.wavescanParam = wavescanningSlider.getValue();
+    }
 }

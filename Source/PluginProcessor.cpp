@@ -20,13 +20,17 @@ WavetableSynthesisTestAudioProcessor::WavetableSynthesisTestAudioProcessor()
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
                        ),
+    
 #endif
-    parameters(*this, nullptr, "ParameterTree", {
-        std::make_unique<juce::AudioParameterFloat>("wave_scan", "Wave Scan", 0.0f, 4.0f, 0.0f)
-    })
+    wavescanParam(2.0f),
+    parameters(*this, nullptr)
 
 {
-    waveScanParameter = parameters.getRawParameterValue("wave_scan");
+    juce::NormalisableRange<float> wavescanRange(0.0f, 4.0f);
+
+    parameters.createAndAddParameter("wavescan", "Wavescan", "Wavescan", wavescanRange, 2.0f, nullptr, nullptr);
+    
+
 
     // add wavetable synth voices to the synthesiser class
     for (int i = 0; i < voiceCount; i++)
@@ -150,10 +154,14 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
     //for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
     //    buffer.clear (i, 0, buffer.getNumSamples());
 
+
+
     for (int i = 0; i < voiceCount; i++)
     {
         WavetableSynthVoice* v = dynamic_cast<WavetableSynthVoice*>(synth.getVoice(i));
-        v->setWavescanVal(*waveScanParameter);
+        v->setWavescanVal(parameters.getRawParameterValue("wavescan"));
+
+
     }
     
 
@@ -164,7 +172,7 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
 //==============================================================================
 bool WavetableSynthesisTestAudioProcessor::hasEditor() const
 {
-    return false; // (change this to false if you choose to not supply an editor)
+    return true; // (change this to false if you choose to not supply an editor)
 }
 
 juce::AudioProcessorEditor* WavetableSynthesisTestAudioProcessor::createEditor()
@@ -185,7 +193,6 @@ void WavetableSynthesisTestAudioProcessor::setStateInformation (const void* data
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
 }
-
 
 
 

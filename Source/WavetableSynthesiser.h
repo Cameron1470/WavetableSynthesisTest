@@ -47,7 +47,7 @@ class WavetableSynthVoice : public juce::SynthesiserVoice
 {
 public:
     WavetableSynthVoice();
-
+ 
     //--------------------------------------------------------------------------
     /**
     What should be done when a note starts
@@ -104,7 +104,7 @@ public:
 
      @param wavescan balance value
      */
-    void setWavescanVal(float _wavescanBal);
+    void setWavescanVal(std::atomic<float>* _wavescanBal);
 
 private:
     //--------------------------------------------------------------------------
@@ -141,8 +141,9 @@ private:
     float gain = 0.2f;
 
     /// value for mixing between the wavetables
-    float wavescanBal = 0.0f;
-    
-    float currentSample;
+    std::atomic<float>* wavescanParameter;
+    float wavescanBal = 2.0f;
+
+    float currentSample = 0.0f;
     
 };

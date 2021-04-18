@@ -114,6 +114,7 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
             auto slotFourSample = oscillatorSlotFour->getNextSample();
             auto slotFiveSample = oscillatorSlotFive->getNextSample();
 
+            wavescanBal = *wavescanParameter;
 
             if (wavescanBal <= 1.0)
             {
@@ -158,7 +159,7 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
     }
 }
 
-void WavetableSynthVoice::setWavescanVal(float _wavescanBal)
+void WavetableSynthVoice::setWavescanVal(std::atomic<float>* _wavescanBal)
 {
-    wavescanBal = _wavescanBal;
+    wavescanParameter = _wavescanBal;
 }

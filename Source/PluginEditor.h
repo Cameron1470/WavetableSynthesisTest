@@ -14,7 +14,8 @@
 //==============================================================================
 /**
 */
-class WavetableSynthesisTestAudioProcessorEditor  : public juce::AudioProcessorEditor
+class WavetableSynthesisTestAudioProcessorEditor  : public juce::AudioProcessorEditor,
+    public juce::Slider::Listener
 {
 public:
     WavetableSynthesisTestAudioProcessorEditor (WavetableSynthesisTestAudioProcessor&);
@@ -23,6 +24,8 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
+
+    void sliderValueChanged(juce::Slider* slider) override;
 
 private:
     //juce::Label dropDownLabel{ {}, "Choose a wavetable file" };
@@ -40,6 +43,8 @@ private:
     juce::Label* dropDownLabels[5] = { &dropDownLabelOne, &dropDownLabelTwo, &dropDownLabelThree, &dropDownLabelFour, &dropDownLabelFive };
 
     juce::Slider wavescanningSlider;
+    
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> wavescanTree;
 
     juce::Label envelopeLabel{ {}, "Envelope" };
 

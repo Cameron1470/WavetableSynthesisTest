@@ -56,8 +56,9 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-
+    float wavescanParam;
     
+    juce::AudioProcessorValueTreeState parameters;
 
 private:
 
@@ -67,13 +68,6 @@ private:
 
     // gain used in process block
     float gain = 0.25f;
-
-    
-
-    juce::AudioProcessorValueTreeState parameters;
-
-    std::atomic<float>* waveScanParameter;
-
     
 
     //==============================================================================
