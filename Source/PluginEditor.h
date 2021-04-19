@@ -27,8 +27,6 @@ public:
 
     void sliderValueChanged(juce::Slider* slider) override;
 
-    int getBinaryID(int slotNumber);
-
 private:
     //juce::Label dropDownLabel{ {}, "Choose a wavetable file" };
     juce::Font textFont{ 15.0f };

@@ -14,87 +14,36 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
 
-    //=========================================================================
-    // TOP SECTION - WAVESCANNING
+    //addAndMakeVisible(dropDownLabel);
+    //dropDownLabel.setFont(textFont);
 
     for (int slot = 0; slot < 5; slot++)
     {
         for (int i = 0; i < BinaryData::namedResourceListSize; i++)
         {
-            // switch statement for adding headers at specific points as the for loop works thorugh the binary data
-            switch (i) {
-            case 0:
-                wavetableDropDowns[slot].addSectionHeading("Analog");
-                break;
-            case 37:
-                wavetableDropDowns[slot].addSeparator();
-                wavetableDropDowns[slot].addSectionHeading("Basics");
-                break;
-            case 79:
-                wavetableDropDowns[slot].addSeparator();
-                wavetableDropDowns[slot].addSectionHeading("FM");
-                break;
-            case 106:
-                wavetableDropDowns[slot].addSeparator();
-                wavetableDropDowns[slot].addSectionHeading("Metallic");
-                break;
-            case 118:
-                wavetableDropDowns[slot].addSeparator();
-                wavetableDropDowns[slot].addSectionHeading("Spectral");
-                break;
-            case 133:
-                wavetableDropDowns[slot].addSeparator();
-                wavetableDropDowns[slot].addSectionHeading("Synth One Shots");
-                break;
-            }
-            
-            // add all items from binary data to the current drop down slot
             wavetableDropDowns[slot].addItem(BinaryData::originalFilenames[i], i + 1);
+        }
  
-        }       
-        
-        // add the drop downs and labels to the GUI
+        wavetableDropDowns[slot].setSelectedId(1);
         addAndMakeVisible(wavetableDropDowns[slot]);
-        addAndMakeVisible(dropDownLabels[slot]);
 
-        // set font and centre text of labels
+        addAndMakeVisible(dropDownLabels[slot]);
         dropDownLabels[slot]->setFont(textFont);
         dropDownLabels[slot]->setJustificationType(juce::Justification::centred);
     }
 
-    // setting the wavetable drop down to match what is set up in WavetableSynthesizer initialisation
-    wavetableDropDowns[0].setSelectedId(23);
-    wavetableDropDowns[1].setSelectedId(24);
-    wavetableDropDowns[2].setSelectedId(10);
-    wavetableDropDowns[3].setSelectedId(13);
-    wavetableDropDowns[4].setSelectedId(28);
-
-    // add wavescanning slider, set range and style
-    addAndMakeVisible(wavescanningSlider);
-    wavescanningSlider.setRange(0, 4);
-    wavescanningSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
-
-    // add a listener
-    wavescanningSlider.addListener(this);
-
-    // setting the slider to control the wavescan parameter in the audio processor
-    wavescanTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "wavescan", wavescanningSlider);
-
-    //=========================================================================
-    // BOTTOM LEFT SECTION - ADSR ENVELOPE
-
-    // add label for section, set font and centre text
     addAndMakeVisible(envelopeLabel);
     envelopeLabel.setFont(textFont);
     envelopeLabel.setJustificationType(juce::Justification::centred);
 
-    // add the 4 ADSR slider to the GUI
+
+
     addAndMakeVisible(attackSlider);
     addAndMakeVisible(decaySlider);
     addAndMakeVisible(sustainSlider);
     addAndMakeVisible(releaseSlider);
     
-    // setting the range and style of the sliders
+    
     attackSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
     attackSlider.setRange(0, 5);
     attackSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
@@ -110,6 +59,13 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
 
     //wavetableChooserDropDown.onChange = [this] { change Audio file function }
 
+    addAndMakeVisible(wavescanningSlider);
+    wavescanningSlider.setRange(0, 4);
+    wavescanningSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
+    wavescanningSlider.addListener(this);
+
+    wavescanTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "wavescan", wavescanningSlider);
+
     
     setSize (620, 400);
 }
@@ -122,6 +78,7 @@ WavetableSynthesisTestAudioProcessorEditor::~WavetableSynthesisTestAudioProcesso
 void WavetableSynthesisTestAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
+    //g.fillAll(juce::Colour (66, 89, 76));
     g.fillAll(juce::Colour(139, 176, 168));
 
     juce::Rectangle<int> wavescanPanelOut{ 4, 4, 612, 194 };
@@ -140,6 +97,7 @@ void WavetableSynthesisTestAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawRect(envPanel);
     g.fillRect(envPanel);
   
+
 
     juce::Rectangle<int> slotOneLine{ 61, 60, 3, 100 };
     juce::Rectangle<int> slotTwoLine{ 185, 120, 3, 40 };
@@ -193,9 +151,4 @@ void WavetableSynthesisTestAudioProcessorEditor::sliderValueChanged(juce::Slider
     {
         audioProcessor.wavescanParam = wavescanningSlider.getValue();
     }
-}
-
-int WavetableSynthesisTestAudioProcessorEditor::getBinaryID(int slotNumber)
-{
-    return wavetableDropDowns[slotNumber].getSelectedId();
 }
