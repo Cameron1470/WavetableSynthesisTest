@@ -97,25 +97,52 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     envelopeLabel.setFont(textFont);
     envelopeLabel.setJustificationType(juce::Justification::centred);
 
-    // add the 4 ADSR slider to the GUI
-    addAndMakeVisible(attackSlider);
-    addAndMakeVisible(decaySlider);
-    addAndMakeVisible(sustainSlider);
-    addAndMakeVisible(releaseSlider);
-    
+    addAndMakeVisible(attackLabel);
+    attackLabel.setFont(textFont);
+    attackLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(decayLabel);
+    decayLabel.setFont(textFont);
+    decayLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(sustainLabel);
+    sustainLabel.setFont(textFont);
+    sustainLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(releaseLabel);
+    releaseLabel.setFont(textFont);
+    releaseLabel.setJustificationType(juce::Justification::centred);
+
     // setting the range and style of the sliders
     attackSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
-    attackSlider.setRange(0, 5);
+    attackSlider.setRange(0, 4);
     attackSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
     decaySlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
-    decaySlider.setRange(0, 5);
+    decaySlider.setRange(0, 4);
     decaySlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
     sustainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
-    sustainSlider.setRange(0, 5);
+    sustainSlider.setRange(0, 1);
     sustainSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
     releaseSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
-    releaseSlider.setRange(0, 5);
+    releaseSlider.setRange(0, 4);
     releaseSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+
+    // add the 4 ADSR slider to the GUI
+    addAndMakeVisible(attackSlider);
+    attackSlider.addListener(this);
+    attackTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "attack", attackSlider);
+
+    addAndMakeVisible(decaySlider);
+    decaySlider.addListener(this);
+    decayTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "decay", decaySlider);
+
+    addAndMakeVisible(sustainSlider);
+    sustainSlider.addListener(this);
+    sustainTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "sustain", sustainSlider);
+
+    addAndMakeVisible(releaseSlider);
+    releaseSlider.addListener(this);
+    releaseTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "release", releaseSlider);
+
+    
+   
 
 
     // set size of window
@@ -187,6 +214,8 @@ void WavetableSynthesisTestAudioProcessorEditor::resized()
     wavetableDropDowns[3].setBounds(346, 90, 180, 20);
     wavetableDropDowns[4].setBounds(430, 30, 180, 20);
 
+
+
     // positioning the wavescan slider
     wavescanningSlider.setBounds(53, 165, 517, 20);
 
@@ -199,6 +228,11 @@ void WavetableSynthesisTestAudioProcessorEditor::resized()
     sustainSlider.setBounds(54, 234, 21, 130);
     releaseSlider.setBounds(76, 234, 21, 130);
 
+    attackLabel.setBounds(10, 370, 21, 20);
+    decayLabel.setBounds(32, 370, 21, 20);
+    sustainLabel.setBounds(54, 370, 21, 20);
+    releaseLabel.setBounds(76, 370, 21, 20);
+
 
 }
 
@@ -207,6 +241,26 @@ void WavetableSynthesisTestAudioProcessorEditor::sliderValueChanged(juce::Slider
     if (slider == &wavescanningSlider)
     {
         audioProcessor.wavescanParam = wavescanningSlider.getValue();
+    }
+
+    if (slider == &attackSlider)
+    {
+        audioProcessor.attackParam = attackSlider.getValue();
+    }
+
+    if (slider == &decaySlider)
+    {
+        audioProcessor.decayParam = decaySlider.getValue();
+    }
+
+    if (slider == &sustainSlider)
+    {
+        audioProcessor.sustainParam = sustainSlider.getValue();
+    }
+
+    if (slider == &releaseSlider)
+    {
+        audioProcessor.releaseParam = releaseSlider.getValue();
     }
 }
 

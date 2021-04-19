@@ -52,11 +52,23 @@ private:
 
 
     juce::Label envelopeLabel{ {}, "Envelope" };
+    juce::Label attackLabel{ {}, "A" };
+    juce::Label decayLabel{ {}, "D" };
+    juce::Label sustainLabel{ {}, "S" };
+    juce::Label releaseLabel{ {}, "R" };
 
     juce::Slider attackSlider;
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> attackTree;
+
     juce::Slider decaySlider;
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> decayTree;
+
     juce::Slider sustainSlider;
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> sustainTree;
+
     juce::Slider releaseSlider;
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> releaseTree;
+
 
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.

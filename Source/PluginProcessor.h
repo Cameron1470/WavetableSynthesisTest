@@ -57,7 +57,12 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
     float wavescanParam;
-    
+
+    float attackParam;
+    float decayParam;
+    float sustainParam;
+    float releaseParam;
+
     juce::AudioProcessorValueTreeState parameters;
 
 private:

@@ -23,15 +23,33 @@ WavetableSynthesisTestAudioProcessor::WavetableSynthesisTestAudioProcessor()
     
 #endif
     wavescanParam(2.0f),
+    attackParam(0.1f),
+    decayParam(0.1f),
+    sustainParam(0.9f),
+    releaseParam(0.5f),
     parameters(*this, nullptr)
 
 {
+    // add wavescan parameter to ValueTreeState 
     juce::NormalisableRange<float> wavescanRange(0.0f, 4.0f);
     parameters.createAndAddParameter("wavescan", "Wavescan", "Wavescan", wavescanRange, 2.0f, nullptr, nullptr);
     
+    // add wavetable type selection parameter to ValueTreeState
     juce::NormalisableRange<float> wavetableTypeRange(0, 148);
     parameters.createAndAddParameter("wavetype_one", "Wave Type One", "Wavetable One", wavetableTypeRange, 22, nullptr, nullptr);
 
+    // add ADSR parameters to value tree state
+    juce::NormalisableRange<float> attackRange(0.0f, 4.0f);
+    parameters.createAndAddParameter("attack", "Attack", "Attack", attackRange, 0.1f, nullptr, nullptr);
+
+    juce::NormalisableRange<float> decayRange(0.0f, 4.0f);
+    parameters.createAndAddParameter("decay", "Decay", "Decay", decayRange, 0.1f, nullptr, nullptr);
+
+    juce::NormalisableRange<float> sustainRange(0.0f, 1.0f);
+    parameters.createAndAddParameter("sustain", "Sustain", "Sustain", sustainRange, 0.9f, nullptr, nullptr);
+
+    juce::NormalisableRange<float> releaseRange(0.0f, 4.0f);
+    parameters.createAndAddParameter("release", "Release", "Release", releaseRange, 0.5f, nullptr, nullptr);
 
 
     // add wavetable synth voices to the synthesiser class
@@ -40,6 +58,7 @@ WavetableSynthesisTestAudioProcessor::WavetableSynthesisTestAudioProcessor()
         synth.addVoice(new WavetableSynthVoice());
     }
 
+    // add wavetable synth sound to the synthesiser class
     synth.addSound(new WavetableSynthSound());
 }
 
@@ -156,8 +175,11 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
     {
         WavetableSynthVoice* v = dynamic_cast<WavetableSynthVoice*>(synth.getVoice(i));
         v->setWavescanVal(parameters.getRawParameterValue("wavescan"));
-
-
+        v->setAttack(parameters.getRawParameterValue("attack"));
+        v->setDecay(parameters.getRawParameterValue("decay"));
+        v->setSustain(parameters.getRawParameterValue("sustain"));
+        v->setRelease(parameters.getRawParameterValue("release"));
+        
     }
     
 

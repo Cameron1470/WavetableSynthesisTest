@@ -19,17 +19,17 @@ WavetableSynthVoice::WavetableSynthVoice() :
     slotFour(BinaryData::Juno_60_Square_wav, BinaryData::Juno_60_Square_wavSize, getSampleRate()),
     slotFive(BinaryData::Prophet_Triangle_wav, BinaryData::Prophet_Triangle_wavSize, getSampleRate())
 
+
 {
     // set sample rate of ADSR envelope
     env.setSampleRate(getSampleRate());
 
     // setting parameters of ADSR envelope
-    juce::ADSR::Parameters envParams;
-    envParams.attack = 0.1f;
-    envParams.decay = 0.25f;
-    envParams.sustain = 0.7f;
-    envParams.release = 0.25f;
-    env.setParameters(envParams);
+    //envParams.attack = 0.1f;
+    //envParams.decay = 0.25f;
+    //envParams.sustain = 0.7f;
+    //envParams.release = 0.25f;
+    //env.setParameters(envParams);
 
 }
 
@@ -78,6 +78,8 @@ void WavetableSynthVoice::startNote(int midiNoteNumber, float velocity, juce::Sy
     wtOscillatorThree.add(oscillatorSlotThree);
     wtOscillatorFour.add(oscillatorSlotFour);
     wtOscillatorFive.add(oscillatorSlotFive);
+    
+
 
     // reset and start envelope
     env.reset();
@@ -163,4 +165,28 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
 void WavetableSynthVoice::setWavescanVal(std::atomic<float>* _wavescanBal)
 {
     wavescanParameter = _wavescanBal;
+}
+
+void WavetableSynthVoice::setAttack(std::atomic<float>* attack)
+{
+    envParams.attack = *attack;
+    env.setParameters(envParams);
+}
+
+void WavetableSynthVoice::setDecay(std::atomic<float>* decay)
+{
+    envParams.decay = *decay;
+    env.setParameters(envParams);
+}
+
+void WavetableSynthVoice::setSustain(std::atomic<float>* sustain)
+{
+    envParams.sustain = *sustain;
+    env.setParameters(envParams);
+}
+
+void WavetableSynthVoice::setRelease(std::atomic<float>* release)
+{
+    envParams.release = *release;
+    env.setParameters(envParams);
 }

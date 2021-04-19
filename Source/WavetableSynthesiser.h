@@ -106,6 +106,16 @@ public:
      */
     void setWavescanVal(std::atomic<float>* _wavescanBal);
 
+
+    void setAttack(std::atomic<float>* attack);
+
+    void setDecay(std::atomic<float>* decay);
+
+    void setSustain(std::atomic<float>* sustain);
+
+    void setRelease(std::atomic<float>* release);
+
+
 private:
     //--------------------------------------------------------------------------
     /// Should the voice be playing?
@@ -144,7 +154,8 @@ private:
     std::atomic<float>* wavescanParameter;
     float wavescanBal = 2.0f;
 
+
     float currentSample = 0.0f;
     
-
+    juce::ADSR::Parameters envParams;
 };
