@@ -13,11 +13,12 @@
 #include <JuceHeader.h>
 
 WavetableSynthVoice::WavetableSynthVoice() :
-    slotOne(BinaryData::ESW_Analog__Moog_Square_01__wav, BinaryData::ESW_Analog__Moog_Square_01__wavSize, getSampleRate()),
-    slotTwo(BinaryData::ESW_Analog__Moog_Triangle_wav, BinaryData::ESW_Analog__Moog_Triangle_wavSize, getSampleRate()),
-    slotThree(BinaryData::ESW_Analog__JP800_Saw_wav, BinaryData::ESW_Analog__JP800_Saw_wavSize, getSampleRate()),
-    slotFour(BinaryData::ESW_Analog__Juno_60_Square_wav, BinaryData::ESW_Analog__Juno_60_Square_wavSize, getSampleRate()),
-    slotFive(BinaryData::ESW_Analog__Prophet_Triangle_wav, BinaryData::ESW_Analog__Prophet_Triangle_wavSize, getSampleRate())
+    slotOne(BinaryData::Moog_Square_01__wav, BinaryData::Moog_Square_01__wavSize, getSampleRate()),
+    slotTwo(BinaryData::Moog_Triangle_wav, BinaryData::Moog_Triangle_wavSize, getSampleRate()),
+    slotThree(BinaryData::JP800_Saw_wav, BinaryData::JP800_Saw_wavSize, getSampleRate()),
+    slotFour(BinaryData::Juno_60_Square_wav, BinaryData::Juno_60_Square_wavSize, getSampleRate()),
+    slotFive(BinaryData::Prophet_Triangle_wav, BinaryData::Prophet_Triangle_wavSize, getSampleRate())
+
 {
     // set sample rate of ADSR envelope
     env.setSampleRate(getSampleRate());
