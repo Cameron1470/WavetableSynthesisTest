@@ -64,11 +64,11 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
 
     }
 
-    //wavetableDropDowns[0].addListener(this);
-    //waveSelectionTree = new juce::AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.parameters, "wavetype_one", wavetableDropDowns[0]);
+    wavetableDropDowns[0].addListener(this);
+    waveSelectionTree = new juce::AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.parameters, "wavetype_one", wavetableDropDowns[0]);
 
     // setting the wavetable drop down to match what is set up in WavetableSynthesizer initialisation
-    wavetableDropDowns[0].setSelectedId(23);
+    //wavetableDropDowns[0].setSelectedId(23);
     wavetableDropDowns[1].setSelectedId(24);
     wavetableDropDowns[2].setSelectedId(10);
     wavetableDropDowns[3].setSelectedId(13);
@@ -212,7 +212,21 @@ void WavetableSynthesisTestAudioProcessorEditor::sliderValueChanged(juce::Slider
 
 void WavetableSynthesisTestAudioProcessorEditor::comboBoxChanged(juce::ComboBox* comboBox)
 {
+    if (comboBox == &wavetableDropDowns[0])
+    {
+        // finding the index in binary data from the combo box
+        int binaryIndex = wavetableDropDowns[0].getSelectedItemIndex() - 1;
+        
+        // get the data name using this index
+        const void* data = BinaryData::originalFilenames[binaryIndex];
 
+        // get the data size using this index???
+        size_t dataSize;
+
+
+        // then call the function in corresponding WavescanningSlot instance
+
+    }
 }
 
 

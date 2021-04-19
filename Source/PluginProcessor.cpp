@@ -30,7 +30,7 @@ WavetableSynthesisTestAudioProcessor::WavetableSynthesisTestAudioProcessor()
     parameters.createAndAddParameter("wavescan", "Wavescan", "Wavescan", wavescanRange, 2.0f, nullptr, nullptr);
     
     juce::NormalisableRange<float> wavetableTypeRange(0, 148);
-    parameters.createAndAddParameter("wavetype_one", "Wave Type One", "Wavetable One", wavetableTypeRange, 23, nullptr, nullptr);
+    parameters.createAndAddParameter("wavetype_one", "Wave Type One", "Wavetable One", wavetableTypeRange, 22, nullptr, nullptr);
 
 
 

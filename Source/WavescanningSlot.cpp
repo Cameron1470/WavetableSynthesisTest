@@ -107,3 +107,11 @@ juce::AudioBuffer<float> WavescanningSlot::getAntialiasedWavetable(int octaveNum
 {
     return mWavescanner[octaveNumber].antialiasedWavetable;
 }
+
+void WavescanningSlot::changeWavetable(const void* _data, size_t _dataSize)
+{
+    data = _data;
+    dataSize = _dataSize;
+
+    setWavetable();
+}
