@@ -15,7 +15,8 @@
 /**
 */
 class WavetableSynthesisTestAudioProcessorEditor  : public juce::AudioProcessorEditor,
-    public juce::Slider::Listener
+    public juce::Slider::Listener,
+    public juce::ComboBox::Listener
 {
 public:
     WavetableSynthesisTestAudioProcessorEditor (WavetableSynthesisTestAudioProcessor&);
@@ -27,26 +28,28 @@ public:
 
     void sliderValueChanged(juce::Slider* slider) override;
 
-    int getBinaryID(int slotNumber);
+    void comboBoxChanged(juce::ComboBox* comboBox) override;
+
 
 private:
-    //juce::Label dropDownLabel{ {}, "Choose a wavetable file" };
     juce::Font textFont{ 15.0f };
     
 
     juce::ComboBox* wavetableDropDowns = new juce::ComboBox[5];
-    
+
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::ComboBoxAttachment> waveSelectionTree;
+
     juce::Label dropDownLabelOne{ {}, "Slot One" };
     juce::Label dropDownLabelTwo{ {}, "Slot Two" };
     juce::Label dropDownLabelThree{ {}, "Slot Three" };
     juce::Label dropDownLabelFour{ {}, "Slot Four" };
     juce::Label dropDownLabelFive{ {}, "Slot Five" };
-
     juce::Label* dropDownLabels[5] = { &dropDownLabelOne, &dropDownLabelTwo, &dropDownLabelThree, &dropDownLabelFour, &dropDownLabelFive };
 
     juce::Slider wavescanningSlider;
     
     juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> wavescanTree;
+
 
     juce::Label envelopeLabel{ {}, "Envelope" };
 

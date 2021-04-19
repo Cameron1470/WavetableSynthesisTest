@@ -27,9 +27,11 @@ WavetableSynthesisTestAudioProcessor::WavetableSynthesisTestAudioProcessor()
 
 {
     juce::NormalisableRange<float> wavescanRange(0.0f, 4.0f);
-
     parameters.createAndAddParameter("wavescan", "Wavescan", "Wavescan", wavescanRange, 2.0f, nullptr, nullptr);
     
+    juce::NormalisableRange<float> wavetableTypeRange(0, 148);
+    parameters.createAndAddParameter("wavetype_one", "Wave Type One", "Wavetable One", wavetableTypeRange, 23, nullptr, nullptr);
+
 
 
     // add wavetable synth voices to the synthesiser class
@@ -148,12 +150,6 @@ bool WavetableSynthesisTestAudioProcessor::isBusesLayoutSupported (const BusesLa
 void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
-    //auto totalNumInputChannels  = getTotalNumInputChannels();
-    //auto totalNumOutputChannels = getTotalNumOutputChannels();
-
-    //for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-    //    buffer.clear (i, 0, buffer.getNumSamples());
-
 
 
     for (int i = 0; i < voiceCount; i++)
