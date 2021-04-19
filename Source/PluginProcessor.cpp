@@ -132,6 +132,12 @@ void WavetableSynthesisTestAudioProcessor::changeProgramName (int index, const j
 void WavetableSynthesisTestAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     synth.setCurrentPlaybackSampleRate(sampleRate);
+
+    reverbParams.dryLevel = 0.5f;
+    reverbParams.wetLevel = 0.5f;
+    reverbParams.roomSize = 0.6f;
+    reverb.setParameters(reverbParams);
+    reverb.reset();
 }
 
 void WavetableSynthesisTestAudioProcessor::releaseResources()
@@ -184,6 +190,9 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
     
 
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+
+    reverb.processStereo(buffer.getWritePointer(0), buffer.getWritePointer(1), buffer.getNumSamples());
+
 
 }
 

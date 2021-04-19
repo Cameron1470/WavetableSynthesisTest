@@ -75,6 +75,9 @@ private:
     float gain = 0.25f;
     
 
+    juce::Reverb reverb;
+    juce::Reverb::Parameters reverbParams;
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WavetableSynthesisTestAudioProcessor)
 };

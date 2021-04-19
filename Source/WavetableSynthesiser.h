@@ -158,4 +158,5 @@ private:
     float currentSample = 0.0f;
     
     juce::ADSR::Parameters envParams;
+
 };

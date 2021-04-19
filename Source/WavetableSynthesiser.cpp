@@ -24,13 +24,7 @@ WavetableSynthVoice::WavetableSynthVoice() :
     // set sample rate of ADSR envelope
     env.setSampleRate(getSampleRate());
 
-    // setting parameters of ADSR envelope
-    //envParams.attack = 0.1f;
-    //envParams.decay = 0.25f;
-    //envParams.sustain = 0.7f;
-    //envParams.release = 0.25f;
-    //env.setParameters(envParams);
-
+    
 }
 
 void WavetableSynthVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound*, int /*currentPitchWheelPosition*/)
@@ -159,6 +153,7 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
                 }
             }
         }
+
     }
 }
 
