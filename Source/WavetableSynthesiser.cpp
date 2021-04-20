@@ -190,7 +190,7 @@ void WavetableSynthVoice::updateWavetable(int index, int slotNumber)
 {
         
     // get the data name using this index
-    const char* namedResource = BinaryData::originalFilenames[index];
+    const char* namedResource = BinaryData::namedResourceList[index];
 
     // create data size variable
     int dataSize;
@@ -198,11 +198,8 @@ void WavetableSynthVoice::updateWavetable(int index, int slotNumber)
     // using the get named resource function to set the dataSize variable to the size of the data in bytes
     const char* data = BinaryData::getNamedResource(namedResource, dataSize);
 
-    slots[slotNumber]->setWavetable(namedResource, dataSize);
-
-
     // use these new data and data size variable to change the wavtable of the specified slot
-    //slots[slotNumber]->setWavetable(BinaryData::Moog_Square_01__wav, BinaryData::Moog_Square_01__wavSize);
+    slots[slotNumber]->setWavetable(data, dataSize);
     
 }
 
