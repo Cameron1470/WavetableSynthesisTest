@@ -79,22 +79,26 @@ public:
     juce::AudioProcessorValueTreeState parameters;
 
 private:
-
+    /// Main instance of the synthesizer class
     juce::Synthesiser synth;
 
+    /// Number of voices the synthesizer has
     int voiceCount = 6;
 
-    // gain used in process block
+    /// Gain used in process block
     float gain = 0.25f;
-    
-    // variable for the current index of the wavetable in BinaryData
+
+    /// Variables for the current index of the wavetable in BinaryData
     float slotOneIndexCurrent;
     float slotTwoIndexCurrent;
     float slotThreeIndexCurrent;
     float slotFourIndexCurrent;
     float slotFiveIndexCurrent;
 
+    /// Juce reverb
     juce::Reverb reverb;
+
+    /// Parameters of the reverb
     juce::Reverb::Parameters reverbParams;
 
     //==============================================================================

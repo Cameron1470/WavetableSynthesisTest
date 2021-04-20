@@ -21,32 +21,6 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     {
         for (int i = 0; i < BinaryData::namedResourceListSize; i++)
         {
-            // switch statement for adding headers at specific points as the for loop works thorugh the binary data
-            switch (i) {
-            case 0:
-                wavetableDropDowns[slot].addSectionHeading("Analog");
-                break;
-            case 37:
-                wavetableDropDowns[slot].addSeparator();
-                wavetableDropDowns[slot].addSectionHeading("Basics");
-                break;
-            case 79:
-                wavetableDropDowns[slot].addSeparator();
-                wavetableDropDowns[slot].addSectionHeading("FM");
-                break;
-            case 106:
-                wavetableDropDowns[slot].addSeparator();
-                wavetableDropDowns[slot].addSectionHeading("Metallic");
-                break;
-            case 118:
-                wavetableDropDowns[slot].addSeparator();
-                wavetableDropDowns[slot].addSectionHeading("Spectral");
-                break;
-            case 133:
-                wavetableDropDowns[slot].addSeparator();
-                wavetableDropDowns[slot].addSectionHeading("Synth One Shots");
-                break;
-            }
             
             // add all items from binary data to the current drop down slot
             wavetableDropDowns[slot].addItem(BinaryData::originalFilenames[i], i + 1);
@@ -63,6 +37,12 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
 
 
     }
+
+    wavetableDropDowns[0].setSelectedId(1);
+    wavetableDropDowns[1].setSelectedId(3);
+    wavetableDropDowns[2].setSelectedId(5);
+    wavetableDropDowns[3].setSelectedId(7);
+    wavetableDropDowns[4].setSelectedId(9);
 
     // adding listeners to every drop down menu and connecting them to the processor
     wavetableDropDowns[0].addListener(this);
