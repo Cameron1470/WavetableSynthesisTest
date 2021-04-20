@@ -186,20 +186,20 @@ void WavetableSynthVoice::setRelease(std::atomic<float>* release)
 
 //=================================================================================
 
-void WavetableSynthVoice::setWavetable(std::atomic<float>* index, int slotNumber)
+void WavetableSynthVoice::setWavetable(int index, int slotNumber)
 {
-    // temporary float value from std::atomic<float> pointer
-    float indexNumber = *index;
-    
+        
     // get the data name using this index
-    const char* namedResource = BinaryData::originalFilenames[int(indexNumber)];
+    const char* namedResource = BinaryData::originalFilenames[index];
 
     // create data size variable
     int dataSize;
 
     // using the get named resource function to set the dataSize variable to the size of the data in bytes
     const char* data = BinaryData::getNamedResource(namedResource, dataSize);
-    
+
     // use these new data and data size variable to change the wavtable of the specified slot
     slots[slotNumber]->changeWavetable(data, dataSize);
+    
 }
+

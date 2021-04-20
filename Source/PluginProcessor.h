@@ -68,9 +68,12 @@ public:
     float sustainParam;
     float releaseParam;
 
+    float slotOneIndexGUI;
+    float slotTwoIndexGUI;
+    float slotThreeIndexGUI;
+    float slotFourIndexGUI;
+    float slotFiveIndexGUI;
 
-    /// The indices used for acquiring wavetables from the BinaryData
-    int binaryIndexParams[5] = { 22, 23, 24, 25, 13 };
 
     juce::AudioProcessorValueTreeState parameters;
 
@@ -83,6 +86,12 @@ private:
     // gain used in process block
     float gain = 0.25f;
     
+    //
+    float slotOneIndexCurrent;
+    float slotTwoIndexCurrent;
+    float slotThreeIndexCurrent;
+    float slotFourIndexCurrent;
+    float slotFiveIndexCurrent;
 
     juce::Reverb reverb;
     juce::Reverb::Parameters reverbParams;

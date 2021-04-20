@@ -64,6 +64,7 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
 
     }
 
+    // adding listeners to every drop down menu and connecting them to the processor
     wavetableDropDowns[0].addListener(this);
     waveSelectionTree = new juce::AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.parameters, "wavetype_one", wavetableDropDowns[0]);
     wavetableDropDowns[1].addListener(this);
@@ -75,12 +76,6 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     wavetableDropDowns[4].addListener(this);
     waveSelectionTree = new juce::AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.parameters, "wavetype_five", wavetableDropDowns[4]);
 
-    // setting the wavetable drop down to match what is set up in WavetableSynthesizer initialisation
-    //wavetableDropDowns[0].setSelectedId(23);
-    //wavetableDropDowns[1].setSelectedId(24);
-    //wavetableDropDowns[2].setSelectedId(10);
-    //wavetableDropDowns[3].setSelectedId(13);
-    //wavetableDropDowns[4].setSelectedId(28);
 
     // add wavescanning slider, set range and style
     addAndMakeVisible(wavescanningSlider);
@@ -274,18 +269,41 @@ void WavetableSynthesisTestAudioProcessorEditor::sliderValueChanged(juce::Slider
 
 void WavetableSynthesisTestAudioProcessorEditor::comboBoxChanged(juce::ComboBox* comboBox)
 {
-    for (int slotNumber = 0; slotNumber < 5; slotNumber++)
+ 
+    if (comboBox == &wavetableDropDowns[0])
     {
-        if (comboBox == &wavetableDropDowns[slotNumber])
-        {
-            // finding the index in binary data from the combo box
-            int binaryIndex = wavetableDropDowns[slotNumber].getSelectedItemIndex() - 1;
-
-            audioProcessor.binaryIndexParams[slotNumber] = binaryIndex;
-
-        }
+        // finding the index in binary data from the combo box and setting the variable in the audio processor
+        int binaryIndex = wavetableDropDowns[0].getSelectedItemIndex() - 1;
+        audioProcessor.slotOneIndexGUI = binaryIndex;
     }
-    
+
+    if (comboBox == &wavetableDropDowns[1])
+    {
+        // finding the index in binary data from the combo box and setting the variable in the audio processor
+        int binaryIndex = wavetableDropDowns[1].getSelectedItemIndex() - 1;
+        audioProcessor.slotTwoIndexGUI = binaryIndex;
+    }
+
+    if (comboBox == &wavetableDropDowns[2])
+    {
+        // finding the index in binary data from the combo box and setting the variable in the audio processor
+        int binaryIndex = wavetableDropDowns[2].getSelectedItemIndex() - 1;
+        audioProcessor.slotThreeIndexGUI = binaryIndex;
+    }
+
+    if (comboBox == &wavetableDropDowns[3])
+    {
+        // finding the index in binary data from the combo box and setting the variable in the audio processor
+        int binaryIndex = wavetableDropDowns[3].getSelectedItemIndex() - 1;
+        audioProcessor.slotFourIndexGUI = binaryIndex;
+    }
+
+    if (comboBox == &wavetableDropDowns[4])
+    {
+        // finding the index in binary data from the combo box and setting the variable in the audio processor
+        int binaryIndex = wavetableDropDowns[4].getSelectedItemIndex() - 1;
+        audioProcessor.slotFiveIndexGUI = binaryIndex;
+    }
     
 }
 

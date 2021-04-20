@@ -27,6 +27,11 @@ WavetableSynthesisTestAudioProcessor::WavetableSynthesisTestAudioProcessor()
     decayParam(0.1f),
     sustainParam(0.9f),
     releaseParam(0.5f),
+    slotOneIndexGUI(22),
+    slotTwoIndexGUI(23),
+    slotThreeIndexGUI(9),
+    slotFourIndexGUI(12),
+    slotFiveIndexGUI(28),
     parameters(*this, nullptr)
 
 {
@@ -151,6 +156,13 @@ void WavetableSynthesisTestAudioProcessor::prepareToPlay (double sampleRate, int
     reverbParams.roomSize = 0.6f;
     reverb.setParameters(reverbParams);
     reverb.reset();
+
+    slotOneIndexCurrent = slotOneIndexGUI;
+    slotTwoIndexCurrent = slotTwoIndexGUI;
+    slotThreeIndexCurrent = slotThreeIndexGUI;
+    slotFourIndexCurrent = slotFourIndexGUI;
+    slotFiveIndexCurrent = slotFiveIndexGUI;
+    
 }
 
 void WavetableSynthesisTestAudioProcessor::releaseResources()
@@ -190,6 +202,7 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
     juce::ScopedNoDenormals noDenormals;
 
 
+
     for (int i = 0; i < voiceCount; i++)
     {
         WavetableSynthVoice* v = dynamic_cast<WavetableSynthVoice*>(synth.getVoice(i));
@@ -199,11 +212,43 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
         v->setSustain(parameters.getRawParameterValue("sustain"));
         v->setRelease(parameters.getRawParameterValue("release"));
 
-        v->setWavetable(parameters.getRawParameterValue("wavetype_one"), 0);
-        v->setWavetable(parameters.getRawParameterValue("wavetype_two"), 1);
-        v->setWavetable(parameters.getRawParameterValue("wavetype_three"), 2);
-        v->setWavetable(parameters.getRawParameterValue("wavetype_four"), 3);
-        v->setWavetable(parameters.getRawParameterValue("wavetype_five"), 4);
+        slotOneIndexGUI = *parameters.getRawParameterValue("wavetype_one");
+        slotTwoIndexGUI = *parameters.getRawParameterValue("wavetype_two");
+        slotThreeIndexGUI = *parameters.getRawParameterValue("wavetype_three");
+        slotFourIndexGUI = *parameters.getRawParameterValue("wavetype_four");
+        slotFiveIndexGUI = *parameters.getRawParameterValue("wavetype_five");
+
+        // only call the set wavetable function if something has been changed in the indices
+        if (slotOneIndexGUI != slotOneIndexCurrent)
+        {
+            // update binary index parameter
+            slotOneIndexCurrent = slotOneIndexGUI;
+            
+            // now call the setWavetable function for each slot
+            // it will only actually do anything if new index =/= current index
+            v->setWavetable(int(slotOneIndexCurrent), 0);
+
+        }
+        else if (slotTwoIndexGUI != slotTwoIndexCurrent)
+        {
+            slotTwoIndexCurrent = slotTwoIndexGUI;
+            v->setWavetable(int(slotTwoIndexCurrent), 1);
+        }
+        else if (slotThreeIndexGUI != slotThreeIndexCurrent)
+        {
+            slotThreeIndexCurrent = slotThreeIndexGUI;
+            v->setWavetable(int(slotThreeIndexCurrent), 2);
+        }
+        else if (slotFourIndexGUI != slotFourIndexCurrent)
+        {
+            slotFourIndexCurrent = slotFourIndexGUI;
+            v->setWavetable(int(slotFourIndexCurrent), 3);
+        }
+        else if (slotFiveIndexGUI != slotFiveIndexCurrent)
+        {
+            slotFiveIndexCurrent = slotFiveIndexGUI;
+            v->setWavetable(int(slotFiveIndexCurrent), 4);
+        }
  
     }
     

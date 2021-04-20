@@ -15,6 +15,7 @@
 #include "WavetableOscillator.h"
 #include <BinaryData.h>
 #include "WavescanningSlot.h"
+#include "PluginProcessor.h"
 
 
 // ===========================
@@ -141,7 +142,8 @@ public:
      @param index number used to obtain wavetable from binary data
      @param slot number of the wavescanner to be changed
      */
-    void setWavetable(std::atomic<float>* index, int slotNumber);
+    void setWavetable(int index, int slotNumber);
+
 
 private:
     //--------------------------------------------------------------------------
@@ -199,5 +201,6 @@ private:
     
     /// For storing the parmeters of the ADSR envelope
     juce::ADSR::Parameters envParams;
+
 
 };
