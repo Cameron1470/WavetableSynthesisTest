@@ -32,6 +32,11 @@ WavetableSynthesisTestAudioProcessor::WavetableSynthesisTestAudioProcessor()
     slotThreeIndexGUI(9),
     slotFourIndexGUI(12),
     slotFiveIndexGUI(28),
+    slotOneIndexCurrent(22),
+    slotTwoIndexCurrent(23),
+    slotThreeIndexCurrent(9),
+    slotFourIndexCurrent(12),
+    slotFiveIndexCurrent(28),
     parameters(*this, nullptr)
 
 {
@@ -211,6 +216,8 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
         v->setDecay(parameters.getRawParameterValue("decay"));
         v->setSustain(parameters.getRawParameterValue("sustain"));
         v->setRelease(parameters.getRawParameterValue("release"));
+        
+        //================================================================================
 
         slotOneIndexGUI = *parameters.getRawParameterValue("wavetype_one");
         slotTwoIndexGUI = *parameters.getRawParameterValue("wavetype_two");
@@ -249,6 +256,8 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
             slotFiveIndexCurrent = slotFiveIndexGUI;
             v->setWavetable(int(slotFiveIndexCurrent), 4);
         }
+
+        //================================================================================
  
     }
     

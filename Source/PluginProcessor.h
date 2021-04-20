@@ -57,7 +57,7 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
     //==============================================================================
-    // SOME PUBLIC VARIABLES, EASILY ACCESSIBLE FOR THE SYNTHESIZER CLASS
+    // SOME PUBLIC VARIABLES, EASILY ACCESSIBLE FOR THE PLUGIN EDITOR CLASS
 
     /// The wavescanning parameter
     float wavescanParam;
@@ -68,6 +68,7 @@ public:
     float sustainParam;
     float releaseParam;
 
+    // variables of current index of the wavetable in BinaryData updated from GUI
     float slotOneIndexGUI;
     float slotTwoIndexGUI;
     float slotThreeIndexGUI;
@@ -86,7 +87,7 @@ private:
     // gain used in process block
     float gain = 0.25f;
     
-    //
+    // variable for the current index of the wavetable in BinaryData
     float slotOneIndexCurrent;
     float slotTwoIndexCurrent;
     float slotThreeIndexCurrent;

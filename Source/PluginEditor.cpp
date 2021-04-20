@@ -66,15 +66,15 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
 
     // adding listeners to every drop down menu and connecting them to the processor
     wavetableDropDowns[0].addListener(this);
-    waveSelectionTree = new juce::AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.parameters, "wavetype_one", wavetableDropDowns[0]);
+    waveslotOneTree = new juce::AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.parameters, "wavetype_one", wavetableDropDowns[0]);
     wavetableDropDowns[1].addListener(this);
-    waveSelectionTree = new juce::AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.parameters, "wavetype_two", wavetableDropDowns[1]);
+    waveslotTwoTree = new juce::AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.parameters, "wavetype_two", wavetableDropDowns[1]);
     wavetableDropDowns[2].addListener(this);
-    waveSelectionTree = new juce::AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.parameters, "wavetype_three", wavetableDropDowns[2]);
+    waveslotThreeTree = new juce::AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.parameters, "wavetype_three", wavetableDropDowns[2]);
     wavetableDropDowns[3].addListener(this);
-    waveSelectionTree = new juce::AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.parameters, "wavetype_four", wavetableDropDowns[3]);
+    waveslotFourTree = new juce::AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.parameters, "wavetype_four", wavetableDropDowns[3]);
     wavetableDropDowns[4].addListener(this);
-    waveSelectionTree = new juce::AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.parameters, "wavetype_five", wavetableDropDowns[4]);
+    waveslotFiveTree = new juce::AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.parameters, "wavetype_five", wavetableDropDowns[4]);
 
 
     // add wavescanning slider, set range and style

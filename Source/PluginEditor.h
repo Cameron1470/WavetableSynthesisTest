@@ -38,7 +38,11 @@ private:
 
     juce::ComboBox* wavetableDropDowns = new juce::ComboBox[5];
 
-    juce::ScopedPointer<juce::AudioProcessorValueTreeState::ComboBoxAttachment> waveSelectionTree;
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::ComboBoxAttachment> waveslotOneTree;
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::ComboBoxAttachment> waveslotTwoTree;
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::ComboBoxAttachment> waveslotThreeTree;
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::ComboBoxAttachment> waveslotFourTree;
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::ComboBoxAttachment> waveslotFiveTree;
 
     juce::Label dropDownLabelOne{ {}, "Slot One" };
     juce::Label dropDownLabelTwo{ {}, "Slot Two" };
