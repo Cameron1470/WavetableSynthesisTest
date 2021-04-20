@@ -16,7 +16,7 @@
 class WavescanningSlot
 {
 public:
-    WavescanningSlot(const void* initialData, size_t initialDataSize, double sampleRate);
+    WavescanningSlot(double sampleRate);
 
 
     //--------------------------------------------------------------------------
@@ -25,7 +25,7 @@ public:
 
     Subsequently calls the antialiasing function below to deal with the artifacting issues
      */
-    void setWavetable();
+    void setWavetable(const void* _data, size_t _dataSize);
 
     //--------------------------------------------------------------------------
     /**
@@ -36,16 +36,6 @@ public:
      */
     juce::AudioBuffer<float> getAntialiasedWavetable(int octaveNumber);
 
-
-    //--------------------------------------------------------------------------
-    /**
-     Change stored wavetable in the slot, called by Combo Box listener
-
-     @param new name of the wavetable data in BinaryData
-     @param new name of the wavetable data size in BinaryData
-
-     */
-    void changeWavetable(const void* _data, size_t _dataSize);
 
 private:
 
@@ -63,12 +53,6 @@ private:
     };
     static constexpr int numWavetableOctaves = 10;
     wavetableOctaves mWavescanner[numWavetableOctaves];
-
-    /// Storing the name of the wavetable data in BinaryData
-    const void* data;
-
-    /// Storing the name of the wavetable data size in BinaryData
-    size_t dataSize;
 
     /// Storing sample rate
     double SR;

@@ -13,11 +13,11 @@
 #include <JuceHeader.h>
 
 WavetableSynthVoice::WavetableSynthVoice() :
-    slotOne(BinaryData::Moog_Square_01__wav, BinaryData::Moog_Square_01__wavSize, getSampleRate()),
-    slotTwo(BinaryData::Moog_Triangle_wav, BinaryData::Moog_Triangle_wavSize, getSampleRate()),
-    slotThree(BinaryData::JP800_Saw_wav, BinaryData::JP800_Saw_wavSize, getSampleRate()),
-    slotFour(BinaryData::Juno_60_Square_wav, BinaryData::Juno_60_Square_wavSize, getSampleRate()),
-    slotFive(BinaryData::Prophet_Triangle_wav, BinaryData::Prophet_Triangle_wavSize, getSampleRate())
+    slotOne(getSampleRate()),
+    slotTwo(getSampleRate()),
+    slotThree(getSampleRate()),
+    slotFour(getSampleRate()),
+    slotFive(getSampleRate())
 
 
 {
@@ -186,7 +186,7 @@ void WavetableSynthVoice::setRelease(std::atomic<float>* release)
 
 //=================================================================================
 
-void WavetableSynthVoice::setWavetable(int index, int slotNumber)
+void WavetableSynthVoice::updateWavetable(int index, int slotNumber)
 {
         
     // get the data name using this index
@@ -198,8 +198,11 @@ void WavetableSynthVoice::setWavetable(int index, int slotNumber)
     // using the get named resource function to set the dataSize variable to the size of the data in bytes
     const char* data = BinaryData::getNamedResource(namedResource, dataSize);
 
+    slots[slotNumber]->setWavetable(namedResource, dataSize);
+
+
     // use these new data and data size variable to change the wavtable of the specified slot
-    slots[slotNumber]->changeWavetable(data, dataSize);
+    //slots[slotNumber]->setWavetable(BinaryData::Moog_Square_01__wav, BinaryData::Moog_Square_01__wavSize);
     
 }
 

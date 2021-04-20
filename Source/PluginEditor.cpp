@@ -76,6 +76,7 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     wavetableDropDowns[4].addListener(this);
     waveslotFiveTree = new juce::AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.parameters, "wavetype_five", wavetableDropDowns[4]);
 
+    //=============================
 
     // add wavescanning slider, set range and style
     addAndMakeVisible(wavescanningSlider);

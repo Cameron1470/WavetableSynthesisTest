@@ -10,13 +10,9 @@
 
 #include "WavescanningSlot.h"
 
-WavescanningSlot::WavescanningSlot(const void* initialData, size_t initialDataSize, double sampleRate)
+//WavescanningSlot::WavescanningSlot(const void* initialData, size_t initialDataSize, double sampleRate)
+WavescanningSlot::WavescanningSlot(double sampleRate)
 {
-    // loading binary data
-    data = initialData;
-
-    // loading size of binary data
-    dataSize = initialDataSize;
 
     // setting sample rate for later use
     SR = sampleRate;
@@ -24,12 +20,11 @@ WavescanningSlot::WavescanningSlot(const void* initialData, size_t initialDataSi
     // allows the program to use basic audio file formats (.wav)
     wtFormatManager.registerBasicFormats();
 
-    // set the inital wavetable
-    setWavetable();
 }
 
-void WavescanningSlot::setWavetable()
+void WavescanningSlot::setWavetable(const void* data, size_t dataSize)
 {
+    
     // creating instance of juce class for reading and writing .wav files
     juce::WavAudioFormat wavFormat;
 
@@ -111,12 +106,3 @@ juce::AudioBuffer<float> WavescanningSlot::getAntialiasedWavetable(int octaveNum
     return mWavescanner[octaveNumber].antialiasedWavetable;
 }
 
-void WavescanningSlot::changeWavetable(const void* _data, size_t _dataSize)
-{
-    // update private variables with BinaryData information of the new wavetable
-    data = _data;
-    dataSize = _dataSize;
-
-    // call the set wavetable function which will now use the new wavetable info to update the slot
-    setWavetable();
-}

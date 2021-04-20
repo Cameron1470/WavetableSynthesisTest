@@ -167,6 +167,16 @@ void WavetableSynthesisTestAudioProcessor::prepareToPlay (double sampleRate, int
     slotThreeIndexCurrent = slotThreeIndexGUI;
     slotFourIndexCurrent = slotFourIndexGUI;
     slotFiveIndexCurrent = slotFiveIndexGUI;
+    for (int i = 0; i < voiceCount; i++)
+    {
+        WavetableSynthVoice* v = dynamic_cast<WavetableSynthVoice*>(synth.getVoice(i));
+        v->updateWavetable(int(slotOneIndexCurrent), 0);
+        v->updateWavetable(int(slotTwoIndexCurrent), 1);
+        v->updateWavetable(int(slotThreeIndexCurrent), 2);
+        v->updateWavetable(int(slotFourIndexCurrent), 3);
+        v->updateWavetable(int(slotFiveIndexCurrent), 4);
+    }
+
     
 }
 
@@ -233,28 +243,28 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
             
             // now call the setWavetable function for each slot
             // it will only actually do anything if new index =/= current index
-            v->setWavetable(int(slotOneIndexCurrent), 0);
+            v->updateWavetable(int(slotOneIndexCurrent), 0);
 
         }
         else if (slotTwoIndexGUI != slotTwoIndexCurrent)
         {
             slotTwoIndexCurrent = slotTwoIndexGUI;
-            v->setWavetable(int(slotTwoIndexCurrent), 1);
+            v->updateWavetable(int(slotTwoIndexCurrent), 1);
         }
         else if (slotThreeIndexGUI != slotThreeIndexCurrent)
         {
             slotThreeIndexCurrent = slotThreeIndexGUI;
-            v->setWavetable(int(slotThreeIndexCurrent), 2);
+            v->updateWavetable(int(slotThreeIndexCurrent), 2);
         }
         else if (slotFourIndexGUI != slotFourIndexCurrent)
         {
             slotFourIndexCurrent = slotFourIndexGUI;
-            v->setWavetable(int(slotFourIndexCurrent), 3);
+            v->updateWavetable(int(slotFourIndexCurrent), 3);
         }
         else if (slotFiveIndexGUI != slotFiveIndexCurrent)
         {
             slotFiveIndexCurrent = slotFiveIndexGUI;
-            v->setWavetable(int(slotFiveIndexCurrent), 4);
+            v->updateWavetable(int(slotFiveIndexCurrent), 4);
         }
 
         //================================================================================
