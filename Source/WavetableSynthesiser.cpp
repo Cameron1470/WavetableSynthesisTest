@@ -72,8 +72,6 @@ void WavetableSynthVoice::startNote(int midiNoteNumber, float velocity, juce::Sy
     wtOscillatorThree.add(oscillatorSlotThree);
     wtOscillatorFour.add(oscillatorSlotFour);
     wtOscillatorFive.add(oscillatorSlotFive);
-    
-
 
     // reset and start envelope
     env.reset();
@@ -102,17 +100,15 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
             auto* oscillatorSlotFour = wtOscillatorFour.getUnchecked(0);
             auto* oscillatorSlotFive = wtOscillatorFive.getUnchecked(0);
 
-            // creating a sample float, using getNextSample function of the WavetableOscillator class 
-            //auto currentSample = ((oscillatorSlotOne->getNextSample() * (1 - wavescanBal)) + (oscillatorSlotTwo->getNextSample() * wavescanBal)) * gain * envVal;
-            
+            // getting the current sample from the oscillator slots and storing in sample variable
             auto slotOneSample = oscillatorSlotOne->getNextSample();
             auto slotTwoSample = oscillatorSlotTwo->getNextSample();
             auto slotThreeSample = oscillatorSlotThree->getNextSample();
             auto slotFourSample = oscillatorSlotFour->getNextSample();
             auto slotFiveSample = oscillatorSlotFive->getNextSample();
 
-            wavescanBal = *wavescanParameter;
-
+            // if, else if statement used for finding which two slots its currently between
+            // and then mixes between the two
             if (wavescanBal <= 1.0)
             {
                 currentSample = ((slotOneSample * (1 - wavescanBal)) + (slotTwoSample * wavescanBal)) * gain * envVal;
@@ -132,7 +128,6 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
                 float normalizedWavescanVal = wavescanBal - 3.0f;
                 currentSample = ((slotFourSample * (1 - normalizedWavescanVal)) + (slotFiveSample * normalizedWavescanVal)) * gain * envVal;
             }
-
 
 
             // for each channel, write the currentSample float to the output
@@ -157,9 +152,12 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
     }
 }
 
+//===========================================================================
+// SIMPLE PARAMETER SETTERS
+
 void WavetableSynthVoice::setWavescanVal(std::atomic<float>* _wavescanBal)
 {
-    wavescanParameter = _wavescanBal;
+    wavescanBal = *_wavescanBal;
 }
 
 void WavetableSynthVoice::setAttack(std::atomic<float>* attack)
@@ -184,4 +182,24 @@ void WavetableSynthVoice::setRelease(std::atomic<float>* release)
 {
     envParams.release = *release;
     env.setParameters(envParams);
+}
+
+//=================================================================================
+
+void WavetableSynthVoice::setWavetable(std::atomic<float>* index, int slotNumber)
+{
+    // temporary float value from std::atomic<float> pointer
+    float indexNumber = *index;
+    
+    // get the data name using this index
+    const char* namedResource = BinaryData::originalFilenames[int(indexNumber)];
+
+    // create data size variable
+    int dataSize;
+
+    // using the get named resource function to set the dataSize variable to the size of the data in bytes
+    const char* data = BinaryData::getNamedResource(namedResource, dataSize);
+    
+    // use these new data and data size variable to change the wavtable of the specified slot
+    slots[slotNumber]->changeWavetable(data, dataSize);
 }

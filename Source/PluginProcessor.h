@@ -56,12 +56,21 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    //==============================================================================
+    // SOME PUBLIC VARIABLES, EASILY ACCESSIBLE FOR THE SYNTHESIZER CLASS
+
+    /// The wavescanning parameter
     float wavescanParam;
 
+    /// The ADSR parameters for the envelope
     float attackParam;
     float decayParam;
     float sustainParam;
     float releaseParam;
+
+
+    /// The indices used for acquiring wavetables from the BinaryData
+    int binaryIndexParams[5] = { 22, 23, 24, 25, 13 };
 
     juce::AudioProcessorValueTreeState parameters;
 

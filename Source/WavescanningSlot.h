@@ -45,7 +45,7 @@ public:
      @param new name of the wavetable data size in BinaryData
 
      */
-    void changeWavetable(const void* initialData, size_t initialDataSize);
+    void changeWavetable(const void* _data, size_t _dataSize);
 
 private:
 

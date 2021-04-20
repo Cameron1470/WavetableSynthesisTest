@@ -30,14 +30,27 @@ WavetableSynthesisTestAudioProcessor::WavetableSynthesisTestAudioProcessor()
     parameters(*this, nullptr)
 
 {
+    //==========================================================================
     // add wavescan parameter to ValueTreeState 
     juce::NormalisableRange<float> wavescanRange(0.0f, 4.0f);
     parameters.createAndAddParameter("wavescan", "Wavescan", "Wavescan", wavescanRange, 2.0f, nullptr, nullptr);
     
+    //==========================================================================
     // add wavetable type selection parameter to ValueTreeState
     juce::NormalisableRange<float> wavetableTypeRange(0, 148);
     parameters.createAndAddParameter("wavetype_one", "Wave Type One", "Wavetable One", wavetableTypeRange, 22, nullptr, nullptr);
 
+    parameters.createAndAddParameter("wavetype_two", "Wave Type Two", "Wavetable Two", wavetableTypeRange, 23, nullptr, nullptr);
+
+    parameters.createAndAddParameter("wavetype_three", "Wave Type Three", "Wavetable Three", wavetableTypeRange, 9, nullptr, nullptr);
+
+    parameters.createAndAddParameter("wavetype_four", "Wave Type Four", "Wavetable Four", wavetableTypeRange, 12, nullptr, nullptr);
+
+    parameters.createAndAddParameter("wavetype_five", "Wave Type Five", "Wavetable Five", wavetableTypeRange, 28, nullptr, nullptr);
+
+
+
+    //==========================================================================
     // add ADSR parameters to value tree state
     juce::NormalisableRange<float> attackRange(0.0f, 4.0f);
     parameters.createAndAddParameter("attack", "Attack", "Attack", attackRange, 0.1f, nullptr, nullptr);
@@ -51,7 +64,7 @@ WavetableSynthesisTestAudioProcessor::WavetableSynthesisTestAudioProcessor()
     juce::NormalisableRange<float> releaseRange(0.0f, 4.0f);
     parameters.createAndAddParameter("release", "Release", "Release", releaseRange, 0.5f, nullptr, nullptr);
 
-
+    //==========================================================================
     // add wavetable synth voices to the synthesiser class
     for (int i = 0; i < voiceCount; i++)
     {
@@ -185,7 +198,13 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
         v->setDecay(parameters.getRawParameterValue("decay"));
         v->setSustain(parameters.getRawParameterValue("sustain"));
         v->setRelease(parameters.getRawParameterValue("release"));
-        
+
+        v->setWavetable(parameters.getRawParameterValue("wavetype_one"), 0);
+        v->setWavetable(parameters.getRawParameterValue("wavetype_two"), 1);
+        v->setWavetable(parameters.getRawParameterValue("wavetype_three"), 2);
+        v->setWavetable(parameters.getRawParameterValue("wavetype_four"), 3);
+        v->setWavetable(parameters.getRawParameterValue("wavetype_five"), 4);
+ 
     }
     
 
@@ -220,6 +239,8 @@ void WavetableSynthesisTestAudioProcessor::setStateInformation (const void* data
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
 }
+
+//==============================================================================
 
 
 

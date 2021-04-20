@@ -106,15 +106,42 @@ public:
      */
     void setWavescanVal(std::atomic<float>* _wavescanBal);
 
+    /**
+     Modify the attack of the ADSR envelope
 
+     @param attack time in seconds
+     */
     void setAttack(std::atomic<float>* attack);
 
+    /**
+     Modify the decay of the ADSR envelope
+
+     @param decay time in seconds
+     */
     void setDecay(std::atomic<float>* decay);
 
+    /**
+     Modify the sustain value of the ADSR envelope
+
+     @param sustain value between 0 and 1
+     */
     void setSustain(std::atomic<float>* sustain);
 
+    /**
+     Modify the release of the ADSR envelope
+
+     @param release time in seconds
+     */
     void setRelease(std::atomic<float>* release);
 
+
+    /**
+     Change the wavetable stored in a specified slot of the wavescanner
+
+     @param index number used to obtain wavetable from binary data
+     @param slot number of the wavescanner to be changed
+     */
+    void setWavetable(std::atomic<float>* index, int slotNumber);
 
 private:
     //--------------------------------------------------------------------------
@@ -124,39 +151,53 @@ private:
     /// Is the voice in the process of ending?
     bool ending = false;
     
-    // number of wavescanning slots
-    int wavescanningSlots = 5;
-
-    //const void** data = new const void* [wavescanningSlots];
-    //size_t* dataSize = new size_t[wavescanningSlots];
     
-    // instance of the WavescanningSlot class
-    WavescanningSlot slotOne;
-    WavescanningSlot slotTwo;
-    WavescanningSlot slotThree;
-    WavescanningSlot slotFour;
-    WavescanningSlot slotFive;
+    
+    //==========================================================================
+    
+    /// Number of wavescanning slots
+    const int wavescanningSlotsNumber = 5;
 
-    /// an array of WavetableOscillators
+    /// First slot of the wavescanner, instance of the WavescanningSlot class
+    WavescanningSlot slotOne;
+
+    /// Second slot of the wavescanner, instance of the WavescanningSlot class
+    WavescanningSlot slotTwo;
+
+    /// Third slot of the wavescanner, instance of the WavescanningSlot class
+    WavescanningSlot slotThree;
+
+    /// Fourth slot of the wavescanner, instance of the WavescanningSlot class
+    WavescanningSlot slotFour;
+
+    /// Fifth slot of the wavescanner, instance of the WavescanningSlot class
+    WavescanningSlot slotFive;
+    
+    /// Pointer array to the five slots of the wavescanner 
+    WavescanningSlot* slots[5] = { &slotOne, &slotTwo, &slotThree, &slotFour, &slotFive };
+
+    /// Owned arrays of WavetableOscillators
     juce::OwnedArray<WavetableOscillator> wtOscillatorOne;
     juce::OwnedArray<WavetableOscillator> wtOscillatorTwo;
     juce::OwnedArray<WavetableOscillator> wtOscillatorThree;
     juce::OwnedArray<WavetableOscillator> wtOscillatorFour;
     juce::OwnedArray<WavetableOscillator> wtOscillatorFive;
 
-    /// the ADSR envelope
+    //==========================================================================
+
+    /// The ADSR envelope
     juce::ADSR env;
 
-    /// gain used in process block
+    /// Gain used in process block to reduce volume
     float gain = 0.2f;
 
-    /// value for mixing between the wavetables
-    std::atomic<float>* wavescanParameter;
+    /// Wavescan balance value, updated from the atomic float
     float wavescanBal = 2.0f;
 
-
+    /// Current sample variable used in the process bloack
     float currentSample = 0.0f;
     
+    /// For storing the parmeters of the ADSR envelope
     juce::ADSR::Parameters envParams;
 
 };

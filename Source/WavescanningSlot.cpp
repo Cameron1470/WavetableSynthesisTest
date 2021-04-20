@@ -3,7 +3,7 @@
 
     WavescanningSlot.cpp
     Created: 9 Apr 2021 9:29:54am
-    Author:  csmit
+    Author:  Cameron Smith
 
   ==============================================================================
 */
@@ -30,8 +30,6 @@ WavescanningSlot::WavescanningSlot(const void* initialData, size_t initialDataSi
 
 void WavescanningSlot::setWavetable()
 {
-    // got most of this from here: https://docs.juce.com/master/tutorial_looping_audio_sample_buffer_advanced.html
-
     // creating instance of juce class for reading and writing .wav files
     juce::WavAudioFormat wavFormat;
 
@@ -41,14 +39,19 @@ void WavescanningSlot::setWavetable()
     // creating an audio format reader from the path
     std::unique_ptr<juce::AudioFormatReader> wtReader(wavFormat.createReaderFor(inputStream, false));
 
-    // if statement used in juce tutorial, only used when a dialogue box is opened and user clicks cancel? maybe uneccesary?
     if (wtReader.get() != nullptr)
     {
+        // create temporary audio buffer
+        juce::AudioBuffer<float> wtTempBuffer;
+        
         //setting size of private variable
-        wtFileBuffer.setSize((int)wtReader->numChannels, (int)wtReader->lengthInSamples);
+        wtTempBuffer.setSize((int)wtReader->numChannels, (int)wtReader->lengthInSamples);
 
         //using the reader to populate AudioSampleBuffer class with the wavetable
-        wtReader->read(&wtFileBuffer, 0, (int)wtReader->lengthInSamples, 0, true, true);
+        wtReader->read(&wtTempBuffer, 0, (int)wtReader->lengthInSamples, 0, true, true);
+
+        // storing in private member variable
+        wtFileBuffer = wtTempBuffer;
     }
 
 
@@ -110,8 +113,10 @@ juce::AudioBuffer<float> WavescanningSlot::getAntialiasedWavetable(int octaveNum
 
 void WavescanningSlot::changeWavetable(const void* _data, size_t _dataSize)
 {
+    // update private variables with BinaryData information of the new wavetable
     data = _data;
     dataSize = _dataSize;
 
+    // call the set wavetable function which will now use the new wavetable info to update the slot
     setWavetable();
 }

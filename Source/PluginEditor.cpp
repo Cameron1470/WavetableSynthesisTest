@@ -10,8 +10,8 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessorEditor (WavetableSynthesisTestAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p)
+WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessorEditor(WavetableSynthesisTestAudioProcessor& p)
+    : AudioProcessorEditor(&p), audioProcessor(p)
 {
 
     //=========================================================================
@@ -66,13 +66,21 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
 
     wavetableDropDowns[0].addListener(this);
     waveSelectionTree = new juce::AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.parameters, "wavetype_one", wavetableDropDowns[0]);
+    wavetableDropDowns[1].addListener(this);
+    waveSelectionTree = new juce::AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.parameters, "wavetype_two", wavetableDropDowns[1]);
+    wavetableDropDowns[2].addListener(this);
+    waveSelectionTree = new juce::AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.parameters, "wavetype_three", wavetableDropDowns[2]);
+    wavetableDropDowns[3].addListener(this);
+    waveSelectionTree = new juce::AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.parameters, "wavetype_four", wavetableDropDowns[3]);
+    wavetableDropDowns[4].addListener(this);
+    waveSelectionTree = new juce::AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.parameters, "wavetype_five", wavetableDropDowns[4]);
 
     // setting the wavetable drop down to match what is set up in WavetableSynthesizer initialisation
     //wavetableDropDowns[0].setSelectedId(23);
-    wavetableDropDowns[1].setSelectedId(24);
-    wavetableDropDowns[2].setSelectedId(10);
-    wavetableDropDowns[3].setSelectedId(13);
-    wavetableDropDowns[4].setSelectedId(28);
+    //wavetableDropDowns[1].setSelectedId(24);
+    //wavetableDropDowns[2].setSelectedId(10);
+    //wavetableDropDowns[3].setSelectedId(13);
+    //wavetableDropDowns[4].setSelectedId(28);
 
     // add wavescanning slider, set range and style
     addAndMakeVisible(wavescanningSlider);
@@ -266,21 +274,19 @@ void WavetableSynthesisTestAudioProcessorEditor::sliderValueChanged(juce::Slider
 
 void WavetableSynthesisTestAudioProcessorEditor::comboBoxChanged(juce::ComboBox* comboBox)
 {
-    if (comboBox == &wavetableDropDowns[0])
+    for (int slotNumber = 0; slotNumber < 5; slotNumber++)
     {
-        // finding the index in binary data from the combo box
-        int binaryIndex = wavetableDropDowns[0].getSelectedItemIndex() - 1;
-        
-        // get the data name using this index
-        const void* data = BinaryData::originalFilenames[binaryIndex];
+        if (comboBox == &wavetableDropDowns[slotNumber])
+        {
+            // finding the index in binary data from the combo box
+            int binaryIndex = wavetableDropDowns[slotNumber].getSelectedItemIndex() - 1;
 
-        // get the data size using this index???
-        size_t dataSize;
+            audioProcessor.binaryIndexParams[slotNumber] = binaryIndex;
 
-
-        // then call the function in corresponding WavescanningSlot instance
-
+        }
     }
+    
+    
 }
 
 
