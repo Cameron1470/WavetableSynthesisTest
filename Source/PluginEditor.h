@@ -34,6 +34,7 @@ public:
 
 private:
     juce::Font textFont{ 15.0f };
+    juce::Font labelFont{ 12.0f };
     
 
     juce::ComboBox* wavetableDropDowns = new juce::ComboBox[5];
@@ -62,6 +63,11 @@ private:
     juce::Label sustainLabel{ {}, "S" };
     juce::Label releaseLabel{ {}, "R" };
 
+    juce::Label chorusLabel{ {}, "Chorus" };
+    juce::Label filterLabel{ {}, "Filter" };
+    juce::Label reverbLabel{ {}, "Reverb" };
+    juce::Label lfoLabel{ {}, "LFO" };
+
     juce::Slider attackSlider;
     juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> attackTree;
 
@@ -74,6 +80,28 @@ private:
     juce::Slider releaseSlider;
     juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> releaseTree;
 
+    juce::Slider chorusDepthSlider;
+    juce::Slider chorusMixSlider;
+    juce::Label chorusDepthLabel{ {}, "Depth" };
+    juce::Label chorusMixLabel{ {}, "Mix" };
+
+    juce::Slider cutoffSlider;
+    juce::Slider resonanceSlider;
+    juce::Label cutoffLabel{ {}, "Cutoff" };
+    juce::Label resonanceLabel{ {}, "Resonance" };
+
+    juce::Slider roomSizeSlider;
+    juce::Slider dampingSlider;
+    juce::Slider drySlider;
+    juce::Slider wetSlider;
+    juce::Label roomSizeLabel{ {}, "Room Size" };
+    juce::Label dampingLabel{ {}, "Damping" };
+    juce::Label dryLabel{ {}, "Dry" };
+    juce::Label wetLabel{ {}, "Wet" };
+
+
+
+    juce::Label waveMorpherLabel{ {}, "W A V E M O R P H E R" };
 
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
