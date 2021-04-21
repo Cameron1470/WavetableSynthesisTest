@@ -37,6 +37,10 @@ WavetableSynthesisTestAudioProcessor::WavetableSynthesisTestAudioProcessor()
     slotThreeIndexCurrent(4),
     slotFourIndexCurrent(6),
     slotFiveIndexCurrent(8),
+    roomSizeParam(0.5),
+    dampingParam(0.5),
+    dryParam(0.5),
+    wetParam(0.5),
     parameters(*this, nullptr)
 
 {
@@ -73,6 +77,19 @@ WavetableSynthesisTestAudioProcessor::WavetableSynthesisTestAudioProcessor()
 
     juce::NormalisableRange<float> releaseRange(0.0f, 4.0f);
     parameters.createAndAddParameter("release", "Release", "Release", releaseRange, 0.5f, nullptr, nullptr);
+    
+    //==========================================================================
+    juce::NormalisableRange<float> roomSizeRange(0.0f, 1.0f);
+    parameters.createAndAddParameter("room_size", "Room Size", "Room Size", roomSizeRange, 0.5f, nullptr, nullptr);
+
+    juce::NormalisableRange<float> dampingRange(0.0f, 1.0f);
+    parameters.createAndAddParameter("damping", "Damping", "Damping", dampingRange, 0.5f, nullptr, nullptr);
+
+    juce::NormalisableRange<float> dryRange(0.0f, 1.0f);
+    parameters.createAndAddParameter("dry", "Dry", "Dry", dryRange, 0.5f, nullptr, nullptr);
+
+    juce::NormalisableRange<float> wetRange(0.0f, 1.0f);
+    parameters.createAndAddParameter("wet", "Wet", "Wet", wetRange, 0.5f, nullptr, nullptr);
 
     //==========================================================================
     // add wavetable synth voices to the synthesiser class
@@ -158,7 +175,7 @@ void WavetableSynthesisTestAudioProcessor::prepareToPlay (double sampleRate, int
 
     reverbParams.dryLevel = 0.5f;
     reverbParams.wetLevel = 0.5f;
-    reverbParams.roomSize = 0.6f;
+    reverbParams.roomSize = 0.5f;
     reverb.setParameters(reverbParams);
     reverb.reset();
 
@@ -312,8 +329,14 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
         }
     }
 
-
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+
+    reverbParams.roomSize = *parameters.getRawParameterValue("room_size");
+    reverbParams.damping = *parameters.getRawParameterValue("damping");
+    reverbParams.dryLevel = *parameters.getRawParameterValue("dry");
+    reverbParams.wetLevel = *parameters.getRawParameterValue("wet");
+    
+    reverb.setParameters(reverbParams);
 
     reverb.processStereo(buffer.getWritePointer(0), buffer.getWritePointer(1), buffer.getNumSamples());
 

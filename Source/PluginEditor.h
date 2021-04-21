@@ -91,9 +91,13 @@ private:
     juce::Label resonanceLabel{ {}, "Resonance" };
 
     juce::Slider roomSizeSlider;
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> roomSizeTree;
     juce::Slider dampingSlider;
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> dampingTree;
     juce::Slider drySlider;
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> dryTree;
     juce::Slider wetSlider;
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> wetTree;
     juce::Label roomSizeLabel{ {}, "Room Size" };
     juce::Label dampingLabel{ {}, "Damping" };
     juce::Label dryLabel{ {}, "Dry" };

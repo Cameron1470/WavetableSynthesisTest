@@ -189,20 +189,33 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     roomSizeSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     roomSizeSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
 
+    roomSizeSlider.addListener(this);
+    roomSizeTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "room_size", roomSizeSlider);
+
     addAndMakeVisible(dampingSlider);
     dampingSlider.setRange(0, 1);
     dampingSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     dampingSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+
+    dampingSlider.addListener(this);
+    dampingTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "damping", dampingSlider);
 
     addAndMakeVisible(drySlider);
     drySlider.setRange(0, 1);
     drySlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     drySlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
 
+    drySlider.addListener(this);
+    dryTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "dry", drySlider);
+
     addAndMakeVisible(wetSlider);
     wetSlider.setRange(0, 1);
     wetSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     wetSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+
+    wetSlider.addListener(this);
+    wetTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "wet", wetSlider);
+
 
     addAndMakeVisible(roomSizeLabel);
     roomSizeLabel.setFont(labelFont);

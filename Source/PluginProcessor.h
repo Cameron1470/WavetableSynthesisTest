@@ -75,6 +75,11 @@ public:
     float slotFourIndexGUI;
     float slotFiveIndexGUI;
 
+    float roomSizeParam;
+    float dampingParam;
+    float dryParam;
+    float wetParam;
+
 
     juce::AudioProcessorValueTreeState parameters;
 
