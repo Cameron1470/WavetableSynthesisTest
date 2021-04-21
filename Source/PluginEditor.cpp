@@ -126,31 +126,6 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     releaseTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "release", releaseSlider);
 
     //=========================================================================
-    // CHORUS
-
-    addAndMakeVisible(chorusLabel);
-    chorusLabel.setFont(textFont);
-    chorusLabel.setJustificationType(juce::Justification::centred);
-
-    addAndMakeVisible(chorusDepthSlider);
-    chorusDepthSlider.setRange(0, 1);
-    chorusDepthSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
-    chorusDepthSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
-
-    addAndMakeVisible(chorusMixSlider);
-    chorusMixSlider.setRange(0, 1);
-    chorusMixSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
-    chorusMixSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
-
-    addAndMakeVisible(chorusDepthLabel);
-    chorusDepthLabel.setFont(labelFont);
-    chorusDepthLabel.setJustificationType(juce::Justification::centred);
-
-    addAndMakeVisible(chorusMixLabel);
-    chorusMixLabel.setFont(labelFont);
-    chorusMixLabel.setJustificationType(juce::Justification::centred);
-
-    //=========================================================================
     // FILTER
 
     addAndMakeVisible(filterLabel);
@@ -162,10 +137,16 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     cutoffSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     cutoffSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
 
+    cutoffSlider.addListener(this);
+    cutoffTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "cutoff", cutoffSlider);
+
     addAndMakeVisible(resonanceSlider);
     resonanceSlider.setRange(0, 1);
     resonanceSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     resonanceSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+
+    resonanceSlider.addListener(this);
+    resonanceTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "resonance", resonanceSlider);
 
     addAndMakeVisible(cutoffLabel);
     cutoffLabel.setFont(labelFont);
@@ -174,6 +155,38 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     addAndMakeVisible(resonanceLabel);
     resonanceLabel.setFont(labelFont);
     resonanceLabel.setJustificationType(juce::Justification::centred);
+
+    //=========================================================================
+    // CHORUS
+
+    addAndMakeVisible(chorusLabel);
+    chorusLabel.setFont(textFont);
+    chorusLabel.setJustificationType(juce::Justification::centred);
+
+    addAndMakeVisible(chorusDepthSlider);
+    chorusDepthSlider.setRange(0, 1);
+    chorusDepthSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    chorusDepthSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+
+    chorusDepthSlider.addListener(this);
+    chorusDepthTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "chorus_depth", chorusDepthSlider);
+
+    addAndMakeVisible(chorusMixSlider);
+    chorusMixSlider.setRange(0, 1);
+    chorusMixSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    chorusMixSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+
+    chorusMixSlider.addListener(this);
+    chorusMixTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "chorus_mix", chorusMixSlider);
+
+
+    addAndMakeVisible(chorusDepthLabel);
+    chorusDepthLabel.setFont(labelFont);
+    chorusDepthLabel.setJustificationType(juce::Justification::centred);
+
+    addAndMakeVisible(chorusMixLabel);
+    chorusMixLabel.setFont(labelFont);
+    chorusMixLabel.setJustificationType(juce::Justification::centred);
 
 
 
@@ -260,8 +273,8 @@ void WavetableSynthesisTestAudioProcessorEditor::paint (juce::Graphics& g)
     // drawing outer rectangle for wavescan panel
     juce::Rectangle<int> wavescanPanelOut{ 4, 4, 612, 194 };
     juce::Rectangle<int> envPanelOut{ 4, 202, 100, 194 };
-    juce::Rectangle<int> stereoPanelOut{ 108, 202, 100, 194 };
-    juce::Rectangle<int> filterPanelOut{ 212, 202, 100, 194 };
+    juce::Rectangle<int> filterPanelOut{ 108, 202, 100, 194 };
+    juce::Rectangle<int> chorusPanelOut{ 212, 202, 100, 194 };
     juce::Rectangle<int> reverbPanelOut{ 316, 202, 148, 194 };
     juce::Rectangle<int> lfoPanelOut{ 468, 202, 148, 194 };
     g.setColour(juce::Colour(47, 61, 59));
@@ -269,10 +282,10 @@ void WavetableSynthesisTestAudioProcessorEditor::paint (juce::Graphics& g)
     g.fillRect(wavescanPanelOut);
     g.drawRect(envPanelOut);
     g.fillRect(envPanelOut);
-    g.drawRect(stereoPanelOut);
-    g.fillRect(stereoPanelOut);
     g.drawRect(filterPanelOut);
     g.fillRect(filterPanelOut);
+    g.drawRect(chorusPanelOut);
+    g.fillRect(chorusPanelOut);
     g.drawRect(reverbPanelOut);
     g.fillRect(reverbPanelOut);
     g.drawRect(lfoPanelOut);
@@ -281,8 +294,8 @@ void WavetableSynthesisTestAudioProcessorEditor::paint (juce::Graphics& g)
     // draw inner rectangle for wavescan panel
     juce::Rectangle<int> wavescanPanel{ 6, 6, 608, 190 };
     juce::Rectangle<int> envPanel{ 6, 204, 96, 190 };
-    juce::Rectangle<int> stereoPanel{ 110, 204, 96, 190 };
-    juce::Rectangle<int> filterPanel{ 214, 204, 96, 190 };
+    juce::Rectangle<int> filterPanel{ 110, 204, 96, 190 };
+    juce::Rectangle<int> chorusPanel{ 214, 204, 96, 190 };
     juce::Rectangle<int> reverbPanel{ 318, 204, 144, 190 };
     juce::Rectangle<int> lfoPanel{ 470, 204, 144, 190 };
     g.setColour(juce::Colours::darkslategrey);
@@ -290,10 +303,10 @@ void WavetableSynthesisTestAudioProcessorEditor::paint (juce::Graphics& g)
     g.fillRect(wavescanPanel);
     g.drawRect(envPanel);
     g.fillRect(envPanel);
-    g.drawRect(stereoPanel);
-    g.fillRect(stereoPanel);
     g.drawRect(filterPanel);
     g.fillRect(filterPanel);
+    g.drawRect(chorusPanel);
+    g.fillRect(chorusPanel);
     g.drawRect(reverbPanel);
     g.fillRect(reverbPanel);
     g.drawRect(lfoPanel);
@@ -349,8 +362,8 @@ void WavetableSynthesisTestAudioProcessorEditor::resized()
 
     // positioning the labels for the lower panels
     envelopeLabel.setBounds(6, 204, 96, 20);
-    chorusLabel.setBounds(110, 204, 96, 20);
-    filterLabel.setBounds(214, 204, 96, 20);
+    chorusLabel.setBounds(214, 204, 96, 20);
+    filterLabel.setBounds(110, 204, 96, 20);
     reverbLabel.setBounds(318, 204, 144, 20);
     lfoLabel.setBounds(470, 204, 144, 20);
 
@@ -365,15 +378,15 @@ void WavetableSynthesisTestAudioProcessorEditor::resized()
     sustainLabel.setBounds(54, 370, 21, 20);
     releaseLabel.setBounds(76, 370, 21, 20);
 
-    chorusDepthSlider.setBounds(128, 234, 60, 60);
-    chorusMixSlider.setBounds(128, 309, 60, 60);
-    chorusDepthLabel.setBounds(128, 294, 60, 15);
-    chorusMixLabel.setBounds(128, 369, 60, 15);
+    chorusDepthSlider.setBounds(232, 234, 60, 60);
+    chorusMixSlider.setBounds(232, 309, 60, 60);
+    chorusDepthLabel.setBounds(232, 294, 60, 15);
+    chorusMixLabel.setBounds(232, 369, 60, 15);
 
-    cutoffSlider.setBounds(232, 234, 60, 60);
-    resonanceSlider.setBounds(232, 309, 60, 60);
-    cutoffLabel.setBounds(232, 294, 60, 15);
-    resonanceLabel.setBounds(232, 369, 60, 15);
+    cutoffSlider.setBounds(128, 234, 60, 60);
+    resonanceSlider.setBounds(128, 309, 60, 60);
+    cutoffLabel.setBounds(128, 294, 60, 15);
+    resonanceLabel.setBounds(128, 369, 60, 15);
 
     roomSizeSlider.setBounds(328, 234, 60, 60);
     drySlider.setBounds(328, 309, 60, 60);

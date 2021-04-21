@@ -77,7 +77,20 @@ WavetableSynthesisTestAudioProcessor::WavetableSynthesisTestAudioProcessor()
 
     juce::NormalisableRange<float> releaseRange(0.0f, 4.0f);
     parameters.createAndAddParameter("release", "Release", "Release", releaseRange, 0.5f, nullptr, nullptr);
-    
+    //==========================================================================
+    juce::NormalisableRange<float> cutoffRange(0.0f, 20000.0f);
+    parameters.createAndAddParameter("cutoff", "Cutoff", "Cutoff", cutoffRange, 5000.0f, nullptr, nullptr);
+
+    juce::NormalisableRange<float> resonanceRange(0.0f, 1.0f);
+    parameters.createAndAddParameter("resonance", "Resonance", "Resonance", resonanceRange, 0.1f, nullptr, nullptr);
+
+    //==========================================================================
+    juce::NormalisableRange<float> chorusDepthRange(0.0f, 1.0f);
+    parameters.createAndAddParameter("chorus_depth", "Chorus Depth", "Chorus Depth", chorusDepthRange, 0.5f, nullptr, nullptr);
+
+    juce::NormalisableRange<float> chorusMixRange(0.0f, 1.0f);
+    parameters.createAndAddParameter("chorus_mix", "Chorus Mix", "Chorus Mix", chorusMixRange, 0.5f, nullptr, nullptr);
+
     //==========================================================================
     juce::NormalisableRange<float> roomSizeRange(0.0f, 1.0f);
     parameters.createAndAddParameter("room_size", "Room Size", "Room Size", roomSizeRange, 0.5f, nullptr, nullptr);
@@ -173,11 +186,28 @@ void WavetableSynthesisTestAudioProcessor::prepareToPlay (double sampleRate, int
 {
     synth.setCurrentPlaybackSampleRate(sampleRate);
 
+    chorus.setDepth(0.5);
+    chorus.setMix(0.5);
+    ladderFilter.setCutoffFrequencyHz(5000.0f);
+    ladderFilter.setResonance(0.1f);
+
+    juce::dsp::ProcessSpec spec;
+    spec.maximumBlockSize = samplesPerBlock;
+    spec.sampleRate = sampleRate;
+
+    chorus.prepare(spec);
+    chorus.reset();
+    ladderFilter.prepare(spec);
+    ladderFilter.reset();
+    
+
     reverbParams.dryLevel = 0.5f;
     reverbParams.wetLevel = 0.5f;
     reverbParams.roomSize = 0.5f;
     reverb.setParameters(reverbParams);
     reverb.reset();
+
+
 
     slotOneIndexCurrent = slotOneIndexGUI;
     slotTwoIndexCurrent = slotTwoIndexGUI;
@@ -330,6 +360,18 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
     }
 
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+
+
+    chorus.setDepth(*parameters.getRawParameterValue("chorus_depth"));
+    chorus.setMix(*parameters.getRawParameterValue("chorus_mix"));
+
+    ladderFilter.setCutoffFrequencyHz(*parameters.getRawParameterValue("cutoff"));
+    ladderFilter.setResonance(*parameters.getRawParameterValue("resonance"));
+
+    juce::dsp::AudioBlock<float> sampleBlock(buffer);
+    chorus.process(juce::dsp::ProcessContextReplacing<float>(sampleBlock));
+
+    ladderFilter.process(juce::dsp::ProcessContextReplacing<float>(sampleBlock));
 
     reverbParams.roomSize = *parameters.getRawParameterValue("room_size");
     reverbParams.damping = *parameters.getRawParameterValue("damping");

@@ -70,23 +70,24 @@ private:
 
     juce::Slider attackSlider;
     juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> attackTree;
-
     juce::Slider decaySlider;
     juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> decayTree;
-
     juce::Slider sustainSlider;
     juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> sustainTree;
-
     juce::Slider releaseSlider;
     juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> releaseTree;
 
     juce::Slider chorusDepthSlider;
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> chorusDepthTree;
     juce::Slider chorusMixSlider;
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> chorusMixTree;
     juce::Label chorusDepthLabel{ {}, "Depth" };
     juce::Label chorusMixLabel{ {}, "Mix" };
 
     juce::Slider cutoffSlider;
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> cutoffTree;
     juce::Slider resonanceSlider;
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> resonanceTree;
     juce::Label cutoffLabel{ {}, "Cutoff" };
     juce::Label resonanceLabel{ {}, "Resonance" };
 
