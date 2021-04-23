@@ -38,11 +38,11 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
 
     }
 
-    wavetableDropDowns[0].setSelectedId(1);
-    wavetableDropDowns[1].setSelectedId(3);
-    wavetableDropDowns[2].setSelectedId(5);
-    wavetableDropDowns[3].setSelectedId(7);
-    wavetableDropDowns[4].setSelectedId(9);
+    // add wavescanning slider, set range and style
+    addAndMakeVisible(wavescanningSlider);
+    wavescanningSlider.setRange(0, 4);
+    wavescanningSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
+
 
     // adding listeners to every drop down menu and connecting them to the processor
     wavetableDropDowns[0].addListener(this);
@@ -56,22 +56,38 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     wavetableDropDowns[4].addListener(this);
     waveslotFiveTree = new juce::AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.parameters, "wavetype_five", wavetableDropDowns[4]);
 
-    //=============================
 
-    // add wavescanning slider, set range and style
-    addAndMakeVisible(wavescanningSlider);
-    wavescanningSlider.setRange(0, 4);
-    wavescanningSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
-
-    // add a listener
+    // add a listener to the slider and connect to the processor
     wavescanningSlider.addListener(this);
-
-    // setting the slider to control the wavescan parameter in the audio processor
     wavescanTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "wavescan", wavescanningSlider);
 
-    
+    //=========================================================================
+    // MIXER
 
-    
+    // add label for section, set font and centre text
+    addAndMakeVisible(mixerLabel);
+    mixerLabel.setFont(textFont);
+    mixerLabel.setJustificationType(juce::Justification::centred);
+
+    // add corresponding labels for the sliders in this section, set font and centre text
+    addAndMakeVisible(wavesynthLabel);
+    wavesynthLabel.setFont(labelFont);
+    wavesynthLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(sinesynthLabel);
+    sinesynthLabel.setFont(labelFont);
+    sinesynthLabel.setJustificationType(juce::Justification::centred);
+
+    // add 1st slider for volume of wavetable synthesizer, set range and appearance
+    addAndMakeVisible(wavesynthSlider);
+    wavesynthSlider.setRange(0, 1);
+    wavesynthSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    wavesynthSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+
+    // add 2nd slider for volume of sinusoidal synthesizer, set range and appearance
+    addAndMakeVisible(sinesynthSlider);
+    sinesynthSlider.setRange(0, 1);
+    sinesynthSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    sinesynthSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
 
     //=========================================================================
     // BOTTOM LEFT SECTION - ADSR ENVELOPE
@@ -81,6 +97,7 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     envelopeLabel.setFont(textFont);
     envelopeLabel.setJustificationType(juce::Justification::centred);
 
+    // add corresponding labels for the sliders in this section, set font and centre text
     addAndMakeVisible(attackLabel);
     attackLabel.setFont(textFont);
     attackLabel.setJustificationType(juce::Justification::centred);
@@ -94,142 +111,172 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     releaseLabel.setFont(textFont);
     releaseLabel.setJustificationType(juce::Justification::centred);
 
-    // setting the range and style of the sliders
-    attackSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
+    // add 1st slider for attack time, set range and appearance
+    addAndMakeVisible(attackSlider);
     attackSlider.setRange(0, 4);
+    attackSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
     attackSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
-    decaySlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
+
+    // add 2nd slider for decay time, set range and appearance
+    addAndMakeVisible(decaySlider);
     decaySlider.setRange(0, 4);
+    decaySlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
     decaySlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
-    sustainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
+
+    // add 3rd slider for sustain level, set range and appearance
+    addAndMakeVisible(sustainSlider);
     sustainSlider.setRange(0, 1);
+    sustainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
     sustainSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
-    releaseSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
+
+    // add 4th slider for relase time, set range and appearance
+    addAndMakeVisible(releaseSlider);
     releaseSlider.setRange(0, 4);
+    releaseSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
     releaseSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
 
-    // add the 4 ADSR slider to the GUI
-    addAndMakeVisible(attackSlider);
+    // adding listeners to every slider and connecting them to the processor
     attackSlider.addListener(this);
     attackTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "attack", attackSlider);
-
-    addAndMakeVisible(decaySlider);
     decaySlider.addListener(this);
     decayTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "decay", decaySlider);
-
-    addAndMakeVisible(sustainSlider);
     sustainSlider.addListener(this);
     sustainTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "sustain", sustainSlider);
-
-    addAndMakeVisible(releaseSlider);
     releaseSlider.addListener(this);
     releaseTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "release", releaseSlider);
 
     //=========================================================================
     // FILTER
 
+    // add label for section, set font and centre text
     addAndMakeVisible(filterLabel);
     filterLabel.setFont(textFont);
     filterLabel.setJustificationType(juce::Justification::centred);
 
+    // add corresponding labels for the sliders in this section, set font and centre text
+    addAndMakeVisible(cutoffLabel);
+    cutoffLabel.setFont(labelFont);
+    cutoffLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(resonanceLabel);
+    resonanceLabel.setFont(labelFont);
+    resonanceLabel.setJustificationType(juce::Justification::centred);
+
+    // add 1st slider for cutoff frequency, set range and appearance
     addAndMakeVisible(cutoffSlider);
     cutoffSlider.setRange(0, 1);
     cutoffSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     cutoffSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
 
-    cutoffSlider.addListener(this);
-    cutoffTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "cutoff", cutoffSlider);
-
+    // add 2nd slider for resonance, set range and appearance
     addAndMakeVisible(resonanceSlider);
     resonanceSlider.setRange(0, 1);
     resonanceSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     resonanceSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
 
+    // adding listeners to every slider and connecting them to the processor
+    cutoffSlider.addListener(this);
+    cutoffTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "cutoff", cutoffSlider);
     resonanceSlider.addListener(this);
     resonanceTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "resonance", resonanceSlider);
 
-    addAndMakeVisible(cutoffLabel);
-    cutoffLabel.setFont(labelFont);
-    cutoffLabel.setJustificationType(juce::Justification::centred);
+    //=========================================================================
+    // FILTER ENVELOPE
 
-    addAndMakeVisible(resonanceLabel);
-    resonanceLabel.setFont(labelFont);
-    resonanceLabel.setJustificationType(juce::Justification::centred);
+    // add label for section, set font and centre text
+    addAndMakeVisible(filterEnvLabel);
+    filterEnvLabel.setFont(textFont);
+    filterEnvLabel.setJustificationType(juce::Justification::centred);
+
+    // add corresponding labels for the sliders in this section, set font and centre text
+    addAndMakeVisible(filterAttackLabel);
+    filterAttackLabel.setFont(textFont);
+    filterAttackLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(filterDecayLabel);
+    filterDecayLabel.setFont(textFont);
+    filterDecayLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(filterSustainLabel);
+    filterSustainLabel.setFont(textFont);
+    filterSustainLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(filterReleaseLabel);
+    filterReleaseLabel.setFont(textFont);
+    filterReleaseLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(filterEnvAmpLabel);
+    filterEnvAmpLabel.setFont(labelFont);
+    filterEnvAmpLabel.setJustificationType(juce::Justification::centred);
+
+    // add 1st slider for filter attack time, set range and appearance
+    addAndMakeVisible(filterAttackSlider);
+    filterAttackSlider.setRange(0, 4);
+    filterAttackSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
+    filterAttackSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+
+    // add 2nd slider for filter decay time, set range and appearance
+    addAndMakeVisible(filterDecaySlider);
+    filterDecaySlider.setRange(0, 4);
+    filterDecaySlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
+    filterDecaySlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+
+    // add 3rd slider for filter sustain level, set range and appearance
+    addAndMakeVisible(filterSustainSlider);
+    filterSustainSlider.setRange(0, 1);
+    filterSustainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
+    filterSustainSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+
+    // add 4th slider for filter release time, set range and appearance
+    addAndMakeVisible(filterReleaseSlider);
+    filterReleaseSlider.setRange(0, 4);
+    filterReleaseSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
+    filterReleaseSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+
+    // add 5th slider for filter envelop amplitude, set range and appearance
+    addAndMakeVisible(filterEnvAmpSlider);
+    filterEnvAmpSlider.setRange(-1, 1);
+    filterEnvAmpSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    filterEnvAmpSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
 
     //=========================================================================
     // CHORUS
 
+    // add label for section, set font and centre text
     addAndMakeVisible(chorusLabel);
     chorusLabel.setFont(textFont);
     chorusLabel.setJustificationType(juce::Justification::centred);
 
+    // add corresponding labels for the sliders in this section, set font and centre text
+    addAndMakeVisible(chorusDepthLabel);
+    chorusDepthLabel.setFont(labelFont);
+    chorusDepthLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(chorusMixLabel);
+    chorusMixLabel.setFont(labelFont);
+    chorusMixLabel.setJustificationType(juce::Justification::centred);
+
+    // add 1st slider for chorus depth, set range and appearance
     addAndMakeVisible(chorusDepthSlider);
     chorusDepthSlider.setRange(0, 1);
     chorusDepthSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     chorusDepthSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
 
-    chorusDepthSlider.addListener(this);
-    chorusDepthTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "chorus_depth", chorusDepthSlider);
-
+    // add 2nd slider for chorus mix level, set range and appearance
     addAndMakeVisible(chorusMixSlider);
     chorusMixSlider.setRange(0, 1);
     chorusMixSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     chorusMixSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
 
+    // adding listeners to every slider and connecting them to the processor
+    chorusDepthSlider.addListener(this);
+    chorusDepthTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "chorus_depth", chorusDepthSlider);
     chorusMixSlider.addListener(this);
     chorusMixTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "chorus_mix", chorusMixSlider);
-
-
-    addAndMakeVisible(chorusDepthLabel);
-    chorusDepthLabel.setFont(labelFont);
-    chorusDepthLabel.setJustificationType(juce::Justification::centred);
-
-    addAndMakeVisible(chorusMixLabel);
-    chorusMixLabel.setFont(labelFont);
-    chorusMixLabel.setJustificationType(juce::Justification::centred);
-
-
 
     //=========================================================================
     // REVERB
 
+    // add label for section, set font and centre text
     addAndMakeVisible(reverbLabel);
     reverbLabel.setFont(textFont);
     reverbLabel.setJustificationType(juce::Justification::centred);
 
-    addAndMakeVisible(roomSizeSlider);
-    roomSizeSlider.setRange(0, 1);
-    roomSizeSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
-    roomSizeSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
-
-    roomSizeSlider.addListener(this);
-    roomSizeTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "room_size", roomSizeSlider);
-
-    addAndMakeVisible(dampingSlider);
-    dampingSlider.setRange(0, 1);
-    dampingSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
-    dampingSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
-
-    dampingSlider.addListener(this);
-    dampingTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "damping", dampingSlider);
-
-    addAndMakeVisible(drySlider);
-    drySlider.setRange(0, 1);
-    drySlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
-    drySlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
-
-    drySlider.addListener(this);
-    dryTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "dry", drySlider);
-
-    addAndMakeVisible(wetSlider);
-    wetSlider.setRange(0, 1);
-    wetSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
-    wetSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
-
-    wetSlider.addListener(this);
-    wetTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "wet", wetSlider);
-
-
+    // add corresponding labels for the sliders in this section, set font and centre text
     addAndMakeVisible(roomSizeLabel);
     roomSizeLabel.setFont(labelFont);
     roomSizeLabel.setJustificationType(juce::Justification::centred);
@@ -243,21 +290,58 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     wetLabel.setFont(labelFont);
     wetLabel.setJustificationType(juce::Justification::centred);
 
+    // add 1st slider for reverb room size, set range and appearance
+    addAndMakeVisible(roomSizeSlider);
+    roomSizeSlider.setRange(0, 1);
+    roomSizeSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    roomSizeSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+
+    // add 2nd slider for reverb damping level, set range and appearance
+    addAndMakeVisible(dampingSlider);
+    dampingSlider.setRange(0, 1);
+    dampingSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    dampingSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+
+    // add 3rd slider for reverb dry level, set range and appearance
+    addAndMakeVisible(drySlider);
+    drySlider.setRange(0, 1);
+    drySlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    drySlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+
+    // add 4th slider for reverb wet level, set range and appearance
+    addAndMakeVisible(wetSlider);
+    wetSlider.setRange(0, 1);
+    wetSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    wetSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+
+    // adding listeners to every slider and connecting them to the processor
+    roomSizeSlider.addListener(this);
+    roomSizeTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "room_size", roomSizeSlider);
+    dampingSlider.addListener(this);
+    dampingTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "damping", dampingSlider);
+    drySlider.addListener(this);
+    dryTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "dry", drySlider);
+    wetSlider.addListener(this);
+    wetTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "wet", wetSlider);
+
     //=========================================================================
     // LFO
 
+    // add label for section, set font and centre text
     addAndMakeVisible(lfoLabel);
     lfoLabel.setFont(textFont);
     lfoLabel.setJustificationType(juce::Justification::centred);
 
+    //=========================================================================
 
+    // add name of the plugin to the interface
     addAndMakeVisible(waveMorpherLabel);
     waveMorpherLabel.setFont(juce::Font(24.0f, juce::Font::bold));
     waveMorpherLabel.setJustificationType(juce::Justification::topLeft);
     waveMorpherLabel.setColour(juce::Label::textColourId, juce::Colour(47, 61, 59));
 
     // set size of window
-    setSize (620, 428);
+    setSize (730, 428);
 }
 
 WavetableSynthesisTestAudioProcessorEditor::~WavetableSynthesisTestAudioProcessorEditor()
@@ -270,20 +354,26 @@ void WavetableSynthesisTestAudioProcessorEditor::paint (juce::Graphics& g)
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll(juce::Colour(139, 176, 168));
 
-    // drawing outer rectangle for wavescan panel
+    // drawing outer rectangles for all section panels
     juce::Rectangle<int> wavescanPanelOut{ 4, 4, 612, 194 };
+    juce::Rectangle<int> mixerPanelOut{ 620, 4, 106, 194 };
     juce::Rectangle<int> envPanelOut{ 4, 202, 100, 194 };
-    juce::Rectangle<int> filterPanelOut{ 108, 202, 100, 194 };
-    juce::Rectangle<int> chorusPanelOut{ 212, 202, 100, 194 };
-    juce::Rectangle<int> reverbPanelOut{ 316, 202, 148, 194 };
-    juce::Rectangle<int> lfoPanelOut{ 468, 202, 148, 194 };
+    juce::Rectangle<int> filterPanelOut{ 108, 202, 80, 194 };
+    juce::Rectangle<int> filterEnvPanelOut{ 192, 202, 170, 194 };
+    juce::Rectangle<int> chorusPanelOut{ 366, 202, 80, 194 };
+    juce::Rectangle<int> reverbPanelOut{ 450, 202, 136, 194 };
+    juce::Rectangle<int> lfoPanelOut{ 590, 202, 136, 194 };
     g.setColour(juce::Colour(47, 61, 59));
     g.drawRect(wavescanPanelOut);
     g.fillRect(wavescanPanelOut);
+    g.drawRect(mixerPanelOut);
+    g.fillRect(mixerPanelOut);
     g.drawRect(envPanelOut);
     g.fillRect(envPanelOut);
     g.drawRect(filterPanelOut);
     g.fillRect(filterPanelOut);
+    g.drawRect(filterEnvPanelOut);
+    g.fillRect(filterEnvPanelOut);
     g.drawRect(chorusPanelOut);
     g.fillRect(chorusPanelOut);
     g.drawRect(reverbPanelOut);
@@ -291,20 +381,26 @@ void WavetableSynthesisTestAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawRect(lfoPanelOut);
     g.fillRect(lfoPanelOut);
 
-    // draw inner rectangle for wavescan panel
+    // drawing inner rectangles for all section panels
     juce::Rectangle<int> wavescanPanel{ 6, 6, 608, 190 };
+    juce::Rectangle<int> mixerPanel{ 622, 6, 102, 190 };
     juce::Rectangle<int> envPanel{ 6, 204, 96, 190 };
-    juce::Rectangle<int> filterPanel{ 110, 204, 96, 190 };
-    juce::Rectangle<int> chorusPanel{ 214, 204, 96, 190 };
-    juce::Rectangle<int> reverbPanel{ 318, 204, 144, 190 };
-    juce::Rectangle<int> lfoPanel{ 470, 204, 144, 190 };
+    juce::Rectangle<int> filterPanel{ 110, 204, 76, 190 };
+    juce::Rectangle<int> filterEnvPanel{ 194, 204, 166, 190}; 
+    juce::Rectangle<int> chorusPanel{ 368, 204, 76, 190 };
+    juce::Rectangle<int> reverbPanel{ 452, 204, 132, 190 };
+    juce::Rectangle<int> lfoPanel{ 592, 204, 132, 190 };
     g.setColour(juce::Colours::darkslategrey);
     g.drawRect(wavescanPanel);
     g.fillRect(wavescanPanel);
+    g.drawRect(mixerPanel);
+    g.fillRect(mixerPanel);
     g.drawRect(envPanel);
     g.fillRect(envPanel);
     g.drawRect(filterPanel);
     g.fillRect(filterPanel);
+    g.drawRect(filterEnvPanel);
+    g.fillRect(filterEnvPanel);
     g.drawRect(chorusPanel);
     g.fillRect(chorusPanel);
     g.drawRect(reverbPanel);
@@ -318,7 +414,7 @@ void WavetableSynthesisTestAudioProcessorEditor::paint (juce::Graphics& g)
     juce::Rectangle<int> slotThreeLine{ 309, 60, 3, 100 };
     juce::Rectangle<int> slotFourLine{ 435, 120, 3, 40 };
     juce::Rectangle<int> slotFiveLine{ 559, 60, 3, 100 };
-    juce::Rectangle<int> bottomLine{ 212,411,404,3 };
+    juce::Rectangle<int> bottomLine{ 212,411,504,3 };
     g.setColour(juce::Colours::antiquewhite);
     g.drawRect(slotOneLine);
     g.drawRect(slotTwoLine);
@@ -332,6 +428,7 @@ void WavetableSynthesisTestAudioProcessorEditor::paint (juce::Graphics& g)
     g.fillRect(slotFourLine);
     g.fillRect(slotFiveLine);
 
+    // draw decorative line along bottom
     g.setColour(juce::Colours::ghostwhite);
     g.drawRect(bottomLine);
     g.fillRect(bottomLine);
@@ -355,48 +452,83 @@ void WavetableSynthesisTestAudioProcessorEditor::resized()
     wavetableDropDowns[3].setBounds(346, 90, 180, 20);
     wavetableDropDowns[4].setBounds(430, 30, 180, 20);
 
-
-
     // positioning the wavescan slider
     wavescanningSlider.setBounds(53, 165, 517, 20);
 
-    // positioning the labels for the lower panels
+    //=========================================================================
+
+    mixerLabel.setBounds(622, 10, 102, 20);
+
+    wavesynthSlider.setBounds(643, 36, 60, 60);
+    wavesynthLabel.setBounds(643, 96, 60, 15);
+    sinesynthSlider.setBounds(643, 111, 60, 60);
+    sinesynthLabel.setBounds(637, 171, 72, 15);
+    
+    //=========================================================================
+
     envelopeLabel.setBounds(6, 204, 96, 20);
-    chorusLabel.setBounds(214, 204, 96, 20);
-    filterLabel.setBounds(110, 204, 96, 20);
-    reverbLabel.setBounds(318, 204, 144, 20);
-    lfoLabel.setBounds(470, 204, 144, 20);
 
-    // positioning the ADSR sliders
     attackSlider.setBounds(10, 234, 21, 130);
-    decaySlider.setBounds(32, 234, 21, 130);
-    sustainSlider.setBounds(54, 234, 21, 130);
-    releaseSlider.setBounds(76, 234, 21, 130);
-
     attackLabel.setBounds(10, 370, 21, 20);
+    decaySlider.setBounds(32, 234, 21, 130);
     decayLabel.setBounds(32, 370, 21, 20);
+    sustainSlider.setBounds(54, 234, 21, 130);
     sustainLabel.setBounds(54, 370, 21, 20);
+    releaseSlider.setBounds(76, 234, 21, 130);
     releaseLabel.setBounds(76, 370, 21, 20);
 
-    chorusDepthSlider.setBounds(232, 234, 60, 60);
-    chorusMixSlider.setBounds(232, 309, 60, 60);
-    chorusDepthLabel.setBounds(232, 294, 60, 15);
-    chorusMixLabel.setBounds(232, 369, 60, 15);
+    //=========================================================================
 
-    cutoffSlider.setBounds(128, 234, 60, 60);
-    resonanceSlider.setBounds(128, 309, 60, 60);
-    cutoffLabel.setBounds(128, 294, 60, 15);
-    resonanceLabel.setBounds(128, 369, 60, 15);
+    filterLabel.setBounds(110, 204, 76, 20);
 
-    roomSizeSlider.setBounds(328, 234, 60, 60);
-    drySlider.setBounds(328, 309, 60, 60);
-    roomSizeLabel.setBounds(328, 294, 60, 15);
-    dryLabel.setBounds(328, 369, 60, 15);
+    cutoffSlider.setBounds(118, 234, 60, 60);
+    cutoffLabel.setBounds(118, 294, 60, 15);
+    resonanceSlider.setBounds(118, 309, 60, 60);
+    resonanceLabel.setBounds(118, 369, 60, 15);
 
-    dampingSlider.setBounds(392, 234, 60, 60);
-    wetSlider.setBounds(392, 309, 60, 60);
-    dampingLabel.setBounds(392, 294, 60, 15);
-    wetLabel.setBounds(392, 369, 60, 15);
+    //=========================================================================
+
+    filterEnvLabel.setBounds(194, 204, 166, 20);
+
+    filterAttackSlider.setBounds(198, 234, 21, 130);
+    filterAttackLabel.setBounds(198, 370, 21, 20);
+    filterDecaySlider.setBounds(220, 234, 21, 130);
+    filterDecayLabel.setBounds(220, 370, 21, 20);
+    filterSustainSlider.setBounds(242, 234, 21, 130);
+    filterSustainLabel.setBounds(242, 370, 21, 20);
+    filterReleaseSlider.setBounds(264, 234, 21, 130);
+    filterReleaseLabel.setBounds(264, 370, 21, 20);
+
+    filterEnvAmpSlider.setBounds(293, 264, 60, 60);
+    filterEnvAmpLabel.setBounds(293, 324, 60, 15);
+
+    //=========================================================================
+
+    chorusLabel.setBounds(368, 204, 76, 20);
+
+    chorusDepthSlider.setBounds(376, 234, 60, 60);
+    chorusDepthLabel.setBounds(376, 294, 60, 15);
+    chorusMixSlider.setBounds(376, 309, 60, 60);
+    chorusMixLabel.setBounds(376, 369, 60, 15);
+
+    //=========================================================================
+
+    reverbLabel.setBounds(452, 204, 132, 20);
+
+    roomSizeSlider.setBounds(458, 234, 60, 60);
+    roomSizeLabel.setBounds(458, 294, 60, 15);
+    drySlider.setBounds(458, 309, 60, 60);
+    dryLabel.setBounds(458, 369, 60, 15);
+    dampingSlider.setBounds(518, 234, 60, 60);
+    dampingLabel.setBounds(518, 294, 60, 15);
+    wetSlider.setBounds(518, 309, 60, 60);
+    wetLabel.setBounds(518, 369, 60, 15);
+
+    //=========================================================================
+
+    //lfoLabel.setBounds(470, 204, 144, 20);
+
+    //=========================================================================
 
     waveMorpherLabel.setBounds(4, 400, 200, 28);
 
