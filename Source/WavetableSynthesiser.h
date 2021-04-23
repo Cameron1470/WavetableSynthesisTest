@@ -90,6 +90,8 @@ public:
     void controllerMoved(int, int) override {}
     //--------------------------------------------------------------------------
 
+    void prepareToPlay(double sampleRate, int samplesPerBlock, int outputChannels) override;
+
     /**
      Can this voice play a sound. I wouldn't worry about this for the time being
 
@@ -150,6 +152,61 @@ public:
      */
     void setRelease(std::atomic<float>* release);
 
+    /**
+     Set the cutoff frequency of the ladder filter
+
+     @param cutoff frequency in Hz
+     */
+    void setFilterCutoff(std::atomic<float>* _filterCutoff);
+
+    /**
+     Set the resonance value of the ladder filter
+
+     @param resonance value between 0 and 1
+     */
+    void setFilterResonance(std::atomic<float>* _filterResonance);
+
+    /**
+     Modify the attack of the filter ADSR envelope
+
+     @param attack time in seconds
+     */
+    void setFilterAttack(std::atomic<float>* filterAttack);
+
+    /**
+     Modify the decay of the filter ADSR envelope
+
+     @param decay time in seconds
+     */
+    void setFilterDecay(std::atomic<float>* filterDecay);
+
+    /**
+     Modify the sustain level of the filter ADSR envelope
+
+     @param sustain value between 0 and 1
+     */
+    void setFilterSustain(std::atomic<float>* filterSustain);
+
+    /**
+     Modify the release of the filter ADSR envelope
+
+     @param release time in seconds
+     */
+    void setFilterRelease(std::atomic<float>* filterRelease);
+
+    /**
+    Modify the amplitude multiplier of the filter ADSR envelope
+
+    @param amplitude between -1 and 1
+    */
+    void setFilterEnvAmp(std::atomic<float>* _filterEnvAmp);
+
+    /**
+     Modify the release of the filter ADSR envelope
+
+     @param release time in seconds
+     */
+    void setSamplesPerBlock(int _sampsPerBlock);
 
     /**
      Change the wavetable stored in a specified slot of the wavescanner
@@ -210,6 +267,9 @@ private:
     /// The ADSR envelope
     juce::ADSR env;
 
+    /// The filter ADSR envelope
+    juce::ADSR filterEnv;
+
     /// Gain used in process block to reduce volume
     float gain = 0.2f;
 
@@ -228,5 +288,18 @@ private:
     /// For storing the parmeters of the ADSR envelope
     juce::ADSR::Parameters envParams;
 
+    /// For storing the parmeters of the filter ADSR envelope
+    juce::ADSR::Parameters filterEnvParams;
+
+    juce::dsp::LadderFilter<float> ladderFilter;
+
+    int sampsPerBlock;
+
+    float filterCutoff = 10000.0f;
+    float filterResonance = 0.1f;
+    float filterEnvVal = 0.0f;
+    float filterEnvAmp = 0.0f;
+
+    juce::AudioBuffer<float> synthBuffer;
 
 };

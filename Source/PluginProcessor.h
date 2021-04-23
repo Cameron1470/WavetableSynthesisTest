@@ -68,6 +68,13 @@ public:
     float sustainParam;
     float releaseParam;
 
+    /// The ADSR parameters for the filter envelope
+    //float filterAttackParam;
+    //float filterDecayParam;
+    //float filterSustainParam;
+    //float filterReleaseParam;
+    //float filterEnvAmpParam;
+
     // variables of current index of the wavetable in BinaryData updated from GUI
     float slotOneIndexGUI;
     float slotTwoIndexGUI;
@@ -109,7 +116,7 @@ private:
     // Juce dsp Chorus
     juce::dsp::Chorus<float> chorus;
 
-    juce::dsp::LadderFilter<float> ladderFilter;
+
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WavetableSynthesisTestAudioProcessor)
