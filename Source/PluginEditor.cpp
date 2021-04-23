@@ -89,6 +89,12 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     sinesynthSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     sinesynthSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
 
+    // adding listeners to every slider and connecting them to the processor
+    wavesynthSlider.addListener(this);
+    wavesynthTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "wave_synth", wavesynthSlider);
+    sinesynthSlider.addListener(this);
+    sinesynthTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "sine_synth", sinesynthSlider);
+
     //=========================================================================
     // BOTTOM LEFT SECTION - ADSR ENVELOPE
 
@@ -113,13 +119,13 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
 
     // add 1st slider for attack time, set range and appearance
     addAndMakeVisible(attackSlider);
-    attackSlider.setRange(0, 4);
+    attackSlider.setRange(0, 1);
     attackSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
     attackSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
 
     // add 2nd slider for decay time, set range and appearance
     addAndMakeVisible(decaySlider);
-    decaySlider.setRange(0, 4);
+    decaySlider.setRange(0, 1);
     decaySlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
     decaySlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
 
@@ -163,7 +169,7 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
 
     // add 1st slider for cutoff frequency, set range and appearance
     addAndMakeVisible(cutoffSlider);
-    cutoffSlider.setRange(0, 1);
+    cutoffSlider.setRange(100, 20000);
     cutoffSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     cutoffSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
 

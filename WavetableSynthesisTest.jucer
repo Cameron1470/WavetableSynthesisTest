@@ -22,6 +22,7 @@
             file="Source/WavescanningSlot.h"/>
       <FILE id="JSZL54" name="WavetableOscillator.h" compile="0" resource="0"
             file="Source/WavetableOscillator.h"/>
+      <FILE id="xXO51w" name="Oscillators.h" compile="0" resource="0" file="Source/Oscillators.h"/>
       <GROUP id="{52E40A58-0297-80BD-F4F4-F08033FE9B7E}" name="Wavetables">
         <FILE id="eCGNU6" name="Arp Pulse.wav" compile="0" resource="1" file="Source/Wavetables/Arp Pulse.wav"/>
         <FILE id="EcsA0c" name="Arp Square.wav" compile="0" resource="1" file="Source/Wavetables/Arp Square.wav"/>

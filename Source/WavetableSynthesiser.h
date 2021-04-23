@@ -16,6 +16,7 @@
 #include <BinaryData.h>
 #include "WavescanningSlot.h"
 #include "PluginProcessor.h"
+#include "Oscillators.h"
 
 
 // ===========================
@@ -108,6 +109,20 @@ public:
     void setWavescanVal(std::atomic<float>* _wavescanBal);
 
     /**
+    Sets the volume of the wavetable oscillator
+
+    @param wavetable volume level
+    */
+    void setWavetableVolume(std::atomic<float>* _wavetableVolume);
+
+    /**
+    Sets the volume of the wavetable oscillator
+
+    @param wavetable volume level
+    */
+    void setSineVolume(std::atomic<float>* _sineVolume);
+
+    /**
      Modify the attack of the ADSR envelope
 
      @param attack time in seconds
@@ -187,6 +202,11 @@ private:
 
     //==========================================================================
 
+    SinOsc fundamentalOsc;
+
+
+    //==========================================================================
+
     /// The ADSR envelope
     juce::ADSR env;
 
@@ -195,6 +215,12 @@ private:
 
     /// Wavescan balance value, updated from the atomic float
     float wavescanBal = 2.0f;
+
+    /// Wavetable volume level, update from the atomic float
+    float wavetableVolume = 1.0f;
+
+    /// Sine oscillator volume level, update from the atomic float
+    float sineVolume = 1.0f;
 
     /// Current sample variable used in the process bloack
     float currentSample = 0.0f;

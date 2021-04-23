@@ -66,9 +66,11 @@ private:
 
     juce::Slider wavesynthSlider;
     juce::Label wavesynthLabel{ {}, "Wavetable" };
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> wavesynthTree;
 
     juce::Slider sinesynthSlider;
     juce::Label sinesynthLabel{ {}, "Fundamental" };
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> sinesynthTree;
 
     //=================================================================================
     // AMPLITUDE ENVELOPE

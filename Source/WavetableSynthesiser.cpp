@@ -73,6 +73,9 @@ void WavetableSynthVoice::startNote(int midiNoteNumber, float velocity, juce::Sy
     wtOscillatorFour.add(oscillatorSlotFour);
     wtOscillatorFive.add(oscillatorSlotFive);
 
+    fundamentalOsc.setSampleRate(getSampleRate());
+    fundamentalOsc.setFrequency(freq);
+
     // reset and start envelope
     env.reset();
     env.noteOn();
@@ -129,12 +132,13 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
                 currentSample = ((slotFourSample * (1 - normalizedWavescanVal)) + (slotFiveSample * normalizedWavescanVal)) * gain * envVal;
             }
 
+            float fundamentalSample = fundamentalOsc.process() * envVal;
 
             // for each channel, write the currentSample float to the output
             for (int chan = 0; chan < outputBuffer.getNumChannels(); chan++)
             {
                 // The output sample is scaled by 0.1 so that it is not too loud by default
-                outputBuffer.addSample(chan, sampleIndex, currentSample * 0.1);
+                outputBuffer.addSample(chan, sampleIndex, ((currentSample * wavetableVolume) + (fundamentalSample * sineVolume)) * 0.1);
             }
 
             // clear current note if ending and env val is very small
@@ -158,6 +162,16 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
 void WavetableSynthVoice::setWavescanVal(std::atomic<float>* _wavescanBal)
 {
     wavescanBal = *_wavescanBal;
+}
+
+void WavetableSynthVoice::setWavetableVolume(std::atomic<float>* _wavetableVolume)
+{
+    wavetableVolume = *_wavetableVolume;
+}
+
+void WavetableSynthVoice::setSineVolume(std::atomic<float>* _sineVolume)
+{
+    sineVolume = *_sineVolume;
 }
 
 void WavetableSynthVoice::setAttack(std::atomic<float>* attack)

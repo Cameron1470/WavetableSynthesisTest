@@ -62,15 +62,21 @@ WavetableSynthesisTestAudioProcessor::WavetableSynthesisTestAudioProcessor()
 
     parameters.createAndAddParameter("wavetype_five", "Wave Type Five", "Wavetable Five", wavetableTypeRange, 8, nullptr, nullptr);
 
+    //==========================================================================
+    // add mixer parameters to value tree state
+    juce::NormalisableRange<float> mixerRange(0, 2);
 
+    parameters.createAndAddParameter("wave_synth", "Wavetable Synth", "Wavetable Synth", mixerRange, 1.0f, nullptr, nullptr);
+
+    parameters.createAndAddParameter("sine_synth", "Sine Synth", "Sine Synth", mixerRange, 1.0f, nullptr, nullptr);
 
     //==========================================================================
     // add ADSR parameters to value tree state
-    juce::NormalisableRange<float> attackRange(0.0f, 4.0f);
+    juce::NormalisableRange<float> attackRange(0.0f, 1.0f);
     parameters.createAndAddParameter("attack", "Attack", "Attack", attackRange, 0.1f, nullptr, nullptr);
 
-    juce::NormalisableRange<float> decayRange(0.0f, 4.0f);
-    parameters.createAndAddParameter("decay", "Decay", "Decay", decayRange, 0.1f, nullptr, nullptr);
+    juce::NormalisableRange<float> decayRange(0.0f, 1.0f);
+    parameters.createAndAddParameter("decay", "Decay", "Decay", decayRange, 0.5f, nullptr, nullptr);
 
     juce::NormalisableRange<float> sustainRange(0.0f, 1.0f);
     parameters.createAndAddParameter("sustain", "Sustain", "Sustain", sustainRange, 0.9f, nullptr, nullptr);
@@ -78,18 +84,18 @@ WavetableSynthesisTestAudioProcessor::WavetableSynthesisTestAudioProcessor()
     juce::NormalisableRange<float> releaseRange(0.0f, 4.0f);
     parameters.createAndAddParameter("release", "Release", "Release", releaseRange, 0.5f, nullptr, nullptr);
     //==========================================================================
-    juce::NormalisableRange<float> cutoffRange(0.0f, 20000.0f);
-    parameters.createAndAddParameter("cutoff", "Cutoff", "Cutoff", cutoffRange, 5000.0f, nullptr, nullptr);
+    juce::NormalisableRange<float> cutoffRange(100.0f, 20000.0f);
+    parameters.createAndAddParameter("cutoff", "Cutoff", "Cutoff", cutoffRange, 10000.0f, nullptr, nullptr);
 
     juce::NormalisableRange<float> resonanceRange(0.0f, 1.0f);
     parameters.createAndAddParameter("resonance", "Resonance", "Resonance", resonanceRange, 0.1f, nullptr, nullptr);
 
     //==========================================================================
     juce::NormalisableRange<float> chorusDepthRange(0.0f, 1.0f);
-    parameters.createAndAddParameter("chorus_depth", "Chorus Depth", "Chorus Depth", chorusDepthRange, 0.5f, nullptr, nullptr);
+    parameters.createAndAddParameter("chorus_depth", "Chorus Depth", "Chorus Depth", chorusDepthRange, 0.1f, nullptr, nullptr);
 
     juce::NormalisableRange<float> chorusMixRange(0.0f, 1.0f);
-    parameters.createAndAddParameter("chorus_mix", "Chorus Mix", "Chorus Mix", chorusMixRange, 0.5f, nullptr, nullptr);
+    parameters.createAndAddParameter("chorus_mix", "Chorus Mix", "Chorus Mix", chorusMixRange, 0.1f, nullptr, nullptr);
 
     //==========================================================================
     juce::NormalisableRange<float> roomSizeRange(0.0f, 1.0f);
@@ -99,10 +105,10 @@ WavetableSynthesisTestAudioProcessor::WavetableSynthesisTestAudioProcessor()
     parameters.createAndAddParameter("damping", "Damping", "Damping", dampingRange, 0.5f, nullptr, nullptr);
 
     juce::NormalisableRange<float> dryRange(0.0f, 1.0f);
-    parameters.createAndAddParameter("dry", "Dry", "Dry", dryRange, 0.5f, nullptr, nullptr);
+    parameters.createAndAddParameter("dry", "Dry", "Dry", dryRange, 0.6f, nullptr, nullptr);
 
     juce::NormalisableRange<float> wetRange(0.0f, 1.0f);
-    parameters.createAndAddParameter("wet", "Wet", "Wet", wetRange, 0.5f, nullptr, nullptr);
+    parameters.createAndAddParameter("wet", "Wet", "Wet", wetRange, 0.3f, nullptr, nullptr);
 
     //==========================================================================
     // add wavetable synth voices to the synthesiser class
@@ -274,6 +280,9 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
         v->setDecay(parameters.getRawParameterValue("decay"));
         v->setSustain(parameters.getRawParameterValue("sustain"));
         v->setRelease(parameters.getRawParameterValue("release"));
+
+        v->setWavetableVolume(parameters.getRawParameterValue("wave_synth"));
+        v->setSineVolume(parameters.getRawParameterValue("sine_synth"));
     }
 
     slotOneIndexGUI = *parameters.getRawParameterValue("wavetype_one");
