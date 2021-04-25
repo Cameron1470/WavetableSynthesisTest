@@ -17,6 +17,9 @@
 #include "WavescanningSlot.h"
 #include "PluginProcessor.h"
 #include "Oscillators.h"
+#include "LadderFilterData.h"
+#include "AdsrData.h"
+
 
 
 // ===========================
@@ -124,83 +127,6 @@ public:
     */
     void setSineVolume(std::atomic<float>* _sineVolume);
 
-    /**
-     Modify the attack of the ADSR envelope
-
-     @param attack time in seconds
-     */
-    void setAttack(std::atomic<float>* attack);
-
-    /**
-     Modify the decay of the ADSR envelope
-
-     @param decay time in seconds
-     */
-    void setDecay(std::atomic<float>* decay);
-
-    /**
-     Modify the sustain value of the ADSR envelope
-
-     @param sustain value between 0 and 1
-     */
-    void setSustain(std::atomic<float>* sustain);
-
-    /**
-     Modify the release of the ADSR envelope
-
-     @param release time in seconds
-     */
-    void setRelease(std::atomic<float>* release);
-
-    /**
-     Set the cutoff frequency of the ladder filter
-
-     @param cutoff frequency in Hz
-     */
-    void setFilterCutoff(std::atomic<float>* _filterCutoff);
-
-    /**
-     Set the resonance value of the ladder filter
-
-     @param resonance value between 0 and 1
-     */
-    void setFilterResonance(std::atomic<float>* _filterResonance);
-
-    /**
-     Modify the attack of the filter ADSR envelope
-
-     @param attack time in seconds
-     */
-    void setFilterAttack(std::atomic<float>* filterAttack);
-
-    /**
-     Modify the decay of the filter ADSR envelope
-
-     @param decay time in seconds
-     */
-    void setFilterDecay(std::atomic<float>* filterDecay);
-
-    /**
-     Modify the sustain level of the filter ADSR envelope
-
-     @param sustain value between 0 and 1
-     */
-    void setFilterSustain(std::atomic<float>* filterSustain);
-
-    /**
-     Modify the release of the filter ADSR envelope
-
-     @param release time in seconds
-     */
-    void setFilterRelease(std::atomic<float>* filterRelease);
-
-    /**
-    Modify the amplitude multiplier of the filter ADSR envelope
-
-    @param amplitude between -1 and 1
-    */
-    void setFilterEnvAmp(std::atomic<float>* _filterEnvAmp);
-
 
     /**
      Change the wavetable stored in a specified slot of the wavescanner
@@ -211,17 +137,17 @@ public:
     void updateWavetable(int index, int slotNumber);
 
 
+    void updateFilter(const float frequency, const float resonance);
+
+    AdsrData& getAdsr() { return adsr; }
+    AdsrData& getFilterAdsr() { return filterAdsr; }
+    LadderFilterData& getFilter() { return filter; }
+
 
 private:
-    //--------------------------------------------------------------------------
-    /// Should the voice be playing?
-    bool playing = false;
+    
+    juce::AudioBuffer<float> synthBuffer;
 
-    /// Is the voice in the process of ending?
-    bool ending = false;
-    
-    
-    
     //==========================================================================
     
     /// Number of wavescanning slots
@@ -256,17 +182,10 @@ private:
 
     SinOsc fundamentalOsc;
 
-
     //==========================================================================
 
-    /// The ADSR envelope
-    juce::ADSR env;
-
-    /// The filter ADSR envelope
-    juce::ADSR filterEnv;
-
     /// Gain used in process block to reduce volume
-    float gain = 0.2f;
+    float gainVolume = 0.2f;
 
     /// Wavescan balance value, updated from the atomic float
     float wavescanBal = 2.0f;
@@ -280,20 +199,21 @@ private:
     /// Current sample variable used in the process bloack
     float currentSample = 0.0f;
     
-    /// For storing the parmeters of the ADSR envelope
-    juce::ADSR::Parameters envParams;
+    //==========================================================================
 
-    /// For storing the parmeters of the filter ADSR envelope
-    juce::ADSR::Parameters filterEnvParams;
+    /// The ADSR envelope
+    AdsrData adsr;
 
     /// The filter
-    juce::dsp::LadderFilter<float> ladderFilter;
+    LadderFilterData filter;
+
+    /// The filter ADSR
+    AdsrData filterAdsr;
+
+    juce::dsp::Gain<float> gain;
+
+    bool isPrepared{ false };
 
 
-    float filterCutoff = 10000.0f;
-    float filterEnvVal = 0.0f;
-    float filterEnvAmp = 0.0f;
-
-    juce::AudioBuffer<float> synthBuffer;
 
 };

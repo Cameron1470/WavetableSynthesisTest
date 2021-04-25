@@ -282,29 +282,39 @@ bool WavetableSynthesisTestAudioProcessor::isBusesLayoutSupported (const BusesLa
 void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
+    auto totalNumInputChannels = getTotalNumInputChannels();
+    auto totalNumOutputChannels = getTotalNumOutputChannels();
+
+    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+        buffer.clear(i, 0, buffer.getNumSamples());
 
 
-
+    // Update voices
     for (int i = 0; i < voiceCount; i++)
     {
         WavetableSynthVoice* v = dynamic_cast<WavetableSynthVoice*>(synth.getVoice(i));
+        
         v->setWavescanVal(parameters.getRawParameterValue("wavescan"));
-        v->setAttack(parameters.getRawParameterValue("attack"));
-        v->setDecay(parameters.getRawParameterValue("decay"));
-        v->setSustain(parameters.getRawParameterValue("sustain"));
-        v->setRelease(parameters.getRawParameterValue("release"));
 
         v->setWavetableVolume(parameters.getRawParameterValue("wave_synth"));
         v->setSineVolume(parameters.getRawParameterValue("sine_synth"));
+        
+        auto& attack = *parameters.getRawParameterValue("attack");
+        auto& decay = *parameters.getRawParameterValue("decay");
+        auto& sustain = *parameters.getRawParameterValue("sustain");
+        auto& release = *parameters.getRawParameterValue("release");
 
-        //v->setFilterCutoff(parameters.getRawParameterValue("cutoff"));
-        //v->setFilterResonance(parameters.getRawParameterValue("resonance"));
+        auto& filterAttack = *parameters.getRawParameterValue("filter_attack");
+        auto& filterDecay = *parameters.getRawParameterValue("filter_decay");
+        auto& filterSustain = *parameters.getRawParameterValue("filter_sustain");
+        auto& filterRelease = *parameters.getRawParameterValue("filter_release");
 
-        v->setFilterAttack(parameters.getRawParameterValue("filter_attack"));
-        v->setFilterDecay(parameters.getRawParameterValue("filter_decay"));
-        v->setFilterSustain(parameters.getRawParameterValue("filter_sustain"));
-        v->setFilterRelease(parameters.getRawParameterValue("filter_release"));
-        v->setFilterEnvAmp(parameters.getRawParameterValue("env_amp"));
+        float cutoff = *parameters.getRawParameterValue("cutoff");
+        float resonance = *parameters.getRawParameterValue("resonance");
+
+        v->getAdsr().update(attack.load(), decay.load(), sustain.load(), release.load());
+        v->getFilterAdsr().update(filterAttack.load(), filterDecay.load(), filterSustain.load(), filterRelease.load());
+        v->updateFilter(cutoff, resonance);
     }
 
     slotOneIndexGUI = *parameters.getRawParameterValue("wavetype_one");
@@ -392,13 +402,12 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
 
 
 
-    synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
-
+    //synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
 
     chorus.setDepth(*parameters.getRawParameterValue("chorus_depth"));
     chorus.setMix(*parameters.getRawParameterValue("chorus_mix"));
 
-    juce::dsp::AudioBlock<float> sampleBlock(buffer);
+    juce::dsp::AudioBlock<float> sampleBlock{ buffer };
     chorus.process(juce::dsp::ProcessContextReplacing<float>(sampleBlock));
 
     reverbParams.roomSize = *parameters.getRawParameterValue("room_size");

@@ -22,16 +22,12 @@ WavetableSynthVoice::WavetableSynthVoice() :
 
 
 {
-    // set sample rate of ADSR envelope
-    env.setSampleRate(getSampleRate());
-    filterEnv.setSampleRate(getSampleRate());
+
     
 }
 
 void WavetableSynthVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound*, int /*currentPitchWheelPosition*/)
 {
-    playing = true;
-    ending = false;
 
     // store frequency in Hz from the midi note number
     float freq = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
@@ -74,103 +70,118 @@ void WavetableSynthVoice::startNote(int midiNoteNumber, float velocity, juce::Sy
     wtOscillatorFour.add(oscillatorSlotFour);
     wtOscillatorFive.add(oscillatorSlotFive);
 
-    fundamentalOsc.setSampleRate(getSampleRate());
+
     fundamentalOsc.setFrequency(freq);
 
-    // reset and start envelope
-    env.reset();
-    env.noteOn();
+    // start volume envelope
+    adsr.noteOn();
 
-    // reset and start filter envelope
-    filterEnv.reset();
-    filterEnv.noteOn();
+    // start filter envelope
+    filterAdsr.noteOn();
 
 }
 
 void WavetableSynthVoice::stopNote(float /*velocity*/, bool allowTailOff)
 {
-    env.noteOff();
-    filterEnv.noteOff();
-    ending = true;
+    adsr.noteOff();
+    filterAdsr.noteOff();
+    
+    if (!allowTailOff || !adsr.isActive())
+        clearCurrentNote();
 }
 
 void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
+    jassert(isPrepared);
     
+    // if voice is not active, return
+    if (!isVoiceActive())
+        return;
 
     
-    if (playing) // check to see if this voice should be playing
+    // set size of synthBuffer audio block
+    synthBuffer.setSize(outputBuffer.getNumChannels(), numSamples, false, false, true);
+
+    // apply filter envelope adsr to output buffer 
+    filterAdsr.applyEnvelopeToBuffer(outputBuffer, 0, numSamples);
+    
+    // clear synth buffer
+    synthBuffer.clear();
+
+    // create new audio block variable initilialized with synthBuffer
+    juce::dsp::AudioBlock<float> audioBlock{ synthBuffer };
+
+    //===================================
+    // CALCULATING OUT OSCILLATOR
+
+    // iterate through the necessary number of samples (from startSample up to startSample + numSamples)
+    for (int sampleIndex = startSample; sampleIndex < (startSample + numSamples); sampleIndex++)
     {
-        // iterate through the necessary number of samples (from startSample up to startSample + numSamples)
-        for (int sampleIndex = startSample; sampleIndex < (startSample + numSamples); sampleIndex++)
+
+        // creating a float taken from index 0 of the wtOscillators array
+        auto* oscillatorSlotOne = wtOscillatorOne.getUnchecked(0);
+        auto* oscillatorSlotTwo = wtOscillatorTwo.getUnchecked(0);
+        auto* oscillatorSlotThree = wtOscillatorThree.getUnchecked(0);
+        auto* oscillatorSlotFour = wtOscillatorFour.getUnchecked(0);
+        auto* oscillatorSlotFive = wtOscillatorFive.getUnchecked(0);
+
+        // getting the current sample from the oscillator slots and storing in sample variable
+        auto slotOneSample = oscillatorSlotOne->getNextSample();
+        auto slotTwoSample = oscillatorSlotTwo->getNextSample();
+        auto slotThreeSample = oscillatorSlotThree->getNextSample();
+        auto slotFourSample = oscillatorSlotFour->getNextSample();
+        auto slotFiveSample = oscillatorSlotFive->getNextSample();
+
+        // if, else if statement used for finding which two slots its currently between
+        // and then mixes between the two
+        if (wavescanBal <= 1.0)
         {
-            float envVal = env.getNextSample();
-
-
-            // creating a float taken from index 0 of the wtOscillators array
-            auto* oscillatorSlotOne = wtOscillatorOne.getUnchecked(0);
-            auto* oscillatorSlotTwo = wtOscillatorTwo.getUnchecked(0);
-            auto* oscillatorSlotThree = wtOscillatorThree.getUnchecked(0);
-            auto* oscillatorSlotFour = wtOscillatorFour.getUnchecked(0);
-            auto* oscillatorSlotFive = wtOscillatorFive.getUnchecked(0);
-
-            // getting the current sample from the oscillator slots and storing in sample variable
-            auto slotOneSample = oscillatorSlotOne->getNextSample();
-            auto slotTwoSample = oscillatorSlotTwo->getNextSample();
-            auto slotThreeSample = oscillatorSlotThree->getNextSample();
-            auto slotFourSample = oscillatorSlotFour->getNextSample();
-            auto slotFiveSample = oscillatorSlotFive->getNextSample();
-
-            // if, else if statement used for finding which two slots its currently between
-            // and then mixes between the two
-            if (wavescanBal <= 1.0)
-            {
-                currentSample = ((slotOneSample * (1 - wavescanBal)) + (slotTwoSample * wavescanBal)) * gain * envVal;
-            }
-            else if (wavescanBal <= 2.0)
-            {
-                float normalizedWavescanVal = wavescanBal - 1.0f;
-                currentSample = ((slotTwoSample * (1 - normalizedWavescanVal)) + (slotThreeSample * normalizedWavescanVal)) * gain * envVal;
-            }
-            else if (wavescanBal <= 3.0)
-            {
-                float normalizedWavescanVal = wavescanBal - 2.0f;
-                currentSample = ((slotThreeSample * (1 - normalizedWavescanVal)) + (slotFourSample * normalizedWavescanVal)) * gain * envVal;
-            }
-            else if (wavescanBal <= 4.0)
-            {
-                float normalizedWavescanVal = wavescanBal - 3.0f;
-                currentSample = ((slotFourSample * (1 - normalizedWavescanVal)) + (slotFiveSample * normalizedWavescanVal)) * gain * envVal;
-            }
-
-            float fundamentalSample = fundamentalOsc.process() * envVal;
-
-            // for each channel, write the currentSample float to the output
-            for (int chan = 0; chan < outputBuffer.getNumChannels(); chan++)
-            {
-                // The output sample is scaled by 0.1 so that it is not too loud by default
-                outputBuffer.addSample(chan, sampleIndex, ((currentSample * wavetableVolume) + (fundamentalSample * sineVolume)) * 0.1);
-            }
-
-            // clear current note if ending and env val is very small
-            if (ending)
-            {
-                if (envVal < 0.0001f)
-                {
-                    clearCurrentNote();
-                    playing = false;
-
-                }
-            }
+            currentSample = ((slotOneSample * (1 - wavescanBal)) + (slotTwoSample * wavescanBal)) * gainVolume;
+        }
+        else if (wavescanBal <= 2.0)
+        {
+            float normalizedWavescanVal = wavescanBal - 1.0f;
+            currentSample = ((slotTwoSample * (1 - normalizedWavescanVal)) + (slotThreeSample * normalizedWavescanVal)) * gainVolume;
+        }
+        else if (wavescanBal <= 3.0)
+        {
+            float normalizedWavescanVal = wavescanBal - 2.0f;
+            currentSample = ((slotThreeSample * (1 - normalizedWavescanVal)) + (slotFourSample * normalizedWavescanVal)) * gainVolume;
+        }
+        else if (wavescanBal <= 4.0)
+        {
+            float normalizedWavescanVal = wavescanBal - 3.0f;
+            currentSample = ((slotFourSample * (1 - normalizedWavescanVal)) + (slotFiveSample * normalizedWavescanVal)) * gainVolume;
         }
 
-        //===================================
+        float fundamentalSample = fundamentalOsc.process();
 
-        juce::dsp::AudioBlock<float> sampleBlock(outputBuffer);
-        ladderFilter.process(juce::dsp::ProcessContextReplacing<float>(sampleBlock));
+        // for each channel, write the currentSample float to the output
+        for (int chan = 0; chan < outputBuffer.getNumChannels(); chan++)
+        {
+            // The output sample is scaled by 0.1 so that it is not too loud by default
+            synthBuffer.addSample(chan, sampleIndex, ((currentSample * wavetableVolume) + (fundamentalSample * sineVolume)) * 0.1);
+        }
 
     }
 
+    //===================================
+
+    // apply adsr envelope to buffer
+    adsr.applyEnvelopeToBuffer(synthBuffer, 0, synthBuffer.getNumSamples());
+
+    //
+    //filter.process(synthBuffer);
+
+    //gain.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
+
+    for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
+    {
+        outputBuffer.addFrom(channel, startSample, synthBuffer, channel, 0, numSamples);
+
+        if (!adsr.isActive())
+            clearCurrentNote();
+    }
 
 }
 
@@ -180,12 +191,16 @@ void WavetableSynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, 
     spec.maximumBlockSize = samplesPerBlock;
     spec.sampleRate = sampleRate;
     spec.numChannels = outputChannels;
-    ladderFilter.prepare(spec);
-    ladderFilter.reset();
+    
+    fundamentalOsc.setSampleRate(getSampleRate());
+    filterAdsr.setSampleRate(sampleRate);
+    filter.prepareToPlay(sampleRate, samplesPerBlock, outputChannels);
+    adsr.setSampleRate(sampleRate);
 
-    ladderFilter.setCutoffFrequencyHz(10000.0f);
-    ladderFilter.setResonance(0.1f);
+    gain.prepare(spec);
+    gain.setGainLinear(0.6f);
 
+    isPrepared = true;
 }
 
 //===========================================================================
@@ -206,71 +221,6 @@ void WavetableSynthVoice::setSineVolume(std::atomic<float>* _sineVolume)
     sineVolume = *_sineVolume;
 }
 
-void WavetableSynthVoice::setAttack(std::atomic<float>* attack)
-{
-    envParams.attack = *attack;
-    env.setParameters(envParams);
-}
-
-void WavetableSynthVoice::setDecay(std::atomic<float>* decay)
-{
-    envParams.decay = *decay;
-    env.setParameters(envParams);
-}
-
-void WavetableSynthVoice::setSustain(std::atomic<float>* sustain)
-{
-    envParams.sustain = *sustain;
-    env.setParameters(envParams);
-}
-
-void WavetableSynthVoice::setRelease(std::atomic<float>* release)
-{
-    envParams.release = *release;
-    env.setParameters(envParams);
-}
-
-//=================================================================================
-
-void WavetableSynthVoice::setFilterCutoff(std::atomic<float>* _filterCutoff)
-{
-    //ladderFilter.setCutoffFrequencyHz(*_filterCutoff);
-}
-
-void WavetableSynthVoice::setFilterResonance(std::atomic<float>* _filterResonance)
-{
-    //ladderFilter.setResonance(*_filterResonance);
-}
-
-void WavetableSynthVoice::setFilterAttack(std::atomic<float>* filterAttack)
-{
-    filterEnvParams.release = *filterAttack;
-    filterEnv.setParameters(filterEnvParams);
-}
-
-void WavetableSynthVoice::setFilterDecay(std::atomic<float>* filterDecay)
-{
-    filterEnvParams.decay = *filterDecay;
-    filterEnv.setParameters(filterEnvParams);
-}
-
-void WavetableSynthVoice::setFilterSustain(std::atomic<float>* filterSustain)
-{
-    filterEnvParams.sustain = *filterSustain;
-    filterEnv.setParameters(filterEnvParams);
-}
-
-void WavetableSynthVoice::setFilterRelease(std::atomic<float>* filterRelease)
-{
-    filterEnvParams.release = *filterRelease;
-    filterEnv.setParameters(filterEnvParams);
-}
-
-void WavetableSynthVoice::setFilterEnvAmp(std::atomic<float>* _filterEnvAmp)
-{
-    filterEnvAmp = *_filterEnvAmp;
-
-}
 
 //=================================================================================
 
@@ -291,5 +241,11 @@ void WavetableSynthVoice::updateWavetable(int index, int slotNumber)
     // use these new data and data size variable to change the wavtable of the specified slot
     slots[slotNumber]->setWavetable(data, dataSize);
     
+}
+
+void WavetableSynthVoice::updateFilter(const float frequency, const float resonance)
+{
+    auto modulator = filterAdsr.getNextSample();
+    filter.updateParameters(modulator, frequency, resonance);
 }
 
