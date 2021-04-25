@@ -87,7 +87,10 @@ void WavetableSynthVoice::stopNote(float /*velocity*/, bool allowTailOff)
     filterAdsr.noteOff();
     
     if (!allowTailOff || !adsr.isActive())
+    {
         clearCurrentNote();
+    }
+        
 }
 
 void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
@@ -96,9 +99,10 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
     
     // if voice is not active, return
     if (!isVoiceActive())
+    {
         return;
-
-    
+    }
+        
     // set size of synthBuffer audio block
     synthBuffer.setSize(outputBuffer.getNumChannels(), numSamples, false, false, true);
 
@@ -160,10 +164,11 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
         for (int chan = 0; chan < outputBuffer.getNumChannels(); chan++)
         {
             // The output sample is scaled by 0.1 so that it is not too loud by default
-            synthBuffer.addSample(chan, sampleIndex, ((currentSample * wavetableVolume) + (fundamentalSample * sineVolume)) * 0.1);
+            audioBlock.addSample(chan, sampleIndex, ((currentSample * wavetableVolume) + (fundamentalSample * sineVolume)) * 0.1);
         }
 
     }
+
 
     //===================================
 

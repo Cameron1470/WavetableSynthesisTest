@@ -12,11 +12,13 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "WavetableOscillator.h"
 #include <BinaryData.h>
+
+#include "WavetableOscillator.h"
 #include "WavescanningSlot.h"
 #include "PluginProcessor.h"
 #include "Oscillators.h"
+
 #include "LadderFilterData.h"
 #include "AdsrData.h"
 
@@ -215,5 +217,10 @@ private:
     bool isPrepared{ false };
 
 
+    //--------------------------------------------------------------------------
+    /// Should the voice be playing?
+    bool playing = false;
 
+    /// Is the voice in the process of ending?
+    bool ending = false;
 };
