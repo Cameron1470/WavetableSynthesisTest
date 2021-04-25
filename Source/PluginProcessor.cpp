@@ -194,8 +194,8 @@ void WavetableSynthesisTestAudioProcessor::prepareToPlay (double sampleRate, int
 
     chorus.setDepth(0.5);
     chorus.setMix(0.5);
-    ladderFilter.setCutoffFrequencyHz(5000.0f);
-    ladderFilter.setResonance(0.1f);
+    //ladderFilter.setCutoffFrequencyHz(5000.0f);
+    //ladderFilter.setResonance(0.1f);
 
     juce::dsp::ProcessSpec spec;
     spec.maximumBlockSize = samplesPerBlock;
@@ -203,8 +203,8 @@ void WavetableSynthesisTestAudioProcessor::prepareToPlay (double sampleRate, int
 
     chorus.prepare(spec);
     chorus.reset();
-    ladderFilter.prepare(spec);
-    ladderFilter.reset();
+    //ladderFilter.prepare(spec);
+    //ladderFilter.reset();
     
 
     reverbParams.dryLevel = 0.5f;
@@ -229,6 +229,8 @@ void WavetableSynthesisTestAudioProcessor::prepareToPlay (double sampleRate, int
         v->updateWavetable(int(slotThreeIndexCurrent), 2);
         v->updateWavetable(int(slotFourIndexCurrent), 3);
         v->updateWavetable(int(slotFiveIndexCurrent), 4);
+
+        v->prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
     }
 
     
@@ -374,13 +376,13 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
     chorus.setDepth(*parameters.getRawParameterValue("chorus_depth"));
     chorus.setMix(*parameters.getRawParameterValue("chorus_mix"));
 
-    ladderFilter.setCutoffFrequencyHz(*parameters.getRawParameterValue("cutoff"));
-    ladderFilter.setResonance(*parameters.getRawParameterValue("resonance"));
+    //ladderFilter.setCutoffFrequencyHz(*parameters.getRawParameterValue("cutoff"));
+    //ladderFilter.setResonance(*parameters.getRawParameterValue("resonance"));
 
     juce::dsp::AudioBlock<float> sampleBlock(buffer);
     chorus.process(juce::dsp::ProcessContextReplacing<float>(sampleBlock));
 
-    ladderFilter.process(juce::dsp::ProcessContextReplacing<float>(sampleBlock));
+    //ladderFilter.process(juce::dsp::ProcessContextReplacing<float>(sampleBlock));
 
     reverbParams.roomSize = *parameters.getRawParameterValue("room_size");
     reverbParams.damping = *parameters.getRawParameterValue("damping");

@@ -109,7 +109,7 @@ private:
     // Juce dsp Chorus
     juce::dsp::Chorus<float> chorus;
 
-    juce::dsp::LadderFilter<float> ladderFilter;
+    
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WavetableSynthesisTestAudioProcessor)

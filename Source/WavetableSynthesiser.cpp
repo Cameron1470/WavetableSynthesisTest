@@ -24,6 +24,8 @@ WavetableSynthVoice::WavetableSynthVoice() :
     // set sample rate of ADSR envelope
     env.setSampleRate(getSampleRate());
 
+
+
     
 }
 
@@ -87,12 +89,40 @@ void WavetableSynthVoice::stopNote(float /*velocity*/, bool allowTailOff)
     ending = true;
 }
 
+void WavetableSynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int outputChannels)
+{
+    ladderFilter.reset();
+
+    juce::dsp::ProcessSpec spec;
+    spec.maximumBlockSize = samplesPerBlock;
+    spec.sampleRate = sampleRate;
+    spec.numChannels = outputChannels;
+
+    ladderFilter.prepare(spec);
+
+    ladderFilter.setCutoffFrequencyHz(1000.0f);
+    ladderFilter.setResonance(0.6f);
+
+    voiceBuffer.setSize(outputChannels, samplesPerBlock);
+
+
+}
+
+
 void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
+    
+
     if (playing) // check to see if this voice should be playing
     {
+        jassert(numSamples <= voiceBuffer.getNumSamples());
+        juce::AudioBuffer<float> proxy(voiceBuffer.getArrayOfWritePointers(), voiceBuffer.getNumChannels(), startSample, numSamples);
+        proxy.clear();
+
+        int tmpStartSample = 0;
+
         // iterate through the necessary number of samples (from startSample up to startSample + numSamples)
-        for (int sampleIndex = startSample; sampleIndex < (startSample + numSamples); sampleIndex++)
+        for (int sample = 0; sample < proxy.getNumSamples(); sample++)
         {
             float envVal = env.getNextSample();
 
@@ -135,11 +165,13 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
             float fundamentalSample = fundamentalOsc.process() * envVal;
 
             // for each channel, write the currentSample float to the output
-            for (int chan = 0; chan < outputBuffer.getNumChannels(); chan++)
+            for (int channel = 0; channel < proxy.getNumChannels(); channel++)
             {
                 // The output sample is scaled by 0.1 so that it is not too loud by default
-                outputBuffer.addSample(chan, sampleIndex, ((currentSample * wavetableVolume) + (fundamentalSample * sineVolume)) * 0.1);
+                proxy.addSample(channel, sample, ((currentSample * wavetableVolume) + (fundamentalSample * sineVolume)) * 0.1);
             }
+
+            ++tmpStartSample;
 
             // clear current note if ending and env val is very small
             if (ending)
@@ -152,8 +184,23 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
                 }
             }
         }
+        
+        juce::dsp::AudioBlock<float> sampleBlock(proxy);
+        ladderFilter.process(juce::dsp::ProcessContextReplacing<float>(sampleBlock));
+        
+        for (int sample = 0; sample < numSamples; ++sample)
+        {
+            for (int channel = 0; channel < proxy.getNumChannels(); channel++)
+            {
+                outputBuffer.addSample(channel, startSample, proxy.getSample(channel, sample));
+            }
 
+            ++startSample;
+        }
     }
+
+   
+    
 }
 
 //===========================================================================

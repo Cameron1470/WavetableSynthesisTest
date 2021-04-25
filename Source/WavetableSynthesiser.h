@@ -72,6 +72,9 @@ public:
     void stopNote(float /*velocity*/, bool allowTailOff) override;
 
     
+    void prepareToPlay(double sampleRate, int samplesPerBlock, int outputChannels);
+
+
     //--------------------------------------------------------------------------
     /**
      The Main DSP Block: Put your DSP code in here
@@ -228,5 +231,8 @@ private:
     /// For storing the parmeters of the ADSR envelope
     juce::ADSR::Parameters envParams;
 
+    juce::dsp::LadderFilter<float> ladderFilter;
+
+    juce::AudioBuffer<float> voiceBuffer;
 
 };
