@@ -312,6 +312,9 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
         float cutoff = *parameters.getRawParameterValue("cutoff");
         float resonance = *parameters.getRawParameterValue("resonance");
 
+        v->getOscillator().setWaveType(0);
+        v->getOscillator().updateFm(0.01f, 0.01f);
+
         v->getAdsr().update(attack.load(), decay.load(), sustain.load(), release.load());
         v->getFilterAdsr().update(filterAttack.load(), filterDecay.load(), filterSustain.load(), filterRelease.load());
         v->updateFilter(cutoff, resonance);

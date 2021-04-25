@@ -6,6 +6,8 @@
   <MAINGROUP id="C7VMC9" name="WavetableSynthesisTest">
     <GROUP id="{998DAF63-F55F-C007-C622-BF2919301A72}" name="Source">
       <GROUP id="{D415B4F9-9522-EAF3-31FE-06C5923B0638}" name="Data">
+        <FILE id="NZZgDq" name="OscData.cpp" compile="1" resource="0" file="Source/OscData.cpp"/>
+        <FILE id="QdF1jy" name="OscData.h" compile="0" resource="0" file="Source/OscData.h"/>
         <FILE id="YMqXUq" name="LadderFilterData.h" compile="0" resource="0"
               file="Source/LadderFilterData.h"/>
         <FILE id="eBt4GK" name="LadderFilterData.cpp" compile="1" resource="0"

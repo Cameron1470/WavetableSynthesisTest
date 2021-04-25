@@ -12,6 +12,7 @@
 #include "WavetableOscillator.h"
 #include <BinaryData.h>
 #include "WavetableSynthesiser.h"
+#include "AdsrData.h"
 
 //==============================================================================
 /**
