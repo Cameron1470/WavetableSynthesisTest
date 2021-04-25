@@ -297,8 +297,8 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
         v->setWavetableVolume(parameters.getRawParameterValue("wave_synth"));
         v->setSineVolume(parameters.getRawParameterValue("sine_synth"));
 
-        v->setFilterCutoff(parameters.getRawParameterValue("cutoff"));
-        v->setFilterResonance(parameters.getRawParameterValue("resonance"));
+        //v->setFilterCutoff(parameters.getRawParameterValue("cutoff"));
+        //v->setFilterResonance(parameters.getRawParameterValue("resonance"));
 
         v->setFilterAttack(parameters.getRawParameterValue("filter_attack"));
         v->setFilterDecay(parameters.getRawParameterValue("filter_decay"));
