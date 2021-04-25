@@ -241,11 +241,7 @@ void WavetableSynthesisTestAudioProcessor::prepareToPlay (double sampleRate, int
         v->updateWavetable(int(slotFourIndexCurrent), 3);
         v->updateWavetable(int(slotFiveIndexCurrent), 4);
 
-        v->setSamplesPerBlock(samplesPerBlock);
-
-        v->setFilterCutoff(parameters.getRawParameterValue("cutoff"));
-        v->setFilterResonance(parameters.getRawParameterValue("resonance"));
-        v->setFilterEnvAmp(parameters.getRawParameterValue("env_amp"));
+        v->prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
     }
 
     
@@ -393,6 +389,8 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
             v->updateWavetable(int(slotFiveIndexCurrent), 4);
         }
     }
+
+
 
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
 

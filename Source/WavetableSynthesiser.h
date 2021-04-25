@@ -90,7 +90,7 @@ public:
     void controllerMoved(int, int) override {}
     //--------------------------------------------------------------------------
 
-    void prepareToPlay(double sampleRate, int samplesPerBlock, int outputChannels) override;
+    void prepareToPlay(double sampleRate, int samplesPerBlock, int outputChannels);
 
     /**
      Can this voice play a sound. I wouldn't worry about this for the time being
@@ -201,12 +201,6 @@ public:
     */
     void setFilterEnvAmp(std::atomic<float>* _filterEnvAmp);
 
-    /**
-     Modify the release of the filter ADSR envelope
-
-     @param release time in seconds
-     */
-    void setSamplesPerBlock(int _sampsPerBlock);
 
     /**
      Change the wavetable stored in a specified slot of the wavescanner
@@ -215,6 +209,7 @@ public:
      @param slot number of the wavescanner to be changed
      */
     void updateWavetable(int index, int slotNumber);
+
 
 
 private:
@@ -291,12 +286,11 @@ private:
     /// For storing the parmeters of the filter ADSR envelope
     juce::ADSR::Parameters filterEnvParams;
 
+    /// The filter
     juce::dsp::LadderFilter<float> ladderFilter;
 
-    int sampsPerBlock;
 
     float filterCutoff = 10000.0f;
-    float filterResonance = 0.1f;
     float filterEnvVal = 0.0f;
     float filterEnvAmp = 0.0f;
 

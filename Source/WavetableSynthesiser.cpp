@@ -24,9 +24,7 @@ WavetableSynthVoice::WavetableSynthVoice() :
 {
     // set sample rate of ADSR envelope
     env.setSampleRate(getSampleRate());
-
-    
-
+    filterEnv.setSampleRate(getSampleRate());
     
 }
 
@@ -87,9 +85,6 @@ void WavetableSynthVoice::startNote(int midiNoteNumber, float velocity, juce::Sy
     filterEnv.reset();
     filterEnv.noteOn();
 
-
-
-
 }
 
 void WavetableSynthVoice::stopNote(float /*velocity*/, bool allowTailOff)
@@ -101,13 +96,15 @@ void WavetableSynthVoice::stopNote(float /*velocity*/, bool allowTailOff)
 
 void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
+    
+
+    
     if (playing) // check to see if this voice should be playing
     {
         // iterate through the necessary number of samples (from startSample up to startSample + numSamples)
         for (int sampleIndex = startSample; sampleIndex < (startSample + numSamples); sampleIndex++)
         {
             float envVal = env.getNextSample();
-
 
 
             // creating a float taken from index 0 of the wtOscillators array
@@ -167,27 +164,24 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
             }
         }
 
-        float currentFilterCutoff = filterCutoff * pow(10.0f, filterEnvVal * filterEnvAmp);
+        //===================================
 
-        if (currentFilterCutoff > 20000.0f)
-        {
-            currentFilterCutoff = 20000.0f;
-        }
-        else if (currentFilterCutoff < 100.0f)
-        {
-            currentFilterCutoff = 100.0f;
-        }
 
-        synthBuffer.setSize(outputBuffer.getNumChannels(), numSamples, false, false, true);
-        filterEnv.applyEnvelopeToBuffer(outputBuffer, 0, numSamples);        
+        //float currentFilterCutoff = filterCutoff;  // *pow(10.0f, filterEnvVal * filterEnvAmp);
 
-        juce::dsp::AudioBlock<float> audioBlock{ synthBuffer };
-        ladderFilter.process(synthBuffer);
+        //if (currentFilterCutoff > 20000.0f)
+        //{
+        //    currentFilterCutoff = 20000.0f;
+        //}
+        //else if (currentFilterCutoff < 100.0f)
+        //{
+        //    currentFilterCutoff = 100.0f;
+        //}
 
-        for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
-        {
-            outputBuffer.addFrom(channel, startSample, synthBuffer, channel, 0, numSamples);
-        }
+        //ladderFilter.setCutoffFrequencyHz(currentFilterCutoff);
+
+        juce::dsp::AudioBlock<float> sampleBlock(outputBuffer);
+        ladderFilter.process(juce::dsp::ProcessContextReplacing<float>(sampleBlock));
 
     }
 }
@@ -200,6 +194,7 @@ void WavetableSynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, 
     spec.numChannels = outputChannels;
     ladderFilter.prepare(spec);
     ladderFilter.reset();
+
 }
 
 //===========================================================================
@@ -248,12 +243,12 @@ void WavetableSynthVoice::setRelease(std::atomic<float>* release)
 
 void WavetableSynthVoice::setFilterCutoff(std::atomic<float>* _filterCutoff)
 {
-    filterCutoff = *_filterCutoff;
+    ladderFilter.setCutoffFrequencyHz(*_filterCutoff);
 }
 
 void WavetableSynthVoice::setFilterResonance(std::atomic<float>* _filterResonance)
 {
-    filterResonance = *_filterResonance;
+    ladderFilter.setResonance(*_filterResonance);
 }
 
 void WavetableSynthVoice::setFilterAttack(std::atomic<float>* filterAttack)
@@ -288,10 +283,6 @@ void WavetableSynthVoice::setFilterEnvAmp(std::atomic<float>* _filterEnvAmp)
 
 //=================================================================================
 
-void WavetableSynthVoice::setSamplesPerBlock(int _sampsPerBlock)
-{
-    sampsPerBlock = _sampsPerBlock;
-}
 
 
 void WavetableSynthVoice::updateWavetable(int index, int slotNumber)
