@@ -95,7 +95,7 @@ public:
     void controllerMoved(int, int) override {}
     //--------------------------------------------------------------------------
 
-    void prepareToPlay(double sampleRate, int samplesPerBlock, int outputChannels);
+    void prepareToPlay(double sampleRate, int samplesPerBlock, int outputChannels) override;
 
     /**
      Can this voice play a sound. I wouldn't worry about this for the time being
@@ -129,6 +129,92 @@ public:
     */
     void setSineVolume(std::atomic<float>* _sineVolume);
 
+<<<<<<< HEAD
+=======
+    /**
+     Modify the attack of the ADSR envelope
+
+     @param attack time in seconds
+     */
+    void setAttack(std::atomic<float>* attack);
+
+    /**
+     Modify the decay of the ADSR envelope
+
+     @param decay time in seconds
+     */
+    void setDecay(std::atomic<float>* decay);
+
+    /**
+     Modify the sustain value of the ADSR envelope
+
+     @param sustain value between 0 and 1
+     */
+    void setSustain(std::atomic<float>* sustain);
+
+    /**
+     Modify the release of the ADSR envelope
+
+     @param release time in seconds
+     */
+    void setRelease(std::atomic<float>* release);
+
+    /**
+     Set the cutoff frequency of the ladder filter
+
+     @param cutoff frequency in Hz
+     */
+    void setFilterCutoff(std::atomic<float>* _filterCutoff);
+
+    /**
+     Set the resonance value of the ladder filter
+
+     @param resonance value between 0 and 1
+     */
+    void setFilterResonance(std::atomic<float>* _filterResonance);
+
+    /**
+     Modify the attack of the filter ADSR envelope
+
+     @param attack time in seconds
+     */
+    void setFilterAttack(std::atomic<float>* filterAttack);
+
+    /**
+     Modify the decay of the filter ADSR envelope
+
+     @param decay time in seconds
+     */
+    void setFilterDecay(std::atomic<float>* filterDecay);
+
+    /**
+     Modify the sustain level of the filter ADSR envelope
+
+     @param sustain value between 0 and 1
+     */
+    void setFilterSustain(std::atomic<float>* filterSustain);
+
+    /**
+     Modify the release of the filter ADSR envelope
+
+     @param release time in seconds
+     */
+    void setFilterRelease(std::atomic<float>* filterRelease);
+
+    /**
+    Modify the amplitude multiplier of the filter ADSR envelope
+
+    @param amplitude between -1 and 1
+    */
+    void setFilterEnvAmp(std::atomic<float>* _filterEnvAmp);
+
+    /**
+     Modify the release of the filter ADSR envelope
+
+     @param release time in seconds
+     */
+    void setSamplesPerBlock(int _sampsPerBlock);
+>>>>>>> parent of 7c7f331 (issues with filter on synth voices)
 
     /**
      Change the wavetable stored in a specified slot of the wavescanner
@@ -139,11 +225,18 @@ public:
     void updateWavetable(int index, int slotNumber);
 
 
+<<<<<<< HEAD
     void updateFilter(const float frequency, const float resonance);
 
     AdsrData& getAdsr() { return adsr; }
     AdsrData& getFilterAdsr() { return filterAdsr; }
     LadderFilterData& getFilter() { return filter; }
+=======
+private:
+    //--------------------------------------------------------------------------
+    /// Should the voice be playing?
+    bool playing = false;
+>>>>>>> parent of 7c7f331 (issues with filter on synth voices)
 
 
 private:
@@ -206,6 +299,7 @@ private:
     /// The ADSR envelope
     AdsrData adsr;
 
+<<<<<<< HEAD
     /// The filter
     LadderFilterData filter;
 
@@ -215,6 +309,16 @@ private:
     juce::dsp::Gain<float> gain;
 
     bool isPrepared{ false };
+=======
+    juce::dsp::LadderFilter<float> ladderFilter;
+
+    int sampsPerBlock;
+
+    float filterCutoff = 10000.0f;
+    float filterResonance = 0.1f;
+    float filterEnvVal = 0.0f;
+    float filterEnvAmp = 0.0f;
+>>>>>>> parent of 7c7f331 (issues with filter on synth voices)
 
 
     //--------------------------------------------------------------------------

@@ -241,7 +241,11 @@ void WavetableSynthesisTestAudioProcessor::prepareToPlay (double sampleRate, int
         v->updateWavetable(int(slotFourIndexCurrent), 3);
         v->updateWavetable(int(slotFiveIndexCurrent), 4);
 
-        v->prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
+        v->setSamplesPerBlock(samplesPerBlock);
+
+        v->setFilterCutoff(parameters.getRawParameterValue("cutoff"));
+        v->setFilterResonance(parameters.getRawParameterValue("resonance"));
+        v->setFilterEnvAmp(parameters.getRawParameterValue("env_amp"));
     }
 
     
@@ -400,9 +404,14 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
         }
     }
 
+<<<<<<< HEAD
 
 
     //synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+=======
+    synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+
+>>>>>>> parent of 7c7f331 (issues with filter on synth voices)
 
     chorus.setDepth(*parameters.getRawParameterValue("chorus_depth"));
     chorus.setMix(*parameters.getRawParameterValue("chorus_mix"));
