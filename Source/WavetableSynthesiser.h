@@ -19,7 +19,6 @@
 #include "Oscillators.h"
 #include "LadderFilterData.h"
 #include "AdsrData.h"
-#include "OscData.h"
 
 
 
@@ -140,7 +139,6 @@ public:
 
     void updateFilter(const float frequency, const float resonance);
 
-    OscData& getOscillator() { return osc; }
     AdsrData& getAdsr() { return adsr; }
     AdsrData& getFilterAdsr() { return filterAdsr; }
     LadderFilterData& getFilter() { return filter; }
@@ -202,8 +200,6 @@ private:
     float currentSample = 0.0f;
     
     //==========================================================================
-
-    OscData osc;
 
     /// The ADSR envelope
     AdsrData adsr;
