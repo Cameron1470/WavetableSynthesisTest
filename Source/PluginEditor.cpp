@@ -249,6 +249,8 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     filterSustainTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "filter_sustain", filterSustainSlider);
     filterReleaseSlider.addListener(this);
     filterReleaseTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "filter_release", filterReleaseSlider);
+    filterEnvAmpSlider.addListener(this);
+    filterEnvAmpTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "filter_envamp", filterEnvAmpSlider);
 
     //=========================================================================
     // CHORUS

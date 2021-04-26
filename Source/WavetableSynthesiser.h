@@ -157,6 +157,8 @@ public:
 
     void updateFilterEnv(std::atomic<float>* filterAttack, std::atomic<float>* filterDecay, std::atomic<float>* filterSustain, std::atomic<float>* filterRelease);
 
+    void updateFilterEnvAmp(std::atomic<float>* _filterEnvAmp);
+
     /**
      Change the wavetable stored in a specified slot of the wavescanner
 
@@ -242,9 +244,13 @@ private:
 
     float cutoff = 10000.0f;
 
+    float currentCutOff = 10000.0f;
+
     float resonance = 0.1f;
 
     float filterEnvVal;
+
+    float filterEnvAmp;
 
     juce::AudioBuffer<float> voiceBuffer;
 

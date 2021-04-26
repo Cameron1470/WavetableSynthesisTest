@@ -190,12 +190,16 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
             }
         }
         
-        //if (filterEnvVal >= 0.0f)
-        //{
-        //    float currentCutOff = cutoff + filterEnvVal * filterEnvAmp* (20000.0f - cutoff);
-        //}
+        if (filterEnvAmp >= 0.0f)
+        {
+            currentCutOff = cutoff + filterEnvVal * filterEnvAmp* (20000.0f - cutoff);
+        }
+        else if (filterEnvAmp < 0.0f)
+        {
+            currentCutOff = cutoff + filterEnvVal * filterEnvAmp * (cutoff - 100.0f);
+        }
 
-        float currentCutOff = cutoff + filterEnvVal * 0.85f * (20000.0f - cutoff);
+        //float currentCutOff = cutoff + filterEnvVal * 0.85f * (20000.0f - cutoff);
 
         ladderFilter.setCutoffFrequencyHz(currentCutOff);
         ladderFilter.setResonance(resonance);
@@ -277,6 +281,11 @@ void WavetableSynthVoice::updateFilterEnv(std::atomic<float>* filterAttack, std:
 
     filterEnv.setParameters(filterEnvParams);
 
+}
+
+void WavetableSynthVoice::updateFilterEnvAmp(std::atomic<float>* _filterEnvAmp)
+{
+    filterEnvAmp = *_filterEnvAmp;
 }
 
 //=================================================================================

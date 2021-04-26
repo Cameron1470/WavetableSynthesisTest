@@ -129,6 +129,8 @@ private:
 
     juce::Slider filterEnvAmpSlider;
     juce::Label filterEnvAmpLabel{ {}, "Amplitude" };
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> filterEnvAmpTree;
+
 
     //=================================================================================
     // CHORUS
