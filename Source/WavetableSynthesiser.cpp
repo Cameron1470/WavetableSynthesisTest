@@ -245,10 +245,21 @@ void WavetableSynthVoice::setRelease(std::atomic<float>* release)
     env.setParameters(envParams);
 }
 
-void WavetableSynthVoice::updateFilter(float cutoff, float resonance) //, float filterAttack, float filterDecay, float filterSustain, float filterResonance)
+void WavetableSynthVoice::updateFilter(float cutoff, float resonance)
 {
     ladderFilter.setCutoffFrequencyHz(cutoff);
     ladderFilter.setResonance(resonance);
+
+}
+
+void WavetableSynthVoice::updateFilterEnv(std::atomic<float>* filterAttack, std::atomic<float>* filterDecay, std::atomic<float>* filterSustain, std::atomic<float>* filterRelease)
+{
+    filterEnvParams.attack = *filterAttack;
+    filterEnvParams.decay = *filterDecay;
+    filterEnvParams.sustain = *filterSustain;
+    filterEnvParams.release = *filterRelease;
+
+    filterEnv.setParameters(filterEnvParams);
 
 }
 

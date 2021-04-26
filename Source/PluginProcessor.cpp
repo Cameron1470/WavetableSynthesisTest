@@ -83,12 +83,27 @@ WavetableSynthesisTestAudioProcessor::WavetableSynthesisTestAudioProcessor()
 
     juce::NormalisableRange<float> releaseRange(0.0f, 4.0f);
     parameters.createAndAddParameter("release", "Release", "Release", releaseRange, 0.5f, nullptr, nullptr);
+    
     //==========================================================================
     juce::NormalisableRange<float> cutoffRange(100.0f, 20000.0f);
     parameters.createAndAddParameter("cutoff", "Cutoff", "Cutoff", cutoffRange, 10000.0f, nullptr, nullptr);
 
     juce::NormalisableRange<float> resonanceRange(0.0f, 1.0f);
     parameters.createAndAddParameter("resonance", "Resonance", "Resonance", resonanceRange, 0.1f, nullptr, nullptr);
+
+    //==========================================================================
+    juce::NormalisableRange<float> filterAttackRange(0.0f, 1.0f);
+    parameters.createAndAddParameter("filter_attack", "Filter Attack", "Filter Attack", filterAttackRange, 0.1f, nullptr, nullptr);
+
+    juce::NormalisableRange<float> filterDecayRange(0.0f, 1.0f);
+    parameters.createAndAddParameter("filter_decay", "Filter Decay", "Filter Decay", filterDecayRange, 0.5f, nullptr, nullptr);
+
+    juce::NormalisableRange<float> filterSustainRange(0.0f, 1.0f);
+    parameters.createAndAddParameter("filter_sustain", "Filter Sustain", "Filter Sustain", filterSustainRange, 0.1f, nullptr, nullptr);
+
+    juce::NormalisableRange<float> filterReleaseRange(0.0f, 4.0f);
+    parameters.createAndAddParameter("filter_release", "Filter Release", "Filter Release", filterReleaseRange, 0.5f, nullptr, nullptr);
+
 
     //==========================================================================
     juce::NormalisableRange<float> chorusDepthRange(0.0f, 1.0f);
@@ -194,8 +209,7 @@ void WavetableSynthesisTestAudioProcessor::prepareToPlay (double sampleRate, int
 
     chorus.setDepth(0.5);
     chorus.setMix(0.5);
-    //ladderFilter.setCutoffFrequencyHz(5000.0f);
-    //ladderFilter.setResonance(0.1f);
+
 
     juce::dsp::ProcessSpec spec;
     spec.maximumBlockSize = samplesPerBlock;
@@ -203,8 +217,6 @@ void WavetableSynthesisTestAudioProcessor::prepareToPlay (double sampleRate, int
 
     chorus.prepare(spec);
     chorus.reset();
-    //ladderFilter.prepare(spec);
-    //ladderFilter.reset();
     
 
     reverbParams.dryLevel = 0.5f;
@@ -287,6 +299,7 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
         v->setSineVolume(parameters.getRawParameterValue("sine_synth"));
 
         v->updateFilter(*parameters.getRawParameterValue("cutoff"), *parameters.getRawParameterValue("resonance"));
+        v->updateFilterEnv(parameters.getRawParameterValue("filter_attack"), parameters.getRawParameterValue("filter_decay"), parameters.getRawParameterValue("filter_sustain"), parameters.getRawParameterValue("filter_release"));
     }
 
     slotOneIndexGUI = *parameters.getRawParameterValue("wavetype_one");

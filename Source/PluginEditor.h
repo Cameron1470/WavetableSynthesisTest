@@ -113,15 +113,19 @@ private:
 
     juce::Slider filterAttackSlider;
     juce::Label filterAttackLabel{ {}, "A" };
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> filterAttackTree;
 
     juce::Slider filterDecaySlider;
     juce::Label filterDecayLabel{ {}, "D" };
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> filterDecayTree;
 
     juce::Slider filterSustainSlider;
     juce::Label filterSustainLabel{ {}, "S" };
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> filterSustainTree;
 
     juce::Slider filterReleaseSlider;
     juce::Label filterReleaseLabel{ {}, "R" };
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> filterReleaseTree;
 
     juce::Slider filterEnvAmpSlider;
     juce::Label filterEnvAmpLabel{ {}, "Amplitude" };

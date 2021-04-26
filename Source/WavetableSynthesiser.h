@@ -153,7 +153,9 @@ public:
      */
     void setRelease(std::atomic<float>* release);
 
-    void updateFilter(float cutoff, float resonance); // float filterAttack, float filterDecay, float filterSustain, float filterResonance);
+    void updateFilter(float cutoff, float resonance); 
+
+    void updateFilterEnv(std::atomic<float>* filterAttack, std::atomic<float>* filterDecay, std::atomic<float>* filterSustain, std::atomic<float>* filterRelease);
 
     /**
      Change the wavetable stored in a specified slot of the wavescanner
@@ -233,6 +235,10 @@ private:
     juce::ADSR::Parameters envParams;
 
     juce::dsp::LadderFilter<float> ladderFilter;
+
+    juce::ADSR filterEnv;
+
+    juce::ADSR::Parameters filterEnvParams;
 
     juce::AudioBuffer<float> voiceBuffer;
 

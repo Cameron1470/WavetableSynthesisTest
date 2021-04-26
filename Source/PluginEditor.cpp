@@ -240,6 +240,16 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     filterEnvAmpSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     filterEnvAmpSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
 
+    // adding listeners to every slider and connecting them to the processor
+    filterAttackSlider.addListener(this);
+    filterAttackTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "filter_attack", filterAttackSlider);
+    filterDecaySlider.addListener(this);
+    filterDecayTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "filter_decay", filterDecaySlider);
+    filterSustainSlider.addListener(this);
+    filterSustainTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "filter_sustain", filterSustainSlider);
+    filterReleaseSlider.addListener(this);
+    filterReleaseTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "filter_release", filterReleaseSlider);
+
     //=========================================================================
     // CHORUS
 
