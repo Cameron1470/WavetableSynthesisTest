@@ -81,11 +81,15 @@ void WavetableSynthVoice::startNote(int midiNoteNumber, float velocity, juce::Sy
     // reset and start envelope
     env.reset();
     env.noteOn();
+
+    filterEnv.reset();
+    filterEnv.noteOn();
 }
 
 void WavetableSynthVoice::stopNote(float /*velocity*/, bool allowTailOff)
 {
     env.noteOff();
+    filterEnv.noteOff();
     ending = true;
 }
 
@@ -125,6 +129,7 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
         for (int sample = 0; sample < proxy.getNumSamples(); sample++)
         {
             float envVal = env.getNextSample();
+            filterEnvVal = filterEnv.getNextSample();
 
             // creating a float taken from index 0 of the wtOscillators array
             auto* oscillatorSlotOne = wtOscillatorOne.getUnchecked(0);
@@ -185,6 +190,17 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
             }
         }
         
+        //if (filterEnvVal >= 0.0f)
+        //{
+        //    float currentCutOff = cutoff + filterEnvVal * filterEnvAmp* (20000.0f - cutoff);
+        //}
+
+        float currentCutOff = cutoff + filterEnvVal * 0.85f * (20000.0f - cutoff);
+
+        ladderFilter.setCutoffFrequencyHz(currentCutOff);
+        ladderFilter.setResonance(resonance);
+
+
         juce::dsp::AudioBlock<float> sampleBlock(proxy);
         ladderFilter.process(juce::dsp::ProcessContextReplacing<float>(sampleBlock));
         
@@ -245,10 +261,10 @@ void WavetableSynthVoice::setRelease(std::atomic<float>* release)
     env.setParameters(envParams);
 }
 
-void WavetableSynthVoice::updateFilter(float cutoff, float resonance)
+void WavetableSynthVoice::updateFilter(float _cutoff, float _resonance)
 {
-    ladderFilter.setCutoffFrequencyHz(cutoff);
-    ladderFilter.setResonance(resonance);
+    cutoff = _cutoff;
+    resonance = _resonance;
 
 }
 

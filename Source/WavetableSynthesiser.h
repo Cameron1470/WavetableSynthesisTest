@@ -240,6 +240,12 @@ private:
 
     juce::ADSR::Parameters filterEnvParams;
 
+    float cutoff = 10000.0f;
+
+    float resonance = 0.1f;
+
+    float filterEnvVal;
+
     juce::AudioBuffer<float> voiceBuffer;
 
 };
