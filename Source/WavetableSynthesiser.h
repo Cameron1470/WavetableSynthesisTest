@@ -153,6 +153,7 @@ public:
      */
     void setRelease(std::atomic<float>* release);
 
+    void updateFilter(float cutoff, float resonance); // float filterAttack, float filterDecay, float filterSustain, float filterResonance);
 
     /**
      Change the wavetable stored in a specified slot of the wavescanner

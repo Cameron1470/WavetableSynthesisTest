@@ -285,6 +285,8 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
 
         v->setWavetableVolume(parameters.getRawParameterValue("wave_synth"));
         v->setSineVolume(parameters.getRawParameterValue("sine_synth"));
+
+        v->updateFilter(*parameters.getRawParameterValue("cutoff"), *parameters.getRawParameterValue("resonance"));
     }
 
     slotOneIndexGUI = *parameters.getRawParameterValue("wavetype_one");

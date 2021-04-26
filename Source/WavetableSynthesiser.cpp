@@ -100,8 +100,8 @@ void WavetableSynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, 
 
     ladderFilter.prepare(spec);
 
-    ladderFilter.setCutoffFrequencyHz(1000.0f);
-    ladderFilter.setResonance(0.6f);
+    ladderFilter.setCutoffFrequencyHz(10000.0f);
+    ladderFilter.setResonance(0.1f);
 
     voiceBuffer.setSize(outputChannels, samplesPerBlock);
 
@@ -243,6 +243,13 @@ void WavetableSynthVoice::setRelease(std::atomic<float>* release)
 {
     envParams.release = *release;
     env.setParameters(envParams);
+}
+
+void WavetableSynthVoice::updateFilter(float cutoff, float resonance) //, float filterAttack, float filterDecay, float filterSustain, float filterResonance)
+{
+    ladderFilter.setCutoffFrequencyHz(cutoff);
+    ladderFilter.setResonance(resonance);
+
 }
 
 //=================================================================================
