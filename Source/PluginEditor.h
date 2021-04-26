@@ -173,7 +173,20 @@ private:
     //=================================================================================
     // LFO
 
-    juce::Label lfoLabel{ {}, "LFO" };
+    juce::Label lfoLabel{ {}, "Wavescan LFO" };
+
+    juce::ComboBox lfoSelection;
+    juce::Label lfoSelectionLabel{ {}, "Shape" };
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::ComboBoxAttachment> lfoSelectionTree;
+
+
+    juce::Slider lfoFreqSlider;
+    juce::Label lfoFreqLabel{ {}, "Frequency" };
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> lfoFreqTree;
+
+    juce::Slider lfoAmpSlider;
+    juce::Label lfoAmpLabel{ {}, "Amplitude" };
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> lfoAmpTree;
 
     //=================================================================================
 

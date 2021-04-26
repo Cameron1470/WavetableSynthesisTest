@@ -160,6 +160,9 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     filterLabel.setJustificationType(juce::Justification::centred);
 
     // add corresponding labels for the sliders in this section, set font and centre text
+    addAndMakeVisible(lfoSelectionLabel);
+    lfoSelectionLabel.setFont(labelFont);
+    lfoSelectionLabel.setJustificationType(juce::Justification::centred);
     addAndMakeVisible(cutoffLabel);
     cutoffLabel.setFont(labelFont);
     cutoffLabel.setJustificationType(juce::Justification::centred);
@@ -361,6 +364,43 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     lfoLabel.setFont(textFont);
     lfoLabel.setJustificationType(juce::Justification::centred);
 
+    // add corresponding labels for the sliders in this section, set font and centre text
+    addAndMakeVisible(lfoSelectionLabel);
+    lfoSelectionLabel.setFont(labelFont);
+    lfoSelectionLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(lfoFreqLabel);
+    lfoFreqLabel.setFont(labelFont);
+    lfoFreqLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(lfoAmpLabel);
+    lfoAmpLabel.setFont(labelFont);
+    lfoAmpLabel.setJustificationType(juce::Justification::centred);
+
+    // add drop down box for choosing lfo shape, set range and appearance
+    addAndMakeVisible(lfoSelection);
+    lfoSelection.addItem("Sinusoid", 1);
+    lfoSelection.addItem("Triangle", 2);
+    lfoSelection.addItem("Saw", 3);
+    lfoSelection.addItem("Square", 4);
+    lfoSelection.setSelectedId(1);
+
+    // add 1st slider for lfo frequency, set range and appearance
+    addAndMakeVisible(lfoFreqSlider);
+    lfoFreqSlider.setRange(0, 10);
+    lfoFreqSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    lfoFreqSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+
+    // add 2nd slider for lfo amplitude, set range and appearance
+    addAndMakeVisible(lfoAmpSlider);
+    lfoAmpSlider.setRange(0, 1);
+    lfoAmpSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    lfoAmpSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+
+    // adding listeners to every slider and connecting them to the processor
+    lfoFreqSlider.addListener(this);
+    lfoFreqTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "lfo_freq", lfoFreqSlider);
+    lfoAmpSlider.addListener(this);
+    lfoAmpTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "lfo_amp", lfoAmpSlider);
+
     //=========================================================================
 
     // add name of the plugin to the interface
@@ -557,7 +597,15 @@ void WavetableSynthesisTestAudioProcessorEditor::resized()
 
     //=========================================================================
 
-    //lfoLabel.setBounds(470, 204, 144, 20);
+    lfoLabel.setBounds(592, 204, 132, 20);
+
+    lfoSelection.setBounds(608, 259, 100, 20);
+    lfoSelectionLabel.setBounds(608, 294, 100, 15);
+   
+    lfoFreqSlider.setBounds(598, 309, 60, 60);
+    lfoFreqLabel.setBounds(598, 369, 60, 15);
+    lfoAmpSlider.setBounds(658, 309, 60, 60);
+    lfoAmpLabel.setBounds(658, 369, 60, 15);
 
     //=========================================================================
 
