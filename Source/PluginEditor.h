@@ -127,9 +127,13 @@ private:
     juce::Label filterReleaseLabel{ {}, "R" };
     juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> filterReleaseTree;
 
-    juce::Slider filterEnvAmpSlider;
-    juce::Label filterEnvAmpLabel{ {}, "Amplitude" };
-    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> filterEnvAmpTree;
+    juce::Slider filterCutoffAmpSlider;
+    juce::Label filterCutoffAmpLabel{ {}, "Cutoff Amp" };
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> filterCutoffAmpTree;
+
+    juce::Slider filterResonanceAmpSlider;
+    juce::Label filterResonanceAmpLabel{ {}, "Res Amp" };
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> filterResonanceAmpTree;
 
 
     //=================================================================================

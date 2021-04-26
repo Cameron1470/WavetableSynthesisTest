@@ -190,19 +190,26 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
             }
         }
         
-        if (filterEnvAmp >= 0.0f)
+        if (filterCutoffAmp >= 0.0f)
         {
-            currentCutOff = cutoff + filterEnvVal * filterEnvAmp* (20000.0f - cutoff);
+            currentCutOff = cutoff + filterEnvVal * filterCutoffAmp* (20000.0f - cutoff);
         }
-        else if (filterEnvAmp < 0.0f)
+        else if (filterCutoffAmp < 0.0f)
         {
-            currentCutOff = cutoff + filterEnvVal * filterEnvAmp * (cutoff - 100.0f);
+            currentCutOff = cutoff + filterEnvVal * filterCutoffAmp * (cutoff - 100.0f);
         }
 
-        //float currentCutOff = cutoff + filterEnvVal * 0.85f * (20000.0f - cutoff);
+        if (filterResonanceAmp >= 0.0f)
+        {
+            currentResonance = resonance + (filterEnvVal * filterResonanceAmp * (1.0f - resonance));
+        }
+        else if (filterResonanceAmp < 0.0f)
+        {
+            currentResonance = resonance + (filterEnvVal * filterResonanceAmp * resonance);
+        }
 
         ladderFilter.setCutoffFrequencyHz(currentCutOff);
-        ladderFilter.setResonance(resonance);
+        ladderFilter.setResonance(currentResonance);
 
 
         juce::dsp::AudioBlock<float> sampleBlock(proxy);
@@ -269,7 +276,6 @@ void WavetableSynthVoice::updateFilter(float _cutoff, float _resonance)
 {
     cutoff = _cutoff;
     resonance = _resonance;
-
 }
 
 void WavetableSynthVoice::updateFilterEnv(std::atomic<float>* filterAttack, std::atomic<float>* filterDecay, std::atomic<float>* filterSustain, std::atomic<float>* filterRelease)
@@ -283,9 +289,10 @@ void WavetableSynthVoice::updateFilterEnv(std::atomic<float>* filterAttack, std:
 
 }
 
-void WavetableSynthVoice::updateFilterEnvAmp(std::atomic<float>* _filterEnvAmp)
+void WavetableSynthVoice::updateFilterEnvAmp(std::atomic<float>* _filterCutoffAmp, std::atomic<float>* _filterResonanceAmp)
 {
-    filterEnvAmp = *_filterEnvAmp;
+    filterCutoffAmp = *_filterCutoffAmp;
+    filterResonanceAmp = *_filterResonanceAmp;
 }
 
 //=================================================================================

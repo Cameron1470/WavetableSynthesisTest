@@ -206,9 +206,12 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     addAndMakeVisible(filterReleaseLabel);
     filterReleaseLabel.setFont(textFont);
     filterReleaseLabel.setJustificationType(juce::Justification::centred);
-    addAndMakeVisible(filterEnvAmpLabel);
-    filterEnvAmpLabel.setFont(labelFont);
-    filterEnvAmpLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(filterCutoffAmpLabel);
+    filterCutoffAmpLabel.setFont(labelFont);
+    filterCutoffAmpLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(filterResonanceAmpLabel);
+    filterResonanceAmpLabel.setFont(labelFont);
+    filterResonanceAmpLabel.setJustificationType(juce::Justification::centred);
 
     // add 1st slider for filter attack time, set range and appearance
     addAndMakeVisible(filterAttackSlider);
@@ -234,11 +237,17 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     filterReleaseSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
     filterReleaseSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
 
+    // add 5th slider for filter cutoff envelope amplitude, set range and appearance
+    addAndMakeVisible(filterCutoffAmpSlider);
+    filterCutoffAmpSlider.setRange(-1, 1);
+    filterCutoffAmpSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    filterCutoffAmpSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+
     // add 5th slider for filter envelop amplitude, set range and appearance
-    addAndMakeVisible(filterEnvAmpSlider);
-    filterEnvAmpSlider.setRange(-1, 1);
-    filterEnvAmpSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
-    filterEnvAmpSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+    addAndMakeVisible(filterResonanceAmpSlider);
+    filterResonanceAmpSlider.setRange(-1, 1);
+    filterResonanceAmpSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    filterResonanceAmpSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
 
     // adding listeners to every slider and connecting them to the processor
     filterAttackSlider.addListener(this);
@@ -249,8 +258,10 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     filterSustainTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "filter_sustain", filterSustainSlider);
     filterReleaseSlider.addListener(this);
     filterReleaseTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "filter_release", filterReleaseSlider);
-    filterEnvAmpSlider.addListener(this);
-    filterEnvAmpTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "filter_envamp", filterEnvAmpSlider);
+    filterCutoffAmpSlider.addListener(this);
+    filterCutoffAmpTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "filter_cutoff_amp", filterCutoffAmpSlider);
+    filterResonanceAmpSlider.addListener(this);
+    filterResonanceAmpTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "filter_resonance_amp", filterResonanceAmpSlider);
 
     //=========================================================================
     // CHORUS
@@ -517,8 +528,10 @@ void WavetableSynthesisTestAudioProcessorEditor::resized()
     filterReleaseSlider.setBounds(264, 234, 21, 130);
     filterReleaseLabel.setBounds(264, 370, 21, 20);
 
-    filterEnvAmpSlider.setBounds(293, 264, 60, 60);
-    filterEnvAmpLabel.setBounds(293, 324, 60, 15);
+    filterCutoffAmpSlider.setBounds(293, 234, 60, 60);
+    filterCutoffAmpLabel.setBounds(293, 294, 60, 15);
+    filterResonanceAmpSlider.setBounds(293, 309, 60, 60);
+    filterResonanceAmpLabel.setBounds(293, 369, 60, 15);
 
     //=========================================================================
 

@@ -104,8 +104,11 @@ WavetableSynthesisTestAudioProcessor::WavetableSynthesisTestAudioProcessor()
     juce::NormalisableRange<float> filterReleaseRange(0.0f, 4.0f);
     parameters.createAndAddParameter("filter_release", "Filter Release", "Filter Release", filterReleaseRange, 0.5f, nullptr, nullptr);
 
-    juce::NormalisableRange<float> filterEnvAmpRange(-1.0f, 1.0f);
-    parameters.createAndAddParameter("filter_envamp", "Filter Env Amp", "Filter Env Amp", filterEnvAmpRange, 0.0f, nullptr, nullptr);
+    juce::NormalisableRange<float> filterCutoffAmpRange(-1.0f, 1.0f);
+    parameters.createAndAddParameter("filter_cutoff_amp", "Filter Cutoff Env Amp", "Filter Cutoff Env Amp", filterCutoffAmpRange, 0.0f, nullptr, nullptr);
+
+    juce::NormalisableRange<float> filterResonanceAmpRange(-1.0f, 1.0f);
+    parameters.createAndAddParameter("filter_resonance_amp", "Filter Resonance Env Amp", "Filter Resonance Env Amp", filterResonanceAmpRange, 0.0f, nullptr, nullptr);
 
     //==========================================================================
     juce::NormalisableRange<float> chorusDepthRange(0.0f, 1.0f);
@@ -302,7 +305,7 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
 
         v->updateFilter(*parameters.getRawParameterValue("cutoff"), *parameters.getRawParameterValue("resonance"));
         v->updateFilterEnv(parameters.getRawParameterValue("filter_attack"), parameters.getRawParameterValue("filter_decay"), parameters.getRawParameterValue("filter_sustain"), parameters.getRawParameterValue("filter_release"));
-        v->updateFilterEnvAmp(parameters.getRawParameterValue("filter_envamp"));
+        v->updateFilterEnvAmp(parameters.getRawParameterValue("filter_cutoff_amp"), parameters.getRawParameterValue("filter_resonance_amp"));
     }
 
     slotOneIndexGUI = *parameters.getRawParameterValue("wavetype_one");
