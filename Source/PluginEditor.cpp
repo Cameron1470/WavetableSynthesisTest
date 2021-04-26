@@ -391,11 +391,13 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
 
     // add 2nd slider for lfo amplitude, set range and appearance
     addAndMakeVisible(lfoAmpSlider);
-    lfoAmpSlider.setRange(0, 1);
+    lfoAmpSlider.setRange(0, 4);
     lfoAmpSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     lfoAmpSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
 
     // adding listeners to every slider and connecting them to the processor
+    lfoSelection.addListener(this);
+    lfoSelectionTree = new juce::AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.parameters, "lfo_shape", lfoSelection);
     lfoFreqSlider.addListener(this);
     lfoFreqTree = new juce::AudioProcessorValueTreeState::SliderAttachment(audioProcessor.parameters, "lfo_freq", lfoFreqSlider);
     lfoAmpSlider.addListener(this);

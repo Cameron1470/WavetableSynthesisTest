@@ -61,7 +61,7 @@ class TriOsc : public Phasor
 {
 	float output(float p) override
 	{
-		return fabsf(p - 0.5f) - 0.5f;
+		return (fabsf(p - 0.5f) - 0.25f) * 4.0f;
 	}
 };
 

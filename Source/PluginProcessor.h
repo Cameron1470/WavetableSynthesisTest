@@ -88,7 +88,7 @@ private:
     juce::Synthesiser synth;
 
     /// Number of voices the synthesizer has
-    int voiceCount = 6;
+    int voiceCount = 10;
 
     /// Gain used in process block
     float gain = 0.25f;

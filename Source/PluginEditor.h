@@ -179,7 +179,6 @@ private:
     juce::Label lfoSelectionLabel{ {}, "Shape" };
     juce::ScopedPointer<juce::AudioProcessorValueTreeState::ComboBoxAttachment> lfoSelectionTree;
 
-
     juce::Slider lfoFreqSlider;
     juce::Label lfoFreqLabel{ {}, "Frequency" };
     juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> lfoFreqTree;

@@ -109,7 +109,14 @@ void WavetableSynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, 
 
     voiceBuffer.setSize(outputChannels, samplesPerBlock);
 
-
+    lfo1.setSampleRate(sampleRate);
+    lfo1.setFrequency(0.5f);
+    lfo2.setSampleRate(sampleRate);
+    lfo2.setFrequency(0.5f);
+    lfo3.setSampleRate(sampleRate);
+    lfo3.setFrequency(0.5f);
+    lfo4.setSampleRate(sampleRate);
+    lfo4.setFrequency(0.5f);
 }
 
 
@@ -145,25 +152,51 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
             auto slotFourSample = oscillatorSlotFour->getNextSample();
             auto slotFiveSample = oscillatorSlotFive->getNextSample();
 
+            switch (lfoShape) {
+            case 1:
+                lfoSample = lfo1.process();
+                break;
+            case 2:
+                lfoSample = lfo2.process();
+                break;
+            case 3:
+                lfoSample = lfo3.process();
+                break;
+            case 4:
+                lfoSample = lfo4.process();
+                break;
+            }
+            
+            float modulatedWavescanBal = wavescanBal + (lfoSample * lfoAmp);
+
+            if (modulatedWavescanBal < 0.0f)
+            {
+                modulatedWavescanBal = 0.0f;
+            }
+            else if (modulatedWavescanBal > 4.0f)
+            {
+                modulatedWavescanBal = 4.0f;
+            }
+
             // if, else if statement used for finding which two slots its currently between
             // and then mixes between the two
-            if (wavescanBal <= 1.0)
+            if (modulatedWavescanBal <= 1.0)
             {
-                currentSample = ((slotOneSample * (1 - wavescanBal)) + (slotTwoSample * wavescanBal)) * gain * envVal;
+                currentSample = ((slotOneSample * (1 - modulatedWavescanBal)) + (slotTwoSample * modulatedWavescanBal)) * gain * envVal;
             }
             else if (wavescanBal <= 2.0)
             {
-                float normalizedWavescanVal = wavescanBal - 1.0f;
+                float normalizedWavescanVal = modulatedWavescanBal - 1.0f;
                 currentSample = ((slotTwoSample * (1 - normalizedWavescanVal)) + (slotThreeSample * normalizedWavescanVal)) * gain * envVal;
             }
             else if (wavescanBal <= 3.0)
             {
-                float normalizedWavescanVal = wavescanBal - 2.0f;
+                float normalizedWavescanVal = modulatedWavescanBal - 2.0f;
                 currentSample = ((slotThreeSample * (1 - normalizedWavescanVal)) + (slotFourSample * normalizedWavescanVal)) * gain * envVal;
             }
             else if (wavescanBal <= 4.0)
             {
-                float normalizedWavescanVal = wavescanBal - 3.0f;
+                float normalizedWavescanVal = modulatedWavescanBal - 3.0f;
                 currentSample = ((slotFourSample * (1 - normalizedWavescanVal)) + (slotFiveSample * normalizedWavescanVal)) * gain * envVal;
             }
 
@@ -293,6 +326,16 @@ void WavetableSynthVoice::updateFilterEnvAmp(std::atomic<float>* _filterCutoffAm
 {
     filterCutoffAmp = *_filterCutoffAmp;
     filterResonanceAmp = *_filterResonanceAmp;
+}
+
+void WavetableSynthVoice::updateLfo(std::atomic<float>* _lfoFreq, std::atomic<float>* _lfoAmp, std::atomic<float>* _lfoShape)
+{
+    lfoAmp = *_lfoAmp;
+    lfoShape = int(*_lfoShape + 1);
+    lfo1.setFrequency(*_lfoFreq);
+    lfo2.setFrequency(*_lfoFreq);
+    lfo3.setFrequency(*_lfoFreq);
+    lfo4.setFrequency(*_lfoFreq);
 }
 
 //=================================================================================

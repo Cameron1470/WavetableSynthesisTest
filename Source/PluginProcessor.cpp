@@ -131,6 +131,16 @@ WavetableSynthesisTestAudioProcessor::WavetableSynthesisTestAudioProcessor()
     parameters.createAndAddParameter("wet", "Wet", "Wet", wetRange, 0.3f, nullptr, nullptr);
 
     //==========================================================================
+    juce::NormalisableRange<float> lfoShapeRange(0, 3);
+    parameters.createAndAddParameter("lfo_shape", "LFO Shape", "LFO Shape", lfoShapeRange, 0, nullptr, nullptr);
+    
+    juce::NormalisableRange<float> lfoFreqRange(0.0f, 10.0f);
+    parameters.createAndAddParameter("lfo_freq", "LFO Frequency", "LFO Frequency", lfoFreqRange, 0.5f, nullptr, nullptr);
+
+    juce::NormalisableRange<float> lfoAmpRange(0.0f, 4.0f);
+    parameters.createAndAddParameter("lfo_amp", "LFO Amp", "LFO Amp", lfoAmpRange, 0.0f, nullptr, nullptr);
+
+    //==========================================================================
     // add wavetable synth voices to the synthesiser class
     for (int i = 0; i < voiceCount; i++)
     {
@@ -306,6 +316,8 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
         v->updateFilter(*parameters.getRawParameterValue("cutoff"), *parameters.getRawParameterValue("resonance"));
         v->updateFilterEnv(parameters.getRawParameterValue("filter_attack"), parameters.getRawParameterValue("filter_decay"), parameters.getRawParameterValue("filter_sustain"), parameters.getRawParameterValue("filter_release"));
         v->updateFilterEnvAmp(parameters.getRawParameterValue("filter_cutoff_amp"), parameters.getRawParameterValue("filter_resonance_amp"));
+
+        v->updateLfo(parameters.getRawParameterValue("lfo_freq"), parameters.getRawParameterValue("lfo_amp"), parameters.getRawParameterValue("lfo_shape"));
     }
 
     slotOneIndexGUI = *parameters.getRawParameterValue("wavetype_one");

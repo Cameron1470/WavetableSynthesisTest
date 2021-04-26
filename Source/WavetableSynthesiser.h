@@ -159,6 +159,8 @@ public:
 
     void updateFilterEnvAmp(std::atomic<float>* _filterCutoffAmp, std::atomic<float>* _filterResonanceAmp);
 
+    void updateLfo(std::atomic<float>* _lfoFreq, std::atomic<float>* _lfoAmp, std::atomic<float>* _lfoShape);
+
     /**
      Change the wavetable stored in a specified slot of the wavescanner
 
@@ -253,6 +255,15 @@ private:
 
     float filterCutoffAmp;
     float filterResonanceAmp;
+
+    SinOsc lfo1;
+    TriOsc lfo2;
+    Phasor lfo3;
+    SquareOsc lfo4;
+
+    int lfoShape;
+    float lfoSample;
+    float lfoAmp;
 
     juce::AudioBuffer<float> voiceBuffer;
 
