@@ -2,8 +2,10 @@
   ==============================================================================
 
     WavescanningSlot.cpp
-    Created: 9 Apr 2021 9:29:54am
-    Author:  Cameron Smith
+    Part of WavemorpherSynthesizer project
+
+    Created: 9th April 2021
+    Author:  Cameron Smith, UoE s1338237
 
   ==============================================================================
 */

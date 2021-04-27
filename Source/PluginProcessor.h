@@ -57,17 +57,8 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
     //==============================================================================
-    // SOME PUBLIC VARIABLES, EASILY ACCESSIBLE FOR THE PLUGIN EDITOR CLASS
-
-
-
-
-
     
-    
-
-
-
+    // Value Tree State object for storing parameters
     juce::AudioProcessorValueTreeState parameters;
 
 private:
@@ -80,8 +71,6 @@ private:
     /// Gain used in process block
     float gain = 0.25f;
 
-    
-    
     /// Variables for the current index of the wavetable in BinaryData
     float slotOneIndexCurrent;
     float slotTwoIndexCurrent;

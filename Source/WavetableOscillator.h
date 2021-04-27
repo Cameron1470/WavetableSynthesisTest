@@ -9,7 +9,7 @@
     Description: Class for generating the tone from the wavetable file it is 
     handed at the specifed frequency. Uses cubic spline interpolation to smooth 
     output. Quite short so I didn't feel a seperate .cpp file was necessary.
-    Largely taken from: https://docs.juce.com/master/tutorial_wavetable_synth.html
+    Some aspects from: https://docs.juce.com/master/tutorial_wavetable_synth.html
 
   ==============================================================================
 */

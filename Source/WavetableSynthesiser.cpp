@@ -2,9 +2,10 @@
   ==============================================================================
 
     WavetableSynthesiser.cpp
+    Part of WavemorpherSynthesizer project
 
     Created: 6th April 2021
-    Author:  Cameron Smith
+    Author:  Cameron Smith, UoE s1338237
 
   ==============================================================================
 */
@@ -28,6 +29,7 @@ WavetableSynthVoice::WavetableSynthVoice() :
 
 void WavetableSynthVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound*, int /*currentPitchWheelPosition*/)
 {
+    // change the current playing state of the voice
     playing = true;
     ending = false;
 
@@ -57,7 +59,6 @@ void WavetableSynthVoice::startNote(int midiNoteNumber, float velocity, juce::Sy
     auto* oscillatorSlotFour = new WavetableOscillator(slotFour.getAntialiasedWavetable(currentWavetable));
     auto* oscillatorSlotFive = new WavetableOscillator(slotFive.getAntialiasedWavetable(currentWavetable));
 
-
     // setting the frequency and sample rate in this class instance
     oscillatorSlotOne->setFrequency(freq, getSampleRate());
     oscillatorSlotTwo->setFrequency(freq, getSampleRate());
@@ -72,7 +73,7 @@ void WavetableSynthVoice::startNote(int midiNoteNumber, float velocity, juce::Sy
     wtOscillatorFour.add(oscillatorSlotFour);
     wtOscillatorFive.add(oscillatorSlotFive);
 
-    fundamentalOsc.setSampleRate(getSampleRate());
+    // set the frequency for the fundamental oscillator
     fundamentalOsc.setFrequency(freq);
 
     // reset and start envelope
@@ -92,28 +93,28 @@ void WavetableSynthVoice::stopNote(float /*velocity*/, bool allowTailOff)
 
 void WavetableSynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int outputChannels)
 {
+    // reset filter before beginning
     ladderFilter.reset();
 
+    // further setting up required for juce DSP filter
     juce::dsp::ProcessSpec spec;
     spec.maximumBlockSize = samplesPerBlock;
     spec.sampleRate = sampleRate;
     spec.numChannels = outputChannels;
-
     ladderFilter.prepare(spec);
 
-    ladderFilter.setCutoffFrequencyHz(10000.0f);
-    ladderFilter.setResonance(0.1f);
-
+    // setting size of voice buffer that will be used for applying filters to individual voices
     voiceBuffer.setSize(outputChannels, samplesPerBlock);
 
+    // set sample rates for all the LFO shapes
     lfo1.setSampleRate(sampleRate);
-    lfo1.setFrequency(0.5f);
-    lfo2.setSampleRate(sampleRate);
-    lfo2.setFrequency(0.5f);
+    lfo2.setSampleRate(sampleRate); 
     lfo3.setSampleRate(sampleRate);
-    lfo3.setFrequency(0.5f);
     lfo4.setSampleRate(sampleRate);
-    lfo4.setFrequency(0.5f);
+
+    // set sample rate for the fundamental oscillator 
+    fundamentalOsc.setSampleRate(sampleRate);
+
 }
 
 
@@ -151,6 +152,7 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
             auto slotFourSample = oscillatorSlotFour->getNextSample();
             auto slotFiveSample = oscillatorSlotFive->getNextSample();
 
+            // switch statement for determining which lfo shape to use and get the next sample of
             switch (lfoShape) {
             case 1:
                 lfoSample = lfo1.process();
@@ -197,13 +199,14 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
                 currentSample = ((slotFourSample * (1 - normalizedWavescanVal)) + (slotFiveSample * normalizedWavescanVal)) * gain * envVal;
             }
 
+            // get next sample of the basic sine wave fundamental oscillator
             float fundamentalSample = fundamentalOsc.process() * envVal;
 
             // for each channel, write the currentSample float to the output
             for (int channel = 0; channel < proxy.getNumChannels(); channel++)
             {
                 // The output sample is scaled by 0.1 so that it is not too loud by default
-                proxy.addSample(channel, sample, ((currentSample * wavetableVolume) + (fundamentalSample * sineVolume)) * 0.1);
+                proxy.addSample(channel, sample, ((currentSample * wavetableVolume) + (fundamentalSample * sineVolume)) * 0.5);
             }
 
             // clear current note if ending and env val is very small
