@@ -71,18 +71,26 @@ private:
     /// Gain used in process block
     float gain = 0.25f;
 
-    /// Variables for the current index of the wavetable in BinaryData
+    /// Variable for the current index of the wavetable in BinaryData for wavescanning slot 1
     float slotOneIndexCurrent;
+    /// Variable for the current index of the wavetable in BinaryData for wavescanning slot 2
     float slotTwoIndexCurrent;
+    /// Variable for the current index of the wavetable in BinaryData for wavescanning slot 3
     float slotThreeIndexCurrent;
+    /// Variable for the current index of the wavetable in BinaryData for wavescanning slot 4
     float slotFourIndexCurrent;
+    /// Variable for the current index of the wavetable in BinaryData for wavescanning slot 5
     float slotFiveIndexCurrent;
 
-    // variables of current index of the wavetable in BinaryData updated from GUI
+    /// Variable of current index of the wavetable in BinaryData for wavescanning slot 1 updated from GUI
     float slotOneIndexGUI;
+    /// Variable of current index of the wavetable in BinaryData for wavescanning slot 2 updated from GUI
     float slotTwoIndexGUI;
+    /// Variable of current index of the wavetable in BinaryData for wavescanning slot 3 updated from GUI
     float slotThreeIndexGUI;
+    /// Variable of current index of the wavetable in BinaryData for wavescanning slot 4 updated from GUI
     float slotFourIndexGUI;
+    /// Variable of current index of the wavetable in BinaryData for wavescanning slot 5 updated from GUI
     float slotFiveIndexGUI;
 
     /// Juce reverb
