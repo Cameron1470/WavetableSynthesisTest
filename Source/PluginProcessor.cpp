@@ -131,6 +131,8 @@ WavemorpherSynthesizerAudioProcessor::WavemorpherSynthesizerAudioProcessor()
     juce::NormalisableRange<float> lfoAmpRange(0.0f, 4.0f);
     parameters.createAndAddParameter("lfo_amp", "LFO Amp", "LFO Amp", lfoAmpRange, 0.0f, nullptr, nullptr);
 
+    parameters.state = juce::ValueTree("Foo");
+
     //==========================================================================
     // add wavetable synth voices to the synthesiser class
     for (int i = 0; i < voiceCount; i++)
