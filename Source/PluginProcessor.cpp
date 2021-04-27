@@ -223,30 +223,24 @@ void WavemorpherSynthesizerAudioProcessor::prepareToPlay (double sampleRate, int
     chorus.reset();
     
     // Preparing the reverb with a reset
-    reverb.reset();
+    reverb.reset();;
 
-
-
-    slotOneIndexCurrent = slotOneIndexGUI;
-    slotTwoIndexCurrent = slotTwoIndexGUI;
-    slotThreeIndexCurrent = slotThreeIndexGUI;
-    slotFourIndexCurrent = slotFourIndexGUI;
-    slotFiveIndexCurrent = slotFiveIndexGUI;
-
-
+    // Setting up all the synthesizer voices
     for (int i = 0; i < voiceCount; i++)
     {
         WavetableSynthVoice* v = dynamic_cast<WavetableSynthVoice*>(synth.getVoice(i));
+        
+        // give each wavetable slot in ititial index from the drop down menus
         v->updateWavetable(int(slotOneIndexCurrent), 0);
         v->updateWavetable(int(slotTwoIndexCurrent), 1);
         v->updateWavetable(int(slotThreeIndexCurrent), 2);
         v->updateWavetable(int(slotFourIndexCurrent), 3);
         v->updateWavetable(int(slotFiveIndexCurrent), 4);
 
+        // providing the voices with other essential information (SR, block size, channel number)
         v->prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
     }
 
-    
 }
 
 void WavemorpherSynthesizerAudioProcessor::releaseResources()

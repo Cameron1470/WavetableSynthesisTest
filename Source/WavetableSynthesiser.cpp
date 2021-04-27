@@ -23,9 +23,6 @@ WavetableSynthVoice::WavetableSynthVoice() :
 {
     // set sample rate of ADSR envelope
     env.setSampleRate(getSampleRate());
-
-
-
     
 }
 
@@ -127,14 +124,16 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
     if (playing) // check to see if this voice should be playing
     {
         jassert(numSamples <= voiceBuffer.getNumSamples());
+        
+        // creating a proxy audio buffer to apply Juce DSP filter to before adding to output buffer
         juce::AudioBuffer<float> proxy(voiceBuffer.getArrayOfWritePointers(), voiceBuffer.getNumChannels(), startSample, numSamples);
         proxy.clear();
 
-        int tmpStartSample = 0;
 
         // iterate through the necessary number of samples (from startSample up to startSample + numSamples)
         for (int sample = 0; sample < proxy.getNumSamples(); sample++)
         {
+            // get next sample from the amplitude and filter ADSR envelopes
             float envVal = env.getNextSample();
             filterEnvVal = filterEnv.getNextSample();
 
@@ -167,16 +166,14 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
                 break;
             }
             
+            // find current wavescan parameter including modulation by lfo
             float modulatedWavescanBal = wavescanBal + (lfoSample * lfoAmp);
 
+            // brickwalling the modulated wavescanning parameter so it doesn't exceed bounds
             if (modulatedWavescanBal < 0.0f)
-            {
                 modulatedWavescanBal = 0.0f;
-            }
             else if (modulatedWavescanBal > 4.0f)
-            {
                 modulatedWavescanBal = 4.0f;
-            }
 
             // if, else if statement used for finding which two slots its currently between
             // and then mixes between the two
@@ -209,8 +206,6 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
                 proxy.addSample(channel, sample, ((currentSample * wavetableVolume) + (fundamentalSample * sineVolume)) * 0.1);
             }
 
-            ++tmpStartSample;
-
             // clear current note if ending and env val is very small
             if (ending)
             {
@@ -218,36 +213,30 @@ void WavetableSynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer,
                 {
                     clearCurrentNote();
                     playing = false;
-
                 }
             }
         }
         
+        // calculate cutoff frequency and resonance values with current modulation amount 
         if (filterCutoffAmp >= 0.0f)
-        {
             currentCutOff = cutoff + filterEnvVal * filterCutoffAmp* (20000.0f - cutoff);
-        }
         else if (filterCutoffAmp < 0.0f)
-        {
             currentCutOff = cutoff + filterEnvVal * filterCutoffAmp * (cutoff - 100.0f);
-        }
 
         if (filterResonanceAmp >= 0.0f)
-        {
             currentResonance = resonance + (filterEnvVal * filterResonanceAmp * (1.0f - resonance));
-        }
         else if (filterResonanceAmp < 0.0f)
-        {
             currentResonance = resonance + (filterEnvVal * filterResonanceAmp * resonance);
-        }
 
+        // update the filter with the parameter values plus the envelope modulation
         ladderFilter.setCutoffFrequencyHz(currentCutOff);
         ladderFilter.setResonance(currentResonance);
 
-
+        // apply this filter on the proxy sample block
         juce::dsp::AudioBlock<float> sampleBlock(proxy);
         ladderFilter.process(juce::dsp::ProcessContextReplacing<float>(sampleBlock));
         
+        // add the proxy audio buffer to the output buffer
         for (int sample = 0; sample < numSamples; ++sample)
         {
             for (int channel = 0; channel < proxy.getNumChannels(); channel++)
