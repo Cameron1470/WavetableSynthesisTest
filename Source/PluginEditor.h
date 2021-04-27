@@ -15,13 +15,13 @@
 //==============================================================================
 /**
 */
-class WavetableSynthesisTestAudioProcessorEditor  : public juce::AudioProcessorEditor,
+class WavemorpherSynthesizerAudioProcessorEditor  : public juce::AudioProcessorEditor,
     public juce::Slider::Listener,
     public juce::ComboBox::Listener
 {
 public:
-    WavetableSynthesisTestAudioProcessorEditor (WavetableSynthesisTestAudioProcessor&);
-    ~WavetableSynthesisTestAudioProcessorEditor() override;
+    WavemorpherSynthesizerAudioProcessorEditor (WavemorpherSynthesizerAudioProcessor&);
+    ~WavemorpherSynthesizerAudioProcessorEditor() override;
 
     //==============================================================================
     void paint (juce::Graphics&) override;
@@ -193,7 +193,7 @@ private:
 
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    WavetableSynthesisTestAudioProcessor& audioProcessor;
+    WavemorpherSynthesizerAudioProcessor& audioProcessor;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WavetableSynthesisTestAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WavemorpherSynthesizerAudioProcessorEditor)
 };

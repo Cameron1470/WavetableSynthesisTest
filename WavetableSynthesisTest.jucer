@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="osX93i" name="WavetableSynthesisTest" projectType="audioplug"
+<JUCERPROJECT id="osX93i" name="WavemorpherSynthesizer" projectType="audioplug"
               useAppConfig="0" addUsingNamespaceToJuceHeader="0" displaySplashScreen="1"
-              jucerFormatVersion="1" pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn">
-  <MAINGROUP id="C7VMC9" name="WavetableSynthesisTest">
+              jucerFormatVersion="1" pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
+              companyName="CameronSmith">
+  <MAINGROUP id="C7VMC9" name="WavemorpherSynthesizer">
     <GROUP id="{998DAF63-F55F-C007-C622-BF2919301A72}" name="Source">
       <FILE id="V8BhjZ" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>

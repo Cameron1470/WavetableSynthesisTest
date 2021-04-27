@@ -16,12 +16,12 @@
 //==============================================================================
 /**
 */
-class WavetableSynthesisTestAudioProcessor  : public juce::AudioProcessor
+class WavemorpherSynthesizerAudioProcessor  : public juce::AudioProcessor
 {
 public:
     //==============================================================================
-    WavetableSynthesisTestAudioProcessor();
-    ~WavetableSynthesisTestAudioProcessor() override;
+    WavemorpherSynthesizerAudioProcessor();
+    ~WavemorpherSynthesizerAudioProcessor() override;
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -112,5 +112,5 @@ private:
     
 
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WavetableSynthesisTestAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WavemorpherSynthesizerAudioProcessor)
 };

@@ -10,7 +10,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessorEditor(WavetableSynthesisTestAudioProcessor& p)
+WavemorpherSynthesizerAudioProcessorEditor::WavemorpherSynthesizerAudioProcessorEditor(WavemorpherSynthesizerAudioProcessor& p)
     : AudioProcessorEditor(&p), audioProcessor(p)
 {
 
@@ -415,12 +415,12 @@ WavetableSynthesisTestAudioProcessorEditor::WavetableSynthesisTestAudioProcessor
     setSize (730, 428);
 }
 
-WavetableSynthesisTestAudioProcessorEditor::~WavetableSynthesisTestAudioProcessorEditor()
+WavemorpherSynthesizerAudioProcessorEditor::~WavemorpherSynthesizerAudioProcessorEditor()
 {
 }
 
 //==============================================================================
-void WavetableSynthesisTestAudioProcessorEditor::paint (juce::Graphics& g)
+void WavemorpherSynthesizerAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll(juce::Colour(139, 176, 168));
@@ -507,7 +507,7 @@ void WavetableSynthesisTestAudioProcessorEditor::paint (juce::Graphics& g)
 
 }
 
-void WavetableSynthesisTestAudioProcessorEditor::resized()
+void WavemorpherSynthesizerAudioProcessorEditor::resized()
 {
     // positioning drop down labels
     dropDownLabelOne.setBounds(10, 10, 180, 20);
@@ -615,7 +615,7 @@ void WavetableSynthesisTestAudioProcessorEditor::resized()
 
 }
 
-void WavetableSynthesisTestAudioProcessorEditor::sliderValueChanged(juce::Slider* slider)
+void WavemorpherSynthesizerAudioProcessorEditor::sliderValueChanged(juce::Slider* slider)
 {
     if (slider == &wavescanningSlider)
     {
@@ -643,7 +643,7 @@ void WavetableSynthesisTestAudioProcessorEditor::sliderValueChanged(juce::Slider
     }
 }
 
-void WavetableSynthesisTestAudioProcessorEditor::comboBoxChanged(juce::ComboBox* comboBox)
+void WavemorpherSynthesizerAudioProcessorEditor::comboBoxChanged(juce::ComboBox* comboBox)
 {
  
     if (comboBox == &wavetableDropDowns[0])

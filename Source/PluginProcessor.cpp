@@ -10,7 +10,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-WavetableSynthesisTestAudioProcessor::WavetableSynthesisTestAudioProcessor()
+WavemorpherSynthesizerAudioProcessor::WavemorpherSynthesizerAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
@@ -151,17 +151,17 @@ WavetableSynthesisTestAudioProcessor::WavetableSynthesisTestAudioProcessor()
     synth.addSound(new WavetableSynthSound());
 }
 
-WavetableSynthesisTestAudioProcessor::~WavetableSynthesisTestAudioProcessor()
+WavemorpherSynthesizerAudioProcessor::~WavemorpherSynthesizerAudioProcessor()
 {
 }
 
 //==============================================================================
-const juce::String WavetableSynthesisTestAudioProcessor::getName() const
+const juce::String WavemorpherSynthesizerAudioProcessor::getName() const
 {
     return JucePlugin_Name;
 }
 
-bool WavetableSynthesisTestAudioProcessor::acceptsMidi() const
+bool WavemorpherSynthesizerAudioProcessor::acceptsMidi() const
 {
    #if JucePlugin_WantsMidiInput
     return true;
@@ -170,7 +170,7 @@ bool WavetableSynthesisTestAudioProcessor::acceptsMidi() const
    #endif
 }
 
-bool WavetableSynthesisTestAudioProcessor::producesMidi() const
+bool WavemorpherSynthesizerAudioProcessor::producesMidi() const
 {
    #if JucePlugin_ProducesMidiOutput
     return true;
@@ -179,7 +179,7 @@ bool WavetableSynthesisTestAudioProcessor::producesMidi() const
    #endif
 }
 
-bool WavetableSynthesisTestAudioProcessor::isMidiEffect() const
+bool WavemorpherSynthesizerAudioProcessor::isMidiEffect() const
 {
    #if JucePlugin_IsMidiEffect
     return true;
@@ -188,47 +188,48 @@ bool WavetableSynthesisTestAudioProcessor::isMidiEffect() const
    #endif
 }
 
-double WavetableSynthesisTestAudioProcessor::getTailLengthSeconds() const
+double WavemorpherSynthesizerAudioProcessor::getTailLengthSeconds() const
 {
     return 0.0;
 }
 
-int WavetableSynthesisTestAudioProcessor::getNumPrograms()
+int WavemorpherSynthesizerAudioProcessor::getNumPrograms()
 {
     return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
-int WavetableSynthesisTestAudioProcessor::getCurrentProgram()
+int WavemorpherSynthesizerAudioProcessor::getCurrentProgram()
 {
     return 0;
 }
 
-void WavetableSynthesisTestAudioProcessor::setCurrentProgram (int index)
+void WavemorpherSynthesizerAudioProcessor::setCurrentProgram (int index)
 {
 }
 
-const juce::String WavetableSynthesisTestAudioProcessor::getProgramName (int index)
+const juce::String WavemorpherSynthesizerAudioProcessor::getProgramName (int index)
 {
     return {};
 }
 
-void WavetableSynthesisTestAudioProcessor::changeProgramName (int index, const juce::String& newName)
+void WavemorpherSynthesizerAudioProcessor::changeProgramName (int index, const juce::String& newName)
 {
 }
 
 //==============================================================================
-void WavetableSynthesisTestAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void WavemorpherSynthesizerAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     synth.setCurrentPlaybackSampleRate(sampleRate);
 
-    chorus.setDepth(0.5);
-    chorus.setMix(0.5);
+    //chorus.setDepth(0.5);
+    //chorus.setMix(0.5);
 
 
     juce::dsp::ProcessSpec spec;
     spec.maximumBlockSize = samplesPerBlock;
     spec.sampleRate = sampleRate;
+    spec.numChannels = getNumOutputChannels();
 
     chorus.prepare(spec);
     chorus.reset();
@@ -263,14 +264,14 @@ void WavetableSynthesisTestAudioProcessor::prepareToPlay (double sampleRate, int
     
 }
 
-void WavetableSynthesisTestAudioProcessor::releaseResources()
+void WavemorpherSynthesizerAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool WavetableSynthesisTestAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool WavemorpherSynthesizerAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
   #if JucePlugin_IsMidiEffect
     juce::ignoreUnused (layouts);
@@ -295,7 +296,7 @@ bool WavetableSynthesisTestAudioProcessor::isBusesLayoutSupported (const BusesLa
 }
 #endif
 
-void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+void WavemorpherSynthesizerAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
 
@@ -409,8 +410,7 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
     chorus.setDepth(*parameters.getRawParameterValue("chorus_depth"));
     chorus.setMix(*parameters.getRawParameterValue("chorus_mix"));
 
-    //ladderFilter.setCutoffFrequencyHz(*parameters.getRawParameterValue("cutoff"));
-    //ladderFilter.setResonance(*parameters.getRawParameterValue("resonance"));
+
 
     juce::dsp::AudioBlock<float> sampleBlock(buffer);
     chorus.process(juce::dsp::ProcessContextReplacing<float>(sampleBlock));
@@ -430,25 +430,25 @@ void WavetableSynthesisTestAudioProcessor::processBlock (juce::AudioBuffer<float
 }
 
 //==============================================================================
-bool WavetableSynthesisTestAudioProcessor::hasEditor() const
+bool WavemorpherSynthesizerAudioProcessor::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
 }
 
-juce::AudioProcessorEditor* WavetableSynthesisTestAudioProcessor::createEditor()
+juce::AudioProcessorEditor* WavemorpherSynthesizerAudioProcessor::createEditor()
 {
-    return new WavetableSynthesisTestAudioProcessorEditor (*this);
+    return new WavemorpherSynthesizerAudioProcessorEditor (*this);
 }
 
 //==============================================================================
-void WavetableSynthesisTestAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
+void WavemorpherSynthesizerAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
 }
 
-void WavetableSynthesisTestAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void WavemorpherSynthesizerAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
@@ -462,5 +462,5 @@ void WavetableSynthesisTestAudioProcessor::setStateInformation (const void* data
 // This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new WavetableSynthesisTestAudioProcessor();
+    return new WavemorpherSynthesizerAudioProcessor();
 }
