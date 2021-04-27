@@ -281,29 +281,15 @@ void WavetableSynthVoice::setSineVolume(std::atomic<float>* _sineVolume)
     sineVolume = *_sineVolume;
 }
 
-void WavetableSynthVoice::setAttack(std::atomic<float>* attack)
+void WavetableSynthVoice::updateADSR(std::atomic<float>* attack, std::atomic<float>* decay, std::atomic<float>* sustain, std::atomic<float>* release)
 {
     envParams.attack = *attack;
-    env.setParameters(envParams);
-}
-
-void WavetableSynthVoice::setDecay(std::atomic<float>* decay)
-{
     envParams.decay = *decay;
-    env.setParameters(envParams);
-}
-
-void WavetableSynthVoice::setSustain(std::atomic<float>* sustain)
-{
     envParams.sustain = *sustain;
-    env.setParameters(envParams);
-}
-
-void WavetableSynthVoice::setRelease(std::atomic<float>* release)
-{
     envParams.release = *release;
     env.setParameters(envParams);
 }
+
 
 void WavetableSynthVoice::updateFilter(float _cutoff, float _resonance)
 {

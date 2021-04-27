@@ -126,32 +126,17 @@ public:
     void setSineVolume(std::atomic<float>* _sineVolume);
 
     /**
-     Modify the attack of the ADSR envelope
+    Update the parameters of the ADSR envelope
 
-     @param attack time in seconds
-     */
-    void setAttack(std::atomic<float>* attack);
+    @param attack time in seconds
+    @param decay time in seconds
+    @param sustain value between 0 and 1
+    @param release time in seconds
+    */
+    void updateADSR(std::atomic<float>* attack, std::atomic<float>* decay, std::atomic<float>* sustain, std::atomic<float>* release);
 
-    /**
-     Modify the decay of the ADSR envelope
+ 
 
-     @param decay time in seconds
-     */
-    void setDecay(std::atomic<float>* decay);
-
-    /**
-     Modify the sustain value of the ADSR envelope
-
-     @param sustain value between 0 and 1
-     */
-    void setSustain(std::atomic<float>* sustain);
-
-    /**
-     Modify the release of the ADSR envelope
-
-     @param release time in seconds
-     */
-    void setRelease(std::atomic<float>* release);
 
     void updateFilter(float cutoff, float resonance); 
 

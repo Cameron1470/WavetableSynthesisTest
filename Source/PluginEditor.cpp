@@ -617,69 +617,12 @@ void WavemorpherSynthesizerAudioProcessorEditor::resized()
 
 void WavemorpherSynthesizerAudioProcessorEditor::sliderValueChanged(juce::Slider* slider)
 {
-    if (slider == &wavescanningSlider)
-    {
-        audioProcessor.wavescanParam = wavescanningSlider.getValue();
-    }
-
-    if (slider == &attackSlider)
-    {
-        audioProcessor.attackParam = attackSlider.getValue();
-    }
-
-    if (slider == &decaySlider)
-    {
-        audioProcessor.decayParam = decaySlider.getValue();
-    }
-
-    if (slider == &sustainSlider)
-    {
-        audioProcessor.sustainParam = sustainSlider.getValue();
-    }
-
-    if (slider == &releaseSlider)
-    {
-        audioProcessor.releaseParam = releaseSlider.getValue();
-    }
+   
 }
 
 void WavemorpherSynthesizerAudioProcessorEditor::comboBoxChanged(juce::ComboBox* comboBox)
 {
  
-    if (comboBox == &wavetableDropDowns[0])
-    {
-        // finding the index in binary data from the combo box and setting the variable in the audio processor
-        int binaryIndex = wavetableDropDowns[0].getSelectedItemIndex() - 1;
-        audioProcessor.slotOneIndexGUI = binaryIndex;
-    }
-
-    if (comboBox == &wavetableDropDowns[1])
-    {
-        // finding the index in binary data from the combo box and setting the variable in the audio processor
-        int binaryIndex = wavetableDropDowns[1].getSelectedItemIndex() - 1;
-        audioProcessor.slotTwoIndexGUI = binaryIndex;
-    }
-
-    if (comboBox == &wavetableDropDowns[2])
-    {
-        // finding the index in binary data from the combo box and setting the variable in the audio processor
-        int binaryIndex = wavetableDropDowns[2].getSelectedItemIndex() - 1;
-        audioProcessor.slotThreeIndexGUI = binaryIndex;
-    }
-
-    if (comboBox == &wavetableDropDowns[3])
-    {
-        // finding the index in binary data from the combo box and setting the variable in the audio processor
-        int binaryIndex = wavetableDropDowns[3].getSelectedItemIndex() - 1;
-        audioProcessor.slotFourIndexGUI = binaryIndex;
-    }
-
-    if (comboBox == &wavetableDropDowns[4])
-    {
-        // finding the index in binary data from the combo box and setting the variable in the audio processor
-        int binaryIndex = wavetableDropDowns[4].getSelectedItemIndex() - 1;
-        audioProcessor.slotFiveIndexGUI = binaryIndex;
-    }
     
 }
 

@@ -59,26 +59,13 @@ public:
     //==============================================================================
     // SOME PUBLIC VARIABLES, EASILY ACCESSIBLE FOR THE PLUGIN EDITOR CLASS
 
-    /// The wavescanning parameter
-    float wavescanParam;
 
-    /// The ADSR parameters for the envelope
-    float attackParam;
-    float decayParam;
-    float sustainParam;
-    float releaseParam;
 
-    // variables of current index of the wavetable in BinaryData updated from GUI
-    float slotOneIndexGUI;
-    float slotTwoIndexGUI;
-    float slotThreeIndexGUI;
-    float slotFourIndexGUI;
-    float slotFiveIndexGUI;
 
-    float roomSizeParam;
-    float dampingParam;
-    float dryParam;
-    float wetParam;
+
+    
+    
+
 
 
     juce::AudioProcessorValueTreeState parameters;
@@ -93,6 +80,8 @@ private:
     /// Gain used in process block
     float gain = 0.25f;
 
+    
+    
     /// Variables for the current index of the wavetable in BinaryData
     float slotOneIndexCurrent;
     float slotTwoIndexCurrent;
@@ -100,16 +89,21 @@ private:
     float slotFourIndexCurrent;
     float slotFiveIndexCurrent;
 
+    // variables of current index of the wavetable in BinaryData updated from GUI
+    float slotOneIndexGUI;
+    float slotTwoIndexGUI;
+    float slotThreeIndexGUI;
+    float slotFourIndexGUI;
+    float slotFiveIndexGUI;
+
     /// Juce reverb
     juce::Reverb reverb;
 
     /// Parameters of the reverb
     juce::Reverb::Parameters reverbParams;
 
-    // Juce dsp Chorus
+    /// Juce DSP Chorus
     juce::dsp::Chorus<float> chorus;
-
-    
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WavemorpherSynthesizerAudioProcessor)

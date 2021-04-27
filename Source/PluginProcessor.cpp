@@ -22,11 +22,6 @@ WavemorpherSynthesizerAudioProcessor::WavemorpherSynthesizerAudioProcessor()
                        ),
     
 #endif
-    wavescanParam(2.0f),
-    attackParam(0.1f),
-    decayParam(0.1f),
-    sustainParam(0.9f),
-    releaseParam(0.5f),
     slotOneIndexGUI(0),
     slotTwoIndexGUI(2),
     slotThreeIndexGUI(4),
@@ -37,10 +32,6 @@ WavemorpherSynthesizerAudioProcessor::WavemorpherSynthesizerAudioProcessor()
     slotThreeIndexCurrent(4),
     slotFourIndexCurrent(6),
     slotFiveIndexCurrent(8),
-    roomSizeParam(0.5),
-    dampingParam(0.5),
-    dryParam(0.5),
-    wetParam(0.5),
     parameters(*this, nullptr)
 
 {
@@ -220,25 +211,18 @@ void WavemorpherSynthesizerAudioProcessor::changeProgramName (int index, const j
 //==============================================================================
 void WavemorpherSynthesizerAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+    // Preparing the synthesizer by setting the sample rate
     synth.setCurrentPlaybackSampleRate(sampleRate);
 
-    //chorus.setDepth(0.5);
-    //chorus.setMix(0.5);
-
-
+    // Preparation for the chorus, giving it the sample rate, samples per block and number of channels
     juce::dsp::ProcessSpec spec;
     spec.maximumBlockSize = samplesPerBlock;
     spec.sampleRate = sampleRate;
     spec.numChannels = getNumOutputChannels();
-
     chorus.prepare(spec);
     chorus.reset();
     
-
-    reverbParams.dryLevel = 0.5f;
-    reverbParams.wetLevel = 0.5f;
-    reverbParams.roomSize = 0.5f;
-    reverb.setParameters(reverbParams);
+    // Preparing the reverb with a reset
     reverb.reset();
 
 
@@ -248,6 +232,7 @@ void WavemorpherSynthesizerAudioProcessor::prepareToPlay (double sampleRate, int
     slotThreeIndexCurrent = slotThreeIndexGUI;
     slotFourIndexCurrent = slotFourIndexGUI;
     slotFiveIndexCurrent = slotFiveIndexGUI;
+
 
     for (int i = 0; i < voiceCount; i++)
     {
@@ -305,14 +290,15 @@ void WavemorpherSynthesizerAudioProcessor::processBlock (juce::AudioBuffer<float
     for (int i = 0; i < voiceCount; i++)
     {
         WavetableSynthVoice* v = dynamic_cast<WavetableSynthVoice*>(synth.getVoice(i));
-        v->setWavescanVal(parameters.getRawParameterValue("wavescan"));
-        v->setAttack(parameters.getRawParameterValue("attack"));
-        v->setDecay(parameters.getRawParameterValue("decay"));
-        v->setSustain(parameters.getRawParameterValue("sustain"));
-        v->setRelease(parameters.getRawParameterValue("release"));
 
+        v->setWavescanVal(parameters.getRawParameterValue("wavescan"));
+        
         v->setWavetableVolume(parameters.getRawParameterValue("wave_synth"));
         v->setSineVolume(parameters.getRawParameterValue("sine_synth"));
+
+
+        v->updateADSR(parameters.getRawParameterValue("attack"), parameters.getRawParameterValue("decay"), parameters.getRawParameterValue("sustain"), parameters.getRawParameterValue("release"));
+
 
         v->updateFilter(*parameters.getRawParameterValue("cutoff"), *parameters.getRawParameterValue("resonance"));
         v->updateFilterEnv(parameters.getRawParameterValue("filter_attack"), parameters.getRawParameterValue("filter_decay"), parameters.getRawParameterValue("filter_sustain"), parameters.getRawParameterValue("filter_release"));
